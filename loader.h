@@ -21,10 +21,10 @@ class loader {
     // load line
     void load_line(string line);
     // load file
-    void load_file();
+    int load_file();
 
 public:
-
+    int end_line_num;
 
     // constructor
     loader(const char *fname);

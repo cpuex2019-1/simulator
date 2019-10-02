@@ -6,6 +6,7 @@
 #include <string>
 #include "loader.h"
 #include "memory.h"
+#include "controller.h"
 
 using namespace std;
 
@@ -20,7 +21,8 @@ int main(int argc, char *argv[]){
 
     // load program
     loader ld(argv[1]);
-    memory memory;
+    memory memo;
+    controller controller(&ld, &memo);
 
 
     string str;
@@ -34,13 +36,18 @@ int main(int argc, char *argv[]){
             cout << "get line by main:" << ld.get_line_num_by_label("main") << endl;
             */
 
-            /**/
-            // debug for memory
-            memory.write_word(0,10);
-            memory.write_word(4,5);
-            memory.write_word(8,2);
-            memory.print_word_by_addr(0,20);
+            /* debug for memory
+            memo.write_word(0,10);
+            memo.write_word(4,5);
+            memo.write_word(8,2);
+            memo.print_word_by_addr(0,20);
+            */
 
+            /* debug for executer */
+            if(!controller.exec_step()){
+                cout << "program end!" << endl;
+                return 0;
+            };
 
         }else if (str == "r" || str == "run"){ // run all
 

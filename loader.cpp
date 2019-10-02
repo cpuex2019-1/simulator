@@ -18,7 +18,7 @@ loader::loader(const char *fname){
         exit(1);
     }
     line_num = 0;	// reset line number
-    load_file();
+    end_line_num = load_file();
 }
 
 // destructor
@@ -28,13 +28,14 @@ loader::~loader()
 	input.close();
 }
 
-void loader::load_file(){
+int loader::load_file(){
     string linebuf;
     while(!input.eof()){
         line_num++;		// increment before processing the line
         getline(input, linebuf);
         load_line(linebuf);
     }
+    return line_num;
 }
 
 // load line
