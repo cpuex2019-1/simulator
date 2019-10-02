@@ -34,13 +34,13 @@ int main(int argc, char *argv[]){
             cout << "get line by main:" << ld.get_line_num_by_label("main") << endl;
             */
 
-            /*
+            /**/
             // debug for memory
             memory.write_word(0,10);
             memory.write_word(4,5);
             memory.write_word(8,2);
             memory.print_word_by_addr(0,20);
-            */
+
 
         }else if (str == "r" || str == "run"){ // run all
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
 
 
 void print_usage_while(){
-    cerr << "usage:\n"
+    cerr << "how to use mipsim:\n"
         << "\ts | step | \\n\t: run step by step\n"
         << "\tr | run\t\t: run all\n"
         << "\texit\t\t: exit program"

@@ -53,7 +53,6 @@ void memory::write_byte(sim_addr addr, sim_byte byte_data){
 
 void memory::write_word(sim_addr addr, sim_word word_data){
     if(addr < memorySize && addr%4==0){
-        sim_word tmp_word = word_data;
         table[addr] = (unsigned char)(word_data >> 8*3);
         table[addr+1] = (unsigned char)(word_data >> 8*2);
         table[addr+2] = (unsigned char)(word_data >> 8*1);
