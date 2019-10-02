@@ -3,8 +3,8 @@ PROG = mipsim
 CXXFLAGS = -Wall -O -std=c++11
 
 SRCS := main.cpp loader.cpp memory.cpp
-OBJS := $(SRCS:%.c=%.o)
-DEPS := $(SRCS:%.c=%.d)
+OBJS := $(SRCS:%.cpp=%.o)
+DEPS := $(SRCS:%.cpp=%.d)
 
 
 $(PROG): $(OBJS)

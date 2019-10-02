@@ -49,7 +49,9 @@ void loader::load_line(string line){
              res_str = res_str + iter->str();
     }
 
-    cout << "label: "<<"[" << label_str <<"]"<< "\tres: "<<"[" << res_str <<"]"<< endl;
+    // for debug
+    // cout << "label: "<<"[" << label_str <<"]"<< "\tres: "<<"[" << res_str <<"]"<< endl;
+
     if (label_str !=""){
         label_map.insert(std::make_pair(label_str, line_num));
     }
