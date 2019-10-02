@@ -19,7 +19,7 @@ loader::loader(const char *fname){
     }
     line_num = 0;	// reset line number
     end_line_num = load_file();
-    program_map.push_back(""); //number 0 には何も入れない
+    program_map.insert(program_map.begin(), "program begin hear"); //number 0 にはコードは入らない
 }
 
 // destructor
@@ -91,7 +91,7 @@ void loader::print_program_map(){
     cout << "program_map\n";
     int line = 0;
     for(auto itr = program_map.begin(); itr != program_map.end(); ++itr) {
-        line++;
         cout << "\t"  << line << " => " << *itr << "\n";
+        line++;
     }
 }
