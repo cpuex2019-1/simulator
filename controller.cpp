@@ -34,13 +34,16 @@ bool controller::exec_step(){
     string opecode_str = iter->str();
     iter++;
     string res_str = "" ;
-    for(; iter!=end; iter++) {
-             res_str = res_str + iter->str();
-    }
 
+    //cout << "line:" << line_num <<  "\t"; // for debug
+    for(; iter!=end; iter++) {
+        //cout << " [" << iter->str() << "] "; // for debug
+        res_str = res_str + iter->str();
+    }
+    //cout << endl; // for debug
 
     /* debug*/
-    cout << "line:" << line_num <<  "\topecode: "<<"[" << opecode_str <<"]"<< "\tres: "<<"[" << res_str <<"]"<< endl;
+     cout << "line:" << line_num <<  "\topecode: "<<"[" << opecode_str <<"]"<< "\tres: "<<"[" << res_str <<"]"<< endl;
 
 
     exec_code(opecode_str, res_str);

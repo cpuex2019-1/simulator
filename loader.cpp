@@ -41,7 +41,7 @@ int loader::load_file(){
 
 // load line
 void loader::load_line(string line){
-    regex label_pattern("^[\\t ]*(?:([A-Za-z][\\w.]*)[:])?");
+    regex label_pattern("^[\\t ]*(?:([A-Za-z][\\w.]*)[:])?[\\t ]*");
     sregex_token_iterator iter(line.begin(), line.end(), label_pattern, {1,-1}); // group1: label, 残り: コード
     sregex_token_iterator end;
     string label_str = iter->str();
