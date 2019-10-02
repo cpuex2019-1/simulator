@@ -1,6 +1,19 @@
-# simulator
+# simulator (mipsim)
 
-## 概要
+## how to use
+Make sure you can use `g++` and `c++11`, then, compile the programs:
+```
+$ make
+```
+Use mipsim
+```
+$ ./mipsim test/test.s
+```
 
-メモリとレジスタを個別に用意。読み込んだプログラム(アセンブリ)を逐次実行する。
-メモリとレジスタの中身が見られるようにする。
+Type commands execute assembler.
+```
+usage:
+   s | step | \n	: run step by step
+   r | run		: run all
+   exit		: exit program
+```
