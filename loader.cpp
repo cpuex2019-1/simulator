@@ -19,6 +19,7 @@ loader::loader(const char *fname){
     }
     line_num = 0;	// reset line number
     end_line_num = load_file();
+    program_map.push_back(""); //number 0 には何も入れない
 }
 
 // destructor
@@ -56,7 +57,7 @@ void loader::load_line(string line){
     if (label_str !=""){
         label_map.insert(std::make_pair(label_str, line_num));
     }
-    program_map.insert(std::make_pair(line_num, res_str));
+    program_map.push_back(res_str);
 }
 
 
@@ -88,7 +89,9 @@ void loader::print_label_map(){
 }
 void loader::print_program_map(){
     cout << "program_map\n";
-    for(auto itr = program_map.begin(); itr != program_map.end(); ++itr){
-        cout << "\t"  << itr->first << " => " << itr->second << "\n";
+    int line = 0;
+    for(auto itr = program_map.begin(); itr != program_map.end(); ++itr) {
+        line++;
+        cout << "\t"  << line << " => " << *itr << "\n";
     }
 }

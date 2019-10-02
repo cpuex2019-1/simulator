@@ -17,7 +17,7 @@ class loader {
     // label
     map<string,int> label_map;
     // program
-    map<int, string> program_map;
+    vector<string> program_map;
     // load line
     void load_line(string line);
     // load file

@@ -32,11 +32,11 @@ int main(int argc, char *argv[]){
     while (getline(cin, str)){
         if(str == "s" || str == "step" || str == "" ){ // run step by step
 
-            /* debug for loader
+            /* debug for loader*/
             ld.print_label_map();
             ld.print_program_map();
-            cout << "get line by main:" << ld.get_line_num_by_label("main") << endl;
-            */
+            //cout << "get line by main:" << ld.get_line_num_by_label("Main") << endl;
+
 
             /* debug for memory
             memo.write_word(0,10);
