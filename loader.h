@@ -12,7 +12,7 @@ using namespace std;
 class loader {
     // program file stream
     ifstream	input;
-    // current line number being processed
+    // current line number
     int line_num;
     // label
     map<string,int> label_map;
@@ -33,6 +33,7 @@ public:
 
     int get_line_num_by_label(string label);
     string get_program_by_label(string label);
+    string get_program_by_line_num(int l_num);
 
     // loader のデバッグ用
     void print_label_map();

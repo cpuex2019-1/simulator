@@ -75,6 +75,10 @@ string loader::get_program_by_label(string label){
     return program_map[line_num_of_label];
 }
 
+string loader::get_program_by_line_num(int l_num){
+    return program_map[l_num];
+}
+
 void loader::print_label_map(){
     cout << "label_map\n";
     for(auto itr = label_map.begin(); itr != label_map.end(); ++itr){
