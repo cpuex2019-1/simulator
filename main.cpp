@@ -6,6 +6,7 @@
 #include <string>
 #include "loader.h"
 #include "memory.h"
+#include "register.h"
 #include "controller.h"
 
 using namespace std;
@@ -22,7 +23,8 @@ int main(int argc, char *argv[]){
     // load program
     loader ld(argv[1]);
     memory memo;
-    controller controller(&ld, &memo);
+    reg reg[32];
+    controller controller(&ld, &memo, reg);
 
 
     string str;

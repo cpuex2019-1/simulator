@@ -6,20 +6,28 @@
 #include <iostream>
 #include "loader.h"
 #include "memory.h"
+#include "register.h"
 #include "controller.h"
 using namespace std;
 
 
-controller::controller(loader* l, memory* m){
+controller::controller(loader* l, memory* m, reg r[]){
     ld = l;
     memo = m;
+    regs = r;
     line_num = 1;
 }
 
 bool controller::exec_step(){
+    // for debug
+    /*
+    regs[8].data = regs[8].data+1;
+    cout << "$8:" << regs[8].data << endl;
+    */
+
     string line_str = ld->get_program_by_line_num(line_num);
 
-    // split opecode and residual and remove redundant spases  
+    // split opecode and residual and remove redundant spases
     regex sep("[\\t ]+");
     sregex_token_iterator iter(line_str.begin(), line_str.end(), sep, -1);
     sregex_token_iterator end;
@@ -31,11 +39,11 @@ bool controller::exec_step(){
     }
 
 
-    /* debug
+    /* debug*/
     cout << "line:" << line_num <<  "\topecode: "<<"[" << opecode_str <<"]"<< "\tres: "<<"[" << res_str <<"]"<< endl;
-    */
 
-    exec_code(opecode_str, res);
+
+    exec_code(opecode_str, res_str);
 
     if(line_num == ld->end_line_num){
         return false;
@@ -47,5 +55,13 @@ bool controller::exec_step(){
 
 
 void controller::exec_code(string opecode, string res){
-
+    if(opecode=="add"){
+    }else if(opecode=="addi"){
+    }else if(opecode=="j"){
+    }else if(opecode=="jr"){
+    }else if(opecode=="jal"){
+    }else if(opecode=="sw"){
+    }else if(opecode=="lw"){
+    }else{
+    }
 }
