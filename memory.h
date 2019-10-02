@@ -1,5 +1,7 @@
 // memory.h:
 //
+#ifndef MEMORY_H
+#define MEMORY_H
 
 #include "global.h"
 
@@ -19,3 +21,5 @@ public:
     // print_memory_word from s_addr to e_addr
     void print_word_by_addr(sim_addr s_addr,sim_addr e_addr);
 };
+
+#endif
