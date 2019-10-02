@@ -41,8 +41,18 @@ int loader::load_file(){
 
 // load line
 void loader::load_line(string line){
+
+    // コメントの削除
+    regex comment_pattern("#.*$"); // #から末尾まで
+    sregex_token_iterator iter1(line.begin(), line.end(), comment_pattern, -1);
+    sregex_token_iterator end1;
+    string line_not_comment = "";
+    for(; iter1!=end1; iter1++) {
+             line_not_comment = line_not_comment + iter1->str();
+    }
+
     regex label_pattern("^[\\t ]*(?:([A-Za-z][\\w.]*)[:])?[\\t ]*");
-    sregex_token_iterator iter(line.begin(), line.end(), label_pattern, {1,-1}); // group1: label, 残り: コード
+    sregex_token_iterator iter(line_not_comment.begin(), line_not_comment.end(), label_pattern, {1,-1}); // group1: label, 残り: コード
     sregex_token_iterator end;
     string label_str = iter->str();
     iter++;
