@@ -59,15 +59,18 @@ void loader::load_line(string line){
 
 // public
 
-string loader::get_program_by_label(string label){
+int loader::get_line_num_by_label(string label){
     auto it = label_map.find(label);
     if (it == label_map.end() ) {
-        cout << "not found label" << endl;
+        cout << "not found label: " << label << endl;
         exit(1);
     } else {
-        int line_num_of_label = label_map[label];
-        return program_map[line_num_of_label];
+        return  label_map[label];
     }
+}
+string loader::get_program_by_label(string label){
+    int line_num_of_label = get_line_num_by_label(label);
+    return program_map[line_num_of_label];
 }
 
 void loader::print_label_map(){
