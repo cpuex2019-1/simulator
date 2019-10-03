@@ -48,7 +48,6 @@ bool controller::exec_step(){
 
 sim_addr controller::get_addr_by_base_plus_offset(string base_plus_offset){
     regex sep("([+-]?)([0-9]+)\\(\\$(\\d+)\\)");
-    cout << "base_plus_offset:" << base_plus_offset << endl;
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(), sep, {1,2,3});
 
     string sign = iter->str();
@@ -154,13 +153,15 @@ void controller::exec_code(string opecode, string res){
 
         line_num++;
 
-    }else if(opecode=="j"){
+    }else if(opecode=="j"){ // J label
         string label_str = iter->str();
         line_num = ld->get_line_num_by_label(label_str);
 
-    }else if(opecode=="jr"){
+    }else if(opecode=="jr"){ // JR rs
+        int rs = get_reg_num(iter->str());
+        line_num = (regs[rs].data / 4) + 1; // convert program addr to line number;
 
-    }else if(opecode=="jal"){ // 次の命令への戻り番値は line_num*4
+    }else if(opecode=="jal"){ // JAL label (next instruction addr is line_num*4)
         regs[31].data = line_num*4;
         string label_str = iter->str();
         line_num = ld->get_line_num_by_label(label_str);
@@ -178,7 +179,7 @@ void controller::exec_code(string opecode, string res){
 
         line_num++;
 
-    }else if(opecode=="lw"){
+    }else if(opecode=="lw"){ // LW rd, offset(base)
         int rd = get_reg_num(iter->str());
         iter++;
         int addr = get_addr_by_base_plus_offset(iter->str());
