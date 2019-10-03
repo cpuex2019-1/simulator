@@ -14,6 +14,9 @@ class controller {
     // current line number being processed
     int line_num;
     void exec_code(string opecode, string res);
+    sim_addr get_addr_by_base_plus_offset(string base_plus_offset);
+    int get_reg_num(string reg_str);
+    int get_immediate(string immediate_str);
 public:
     //constructor
     controller(loader* l, memory* m, reg *r);

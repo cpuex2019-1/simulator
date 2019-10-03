@@ -101,7 +101,9 @@ void loader::print_program_map(){
     cout << "program_map\n";
     int line = 0;
     for(auto itr = program_map.begin(); itr != program_map.end(); ++itr) {
-        cout << "\t"  << line << " => " << *itr << "\n";
+        if(line!=0){
+            cout << "\t"  << line << " => " << *itr << "\n";
+        }
         line++;
     }
 }

@@ -1,5 +1,5 @@
 // memory.cpp:
-//
+// (Big endian)
 
 #include <iostream>
 #include "memory.h"

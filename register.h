@@ -5,6 +5,6 @@
 
 class reg{
 public:
-    sim_word data;
+    int data;
     reg();
 };
