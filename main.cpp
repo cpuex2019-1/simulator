@@ -97,11 +97,11 @@ int main(int argc, char *argv[]){
 
 
 void print_usage_while(){
-    cerr << "how to use mipsim:\n"
+    cerr << " How to use mipsim:\n"
         << "\ts | step | \\n\t: run step by step\n"
         << "\ta | all\t\t: run all\n"
         << "\tr | reg\t\t: print register\n"
-        << "\tm | memo\t\t: print memory\n"
+        << "\tm | memo\t: print memory\n"
         << "\texit\t\t: exit program"
         << endl;
 }

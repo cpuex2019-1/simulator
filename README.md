@@ -10,10 +10,12 @@ Use mipsim
 $ ./mipsim test/test.s
 ```
 
-Type commands execute assembler.
+Type commands to execute assembler.
 ```
-usage:
-   s | step | \n	: run step by step
-   r | run		: run all
-   exit		: exit program
+How to use mipsim:
+	s | step | \n	: run step by step
+	a | all		: run all
+	r | reg		: print register
+	m | memo	: print memory
+	exit		: exit program
 ```
