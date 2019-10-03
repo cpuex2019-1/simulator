@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <bitset>
+#include <iomanip>
 #include "loader.h"
 #include "memory.h"
 #include "register.h"
@@ -23,12 +25,14 @@ int main(int argc, char *argv[]){
     // load program
     loader ld(argv[1]);
     memory memo;
-    reg reg[32];
-    controller controller(&ld, &memo, reg);
+    reg regs[32];
+    controller controller(&ld, &memo, regs);
 
 
     string str;
+
     cout << "\n >> ";;
+
     while (getline(cin, str)){
         if(str == "s" || str == "step" || str == "" ){ // run step by step
 
@@ -45,15 +49,36 @@ int main(int argc, char *argv[]){
             memo.print_word_by_addr(0,20);
             */
 
-            /* debug for executer */
+            /* debug for controller */
             if(!controller.exec_step()){
                 cout << "program end!" << endl;
                 return 0;
             };
 
-        }else if (str == "r" || str == "run"){ // run all
+        }else if (str == "a" || str == "all"){ // run all
 
-        }else if (str == "exit"){ // run all
+            while(controller.exec_step());
+            cout << "program end!" << endl;
+            return 0;
+
+        }else if (str == "r" || str == "reg"){ // print register
+            cout << "which register? (input 0~31) :";
+            getline(cin, str);
+
+            try {
+                int reg_num = stoi(str);
+                int reg_data = regs[reg_num].data;
+                cout.fill('0');
+                cout << "\nregister: $" << reg_num
+                << "\n  int:\t\t" << reg_data
+                << "\n  hex(16):\t0x" << std::setw(8) << std::hex << reg_data
+                << "\n  binary:\t" << std::bitset<32>(reg_data) << endl;
+            }
+            catch (const std::invalid_argument& e) {
+                cout << "[" << str << "]: " << "invalid argument" << endl;
+            }
+
+        }else if (str == "exit"){ // exit
             return 0;
         }else{
             print_usage_while();
@@ -67,7 +92,7 @@ int main(int argc, char *argv[]){
 void print_usage_while(){
     cerr << "how to use mipsim:\n"
         << "\ts | step | \\n\t: run step by step\n"
-        << "\tr | run\t\t: run all\n"
+        << "\ta | all\t\t: run all\n"
         << "\texit\t\t: exit program"
         << endl;
 }
