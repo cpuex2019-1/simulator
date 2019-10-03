@@ -4,6 +4,7 @@
 #include <iostream>
 #include "memory.h"
 #include "global.h"
+#include <bitset>
 using namespace std;
 
 
@@ -65,10 +66,10 @@ void memory::write_word(sim_addr addr, sim_word word_data){
 
 // print word from s_addr to e_addr
 void memory::print_word_by_addr(sim_addr s_addr,sim_addr e_addr){
-    if(s_addr < memorySize && s_addr%4==0 && e_addr < memorySize && e_addr%4==0 && s_addr < e_addr){
-        for(sim_addr addr=s_addr; addr!=e_addr; addr+=4){
+    if(s_addr < memorySize && s_addr%4==0 && e_addr+4 <= memorySize && e_addr%4==0 && s_addr < e_addr){
+        for(sim_addr addr=s_addr; addr!=e_addr+4; addr+=4){
             sim_word word = read_word(addr);
-            cout << "address: " << addr << "\t" << word << endl;
+            cout << addr << ":\t" << (int)word << "\t" << std::bitset<32>(word) << endl;
         }
     }else{
         cout << "invalid address" << endl;
