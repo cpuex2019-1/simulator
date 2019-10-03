@@ -6,6 +6,7 @@
 #include <string>
 #include "loader.h"
 #include "memory.h"
+#include "register.h"
 
 class controller {
     memory * memo;

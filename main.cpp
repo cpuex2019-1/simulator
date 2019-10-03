@@ -39,9 +39,6 @@ int main(int argc, char *argv[]){
             /* debug for loader*/
             ld.print_label_map();
             ld.print_program_map();
-            //cout << "get line by main:" << ld.get_line_num_by_label("Main") << endl;
-
-
             /* debug for memory
             memo.write_word(0,10);
             memo.write_word(4,5);
@@ -49,7 +46,6 @@ int main(int argc, char *argv[]){
             memo.print_word_by_addr(0,20);
             */
 
-            /* debug for controller */
             if(!controller.exec_step()){
                 cout << "program end!" << endl;
                 return 0;
@@ -73,8 +69,7 @@ int main(int argc, char *argv[]){
                 << "\n  int:\t\t" << reg_data
                 << "\n  hex(16):\t0x" << std::setw(8) << std::hex << reg_data
                 << "\n  binary:\t" << std::bitset<32>(reg_data) << endl;
-            }
-            catch (const std::invalid_argument& e) {
+            }catch (const std::invalid_argument& e) {
                 cout << "[" << str << "]: " << "invalid argument" << endl;
             }
 

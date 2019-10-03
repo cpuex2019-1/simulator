@@ -4,18 +4,16 @@
 #include <string>
 #include <regex>
 #include <iostream>
-#include "loader.h"
-#include "memory.h"
-#include "register.h"
 #include "controller.h"
 using namespace std;
 
+bool debug_flag = true ;
 
 controller::controller(loader* l, memory* m, reg r[]){
     ld = l;
     memo = m;
     regs = r;
-    line_num = 1;
+    line_num = 1; // (line_num-1)*4 is addr for instruction?
     regs[0].data = 0;
     regs[29].data = memorySize-4; // init sp;
 }
@@ -31,22 +29,12 @@ bool controller::exec_step(){
     string opecode_str = iter->str();
     iter++;
     string res_str = "" ;
-
-    //cout << "line:" << line_num <<  "\t"; // for debug
     for(; iter!=end; iter++) {
-        //cout << " [" << iter->str() << "] "; // for debug
         res_str = res_str + iter->str();
     }
-    //cout << endl; // for debug
 
     /* debug*/
      cout << "line:" << line_num <<  "\topecode: "<<"[" << opecode_str <<"]"<< "\tres: "<<"[" << res_str <<"]"<< endl;
-
-     //cout << "line:" << line_num <<  "\t"; // for debug
-     for(; iter!=end; iter++) {
-         //cout << " [" << iter->str() << "] "; // for debug
-         res_str = res_str + iter->str();
-     }
 
     exec_code(opecode_str, res_str);
 
@@ -54,31 +42,49 @@ bool controller::exec_step(){
         return false;
     }
 
-    line_num++;
+
     return true;
 }
 
 sim_addr controller::get_addr_by_base_plus_offset(string base_plus_offset){
-    regex sep("([+-]?)([0-9]+)\\(([%d]+)\\)");
+    regex sep("([+-]?)([0-9]+)\\(\\$(\\d+)\\)");
+    cout << "base_plus_offset:" << base_plus_offset << endl;
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(), sep, {1,2,3});
+
     string sign = iter->str();
+    cout << sign << endl;
     iter++;
     string offset_str = iter->str();
-    int offset = stoi(offset_str); // convert string to int
+    int offset=0;
+    try {
+        offset = stoi(offset_str); // convert string to int
+    }catch (const std::invalid_argument& e) {
+        cout << "[" << offset_str << "]: " << "invalid argument" << endl;
+        exit(1);
+    }
     iter++;
     string base_str =  iter->str();
-    int reg_num = stoi(base_str);
+    int reg_num=0;
+    try {
+        reg_num = stoi(base_str);
+    }catch (const std::invalid_argument& e) {
+        cout << "[" << offset_str << "]: " << "invalid argument" << endl;
+        exit(1);
+    }
+
+
     int base_addr = regs[reg_num].data; // sim_addr has the same type as sim_word
 
     if(sign=="-"){
         // for debug
-        //cout <<"str:"<< base_plus_offset << " base addr:" << base_addr  << " offset:" << sign <<  base_addr << "result:" << base_addr - offset << endl;
+        cout <<"str:"<< base_plus_offset << "\tbase addr:" << base_addr  << "\toffset:" << sign <<  offset << "\tresult:" << base_addr - offset << endl;
         return (sim_addr)(base_addr - offset);
     }else{
         // for debug
-        //cout <<"str:"<< base_plus_offset << " base addr:" << base_addr  << " offset:" << sign <<  base_addr << "result:" << base_addr + offset << endl;
+        cout <<"str:"<< base_plus_offset << "\tbase addr:" << base_addr  << "\toffset:" << sign <<  offset << "\tresult:" << base_addr + offset << endl;
         return (sim_addr)(base_addr + offset);
     }
+
 }
 
 int controller::get_reg_num(string reg_str){
@@ -125,28 +131,56 @@ void controller::exec_code(string opecode, string res){
         iter++;
         int rt = get_reg_num(iter->str());
         regs[rd].data = regs[rs].data + regs[rt].data;
-        /* for debug */
-        cout << "rd($" << rd << "):" <<  " <- rs($" << rs << "):" << regs[rs].data << " + rt($" << rt << "):" << regs[rt].data << endl;
-        cout << "rd($" << rd << "):" << regs[rd].data << endl;
+
+        if (debug_flag==true){
+            cout << "rd($" << rd << "):" <<  " <- rs($" << rs << "):" << regs[rs].data << " + rt($" << rt << "):" << regs[rt].data << endl;
+            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        }
+
+        line_num++;
+
     }else if(opecode=="addi"){ // ADDI rd <- rs + immediate
         int rd = get_reg_num(iter->str());
         iter++;
-
         int rs = get_reg_num(iter->str());
         iter++;
         int immediate = get_immediate(iter->str());
-        /* for debug*/
-        cout << "rd($" << rd << "):" <<  " <- rs($" << rs << "):" << regs[rs].data << " + immediate:" << immediate << endl;
-        regs[rd].data = regs[rs].data + immediate;
-        /* for debug*/
-        cout << "rd($" << rd << "):" << regs[rd].data << endl;
+
+        if (debug_flag==true){
+            cout << "rd($" << rd << "):" <<  " <- rs($" << rs << "):" << regs[rs].data << " + immediate:" << immediate << endl;
+            regs[rd].data = regs[rs].data + immediate;
+            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        }
+
+        line_num++;
+
     }else if(opecode=="j"){
         string label_str = iter->str();
         line_num = ld->get_line_num_by_label(label_str);
+
     }else if(opecode=="jr"){
-    }else if(opecode=="jal"){
+
+    }else if(opecode=="jal"){ // 次の命令への戻り番値は line_num*4
+        regs[31].data = line_num*4;
+        string label_str = iter->str();
+        line_num = ld->get_line_num_by_label(label_str);
+
     }else if(opecode=="sw"){
+        int rd = get_reg_num(iter->str());
+        iter++;
+
+        int addr = get_addr_by_base_plus_offset(iter->str());
+        /**/
+        memo->write_word(addr, regs[rd].data);
+        if (debug_flag==true){
+            cout << "rd($" << rd << "):" <<  "\taddr:" << addr << endl;
+            cout << "memory[" << addr << "]:" << memo->read_word(addr) << endl;
+        }
+
+        line_num++;
     }else if(opecode=="lw"){
+        line_num++;
     }else{
+        line_num++;
     }
 }

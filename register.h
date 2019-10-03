@@ -1,5 +1,7 @@
 // register.h:
 //
+#ifndef   REGISTER_H
+#define   REGISTER_H
 
 #include "global.h"
 
@@ -8,3 +10,5 @@ public:
     int data;
     reg();
 };
+
+#endif 
