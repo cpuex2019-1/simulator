@@ -94,7 +94,7 @@ string loader::get_program_by_line_num(int l_num){
 void loader::print_label_map(){
     cout << "label_map\n";
     for(auto itr = label_map.begin(); itr != label_map.end(); ++itr){
-        cout  << "\t" << itr->first << " => " << itr->second << "\n";
+        cout  << "\t" << itr->first << ":\t" << itr->second << "\n";
     }
 }
 void loader::print_program_map(){
@@ -102,7 +102,7 @@ void loader::print_program_map(){
     int line = 0;
     for(auto itr = program_map.begin(); itr != program_map.end(); ++itr) {
         if(line!=0){
-            cout << "\t"  << line << " => " << *itr << "\n";
+            cout << "\t"  << line << ":\t" << *itr << "\n";
         }
         line++;
     }

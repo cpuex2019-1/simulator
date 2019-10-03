@@ -168,18 +168,29 @@ void controller::exec_code(string opecode, string res){
     }else if(opecode=="sw"){
         int rd = get_reg_num(iter->str());
         iter++;
-
         int addr = get_addr_by_base_plus_offset(iter->str());
-        /**/
         memo->write_word(addr, regs[rd].data);
+
         if (debug_flag==true){
             cout << "rd($" << rd << "):" <<  "\taddr:" << addr << endl;
             cout << "memory[" << addr << "]:" << memo->read_word(addr) << endl;
         }
 
         line_num++;
+
     }else if(opecode=="lw"){
+        int rd = get_reg_num(iter->str());
+        iter++;
+        int addr = get_addr_by_base_plus_offset(iter->str());
+        regs[rd].data = memo->read_word(addr);
+
+        if (debug_flag==true){
+            cout << "rd($" << rd << "):" <<  "\taddr:" << addr << endl;
+            cout << "reg[" << rd << "]:" << regs[rd].data << endl;
+        }
+
         line_num++;
+
     }else{
         line_num++;
     }
