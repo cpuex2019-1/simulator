@@ -1,29 +1,29 @@
 // loader.h:
 //
-#ifndef	LOADER_H
-#define	LOADER_H
+#ifndef LOADER_H
+#define LOADER_H
 
-#include <string>
 #include <fstream>
 #include <map>
+#include <string>
 #include <vector>
 using namespace std;
 
 class loader {
     // program file stream
-    ifstream	input;
+    ifstream input;
     // current line number
     int line_num;
     // label
-    map<string,int> label_map;
+    map<string, int> label_map;
     // program
-    vector<string> program_map;
+    vector<vector<string>> program_map;
     // load line
     void load_line(string line);
     // load file
     int load_file();
 
-public:
+  public:
     int end_line_num;
 
     // constructor
@@ -32,8 +32,8 @@ public:
     ~loader();
 
     int get_line_num_by_label(string label);
-    string get_program_by_label(string label);
-    string get_program_by_line_num(int l_num);
+    vector<string> get_program_by_label(string label);
+    vector<string> get_program_by_line_num(int l_num);
 
     // loader のデバッグ用
     void print_label_map();
