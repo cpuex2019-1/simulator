@@ -7,12 +7,11 @@
 #include <string>
 using namespace std;
 
-bool debug_flag = true;
-
-controller::controller(loader *l, memory *m, reg r[]) {
+controller::controller(loader *l, memory *m, reg r[], bool *verb) {
     ld = l;
     memo = m;
     regs = r;
+    verbose = verb;
     line_num = 1; // (line_num-1)*4 is addr for instruction?
     regs[0].data = 0;
     regs[29].data = memorySize - 4; // init sp;
@@ -144,7 +143,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = rs_data + regs[rt].data;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " + rt($" << rt
                  << "):" << rt_data << endl;
@@ -161,7 +160,7 @@ void controller::exec_code(string opecode, string res) {
         iter++;
         int immediate = get_immediate(iter->str());
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data
                  << " + immediate:" << immediate << endl;
@@ -181,7 +180,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = rs_data - regs[rt].data;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " - rt($" << rt
                  << "):" << rt_data << endl;
@@ -200,7 +199,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = rs_data * regs[rt].data;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " * rt($" << rt
                  << "):" << rt_data << endl;
@@ -219,7 +218,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = rs_data / regs[rt].data;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " / rt($" << rt
                  << "):" << rt_data << endl;
@@ -238,7 +237,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = regs[rs].data % regs[rt].data;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " % rt($" << rt
                  << "):" << rt_data << endl;
@@ -262,7 +261,7 @@ void controller::exec_code(string opecode, string res) {
         } else {
             regs[rd].data = 0;
         }
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << ")"
                  << " <- if rs($" << rs << "):" << rs_data << " < rt($" << rt
                  << "):" << rt_data << " then 1 else 0" << endl;
@@ -280,7 +279,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = rs_data & regs[rt].data;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " & rt($" << rt
                  << "):" << rt_data << endl;
@@ -299,7 +298,7 @@ void controller::exec_code(string opecode, string res) {
 
         regs[rd].data = regs[rs].data & immediate;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data
                  << " & immediate:" << immediate << endl;
@@ -318,7 +317,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = rs_data | regs[rt].data;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " | rt($" << rt
                  << "):" << rt_data << endl;
@@ -337,7 +336,7 @@ void controller::exec_code(string opecode, string res) {
 
         regs[rd].data = regs[rs].data | immediate;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data
                  << " | immediate:" << immediate << endl;
@@ -356,7 +355,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = ~(rs_data | regs[rt].data);
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- ~(rs($" << rs << "):" << rs_data << " | rt($" << rt
                  << "):" << rt_data << ")" << endl;
@@ -375,7 +374,7 @@ void controller::exec_code(string opecode, string res) {
         int rt_data = regs[rt].data;
         regs[rd].data = rs_data ^ regs[rt].data;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " ^ rt($" << rt
                  << "):" << rt_data << endl;
@@ -394,7 +393,7 @@ void controller::exec_code(string opecode, string res) {
 
         regs[rd].data = regs[rs].data ^ immediate;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data
                  << " ^ immediate:" << immediate << endl;
@@ -412,7 +411,7 @@ void controller::exec_code(string opecode, string res) {
 
         regs[rd].data = regs[rs].data >> sb;
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " >> sb:" << sb
                  << " (arithmetic)" << endl;
@@ -430,7 +429,7 @@ void controller::exec_code(string opecode, string res) {
 
         regs[rd].data = (int)((unsigned int)regs[rs].data >> (unsigned int)sb);
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " >> sb:" << sb
                  << " (logical)" << endl;
@@ -448,7 +447,7 @@ void controller::exec_code(string opecode, string res) {
 
         regs[rd].data = (int)((unsigned int)regs[rs].data << (unsigned int)sb);
 
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << "):"
                  << " <- rs($" << rs << "):" << rs_data << " << sb:" << sb
                  << " (logical)" << endl;
@@ -462,7 +461,20 @@ void controller::exec_code(string opecode, string res) {
         iter++;
         int addr = get_addr_by_base_plus_offset(iter->str());
         regs[rd].data = memo->read_word(addr);
-        if (debug_flag == true) {
+        if (*verbose == true) {
+            cout << "rd($" << rd << ") <-"
+                 << "\tmemo[" << addr << "]" << endl;
+            cout << "reg[" << rd << "]:" << regs[rd].data << endl;
+        }
+        line_num++;
+
+    } else if (opecode == "lb") { // lb rd, offset(base)
+        int rd = get_reg_num(iter->str());
+        iter++;
+        int addr = get_addr_by_base_plus_offset(iter->str());
+        unsigned char data = memo->read_byte(addr);
+        regs[rd].data = (regs[rd].data & 0xffffff00) | (unsigned int)data;
+        if (*verbose == true) {
             cout << "rd($" << rd << ") <-"
                  << "\tmemo[" << addr << "]" << endl;
             cout << "reg[" << rd << "]:" << regs[rd].data << endl;
@@ -474,7 +486,20 @@ void controller::exec_code(string opecode, string res) {
         iter++;
         int addr = get_addr_by_base_plus_offset(iter->str());
         memo->write_word(addr, regs[rd].data);
-        if (debug_flag == true) {
+        if (*verbose == true) {
+            cout << "rd($" << rd << "):" << regs[rd].data << "\taddr:" << addr
+                 << endl;
+            cout << "memory[" << addr << "]:" << memo->read_word(addr) << endl;
+        }
+        line_num++;
+
+    } else if (opecode == "sb") { // sb rd, offset(base)
+        int rd = get_reg_num(iter->str());
+        iter++;
+        int addr = get_addr_by_base_plus_offset(iter->str());
+        memo->write_byte(addr,
+                         (unsigned char)((regs[rd].data << 8 * 3) >> 8 * 3));
+        if (*verbose == true) {
             cout << "rd($" << rd << "):" << regs[rd].data << "\taddr:" << addr
                  << endl;
             cout << "memory[" << addr << "]:" << memo->read_word(addr) << endl;
@@ -486,14 +511,18 @@ void controller::exec_code(string opecode, string res) {
         iter++;
         int rs = get_reg_num(iter->str());
         regs[rd].data = regs[rs].data;
-        if (debug_flag == true) {
+        if (*verbose == true) {
             cout << "rd($" << rd << ")"
                  << " <- rs($" << rs << "):" << regs[rs].data << endl;
             cout << "rd($" << rd << "):" << regs[rd].data;
         }
         line_num++;
 
-    } else if (opecode == "beq") { // BEQ rs rt label(pc+offset)
+    } else if (opecode == "bc") { // BC label(pc+offset<<2)
+        string label_str = iter->str();
+        line_num = ld->get_line_num_by_label(label_str);
+
+    } else if (opecode == "beq") { // BEQ rs rt label(pc+offset<<2)
         int rs = get_reg_num(iter->str());
         iter++;
         int rt = get_reg_num(iter->str());
@@ -504,7 +533,24 @@ void controller::exec_code(string opecode, string res) {
         } else {
             line_num++;
         }
-        if (debug_flag == true) {
+        if (*verbose == true) {
+            cout << "rs($" << rs << "):" << regs[rs].data << "  rt($" << rt
+                 << "):" << regs[rt].data << endl;
+            cout << "next line:" << line_num;
+        }
+
+    } else if (opecode == "bne") { // BNE rs rt label(pc+offset<<2)
+        int rs = get_reg_num(iter->str());
+        iter++;
+        int rt = get_reg_num(iter->str());
+        iter++;
+        if (regs[rs].data != regs[rt].data) {
+            string label_str = iter->str();
+            line_num = ld->get_line_num_by_label(label_str);
+        } else {
+            line_num++;
+        }
+        if (*verbose == true) {
             cout << "rs($" << rs << "):" << regs[rs].data << "  rt($" << rt
                  << "):" << regs[rt].data << endl;
             cout << "next line:" << line_num;
@@ -519,45 +565,34 @@ void controller::exec_code(string opecode, string res) {
         line_num =
             (regs[rs].data / 4) + 1; // convert program addr to line number;
 
-    } else if (opecode == "jal") { // JAL label (next instruction addr
-                                   // is line_num*4)
+    } else if (opecode ==
+               "jal") { // JAL label (next instruction addr is line_num*4)
         regs[31].data = line_num * 4;
         string label_str = iter->str();
         line_num = ld->get_line_num_by_label(label_str);
 
-        /*
-            }else if(opecode=="slti"){ // slti Rt = if Rs < Imm then 1
-           else 0 (いらない) cout << "invalid opecode" << endl; int rt =
-           get_reg_num(iter->str()); iter++; int rs =
-           get_reg_num(iter->str()); iter++; int immediate =
-           get_immediate(iter->str());
+    } else if (opecode == "jalr") { // JALR rd, rs or JALR rs(rd=$31)
+        int rs = get_reg_num(iter->str());
+        iter++;
+        if (iter != end) { // JALR rd, rs
+            int rd = get_reg_num(iter->str());
+            regs[rd].data = line_num * 4;
+            line_num = (regs[rs].data / 4 + 1);
+        } else {
+            regs[31].data = line_num * 4;
+            line_num = (regs[rs].data / 4 + 1);
+        }
+    } else if (opecode == "nop") { // nop
+        line_num++;
 
-                if (regs[rs].data < immediate){
-                    regs[rt].data = 1;
-                }else{
-                    regs[rt].data = 0;
-                }
-                if (debug_flag==true){
-                    cout << "rt($" << rt << "):" << regs[rt].data << "
-           rs($"
-           << rs << ")";
-                }
-                line_num++;
-            }else if(opecode=="bgt"){ // BEQ rs rt label(pc+offset)
-           (いらない) cout << "invalid opecode" << endl; int rs =
-           get_reg_num(iter->str()); iter++; int rt =
-           get_reg_num(iter->str()); iter++; if(regs[rs].data >
-           regs[rt].data){ string label_str = iter->str(); line_num =
-           ld->get_line_num_by_label(label_str); }else{ line_num++;
-                }
-                if (debug_flag==true){
-                    cout << "rs($" << rs << "):" << regs[rs].data << "
-           rt($"
-           << rt << "):" << regs[rt].data << endl; cout << "next line:"
-           << line_num;
-                }
-        */
+    } else if (opecode == "out") { // output 未対応
+        line_num++;
+
     } else {
+        if (opecode != "") {
+            cout << "invalid instruction" << endl;
+            exit(1);
+        }
         line_num++;
     }
 }

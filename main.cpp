@@ -26,7 +26,8 @@ int main(int argc, char *argv[]) {
     loader ld(argv[1]);
     memory memo;
     reg regs[32];
-    controller controller(&ld, &memo, regs);
+    bool verbose = false;
+    controller controller(&ld, &memo, regs, &verbose);
 
     string str;
 
@@ -35,9 +36,10 @@ int main(int argc, char *argv[]) {
     while (getline(cin, str)) {
         if (str == "s" || str == "step" || str == "") { // run step by step
 
-            /* debug for loader*/
-            ld.print_label_map();
-            ld.print_program_map();
+            if (verbose) {
+                ld.print_label_map();
+                ld.print_program_map();
+            }
 
             if (!controller.exec_step()) {
                 end_flag = true;
@@ -101,6 +103,10 @@ int main(int argc, char *argv[]) {
                      << "invalid argument" << endl;
             }
 
+        } else if (str == "verb") { //
+            verbose = true;
+        } else if (str == "normal") { //
+            verbose = false;
         } else if (str == "exit") { // exit
             return 0;
         } else {
@@ -120,6 +126,7 @@ void print_usage() {
          << "\ts | step | \\n\t: run step by step\n"
          << "\ta | all\t\t: run all\n"
          << "\tr | reg\t\t: print register\n"
-         << "\tm | memo\t: print memory\n"
+         << "\tnormal\t\t: normal mode\n"
+         << "\tverb\t\t: verbose mode\n"
          << "\texit\t\t: exit program" << endl;
 }
