@@ -1,26 +1,26 @@
 
 // main.cpp
 //
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <bitset>
-#include <iomanip>
+#include "controller.h"
 #include "loader.h"
 #include "memory.h"
 #include "register.h"
-#include "controller.h"
+#include <bitset>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
 
 using namespace std;
 
+void print_usage();
 
-void print_usage_while();
-
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
     if (argc < 2) {
         cerr << "usage: " << argv[0] << " <program name>" << endl;
         return 1;
     }
+    print_usage();
 
     // load program
     loader ld(argv[1]);
@@ -30,43 +30,61 @@ int main(int argc, char *argv[]){
 
     string str;
 
-    bool end_flag=false;
+    bool end_flag = false;
     cout << "\n >> ";
-    while (getline(cin, str)){
-        if(str == "s" || str == "step" || str == "" ){ // run step by step
+    while (getline(cin, str)) {
+        if (str == "s" || str == "step" || str == "") { // run step by step
 
             /* debug for loader*/
             ld.print_label_map();
             ld.print_program_map();
 
-            if(!controller.exec_step()){
+            if (!controller.exec_step()) {
                 end_flag = true;
             };
 
-        }else if (str == "a" || str == "all"){ // run all
+        } else if (str == "a" || str == "all") { // run all
 
-            while(controller.exec_step());
+            while (controller.exec_step())
+                ;
             end_flag = true;
 
-        }else if (str == "r" || str == "reg"){ // print register
-            cout << "which register? (input 0~31) :";
+        } else if (str == "r" || str == "reg") { // print register
+            cout << "which register? ( input 0~31 or a (all) ) :";
             getline(cin, str);
 
-            try {
-                int reg_num = stoi(str);
-                int reg_data = regs[reg_num].data;
-                std::ios::fmtflags flagsSaved = std::cout.flags();
-                cout.fill('0');
-                cout << "\nregister: $" << reg_num
-                << "\n  int:\t\t" << reg_data
-                << "\n  hex(16):\t0x" << std::setw(8) << std::hex << reg_data
-                << "\n  binary:\t" << std::bitset<32>(reg_data) << endl;
-                std::cout.flags(flagsSaved);
-            }catch (const std::invalid_argument& e) {
-                cout << "[" << str << "]: " << "invalid argument" << endl;
+            std::ios::fmtflags flagsSaved = std::cout.flags();
+
+            if (str == "all" || str == "a") {
+                for (int i = 0; i < 32; i++) {
+                    int reg_data = regs[i].data;
+                    cout << " $" << i << "\tint:" << std::setw(9) << reg_data;
+                    cout.fill('0');
+                    cout << "\thex(16):0x" << std::setw(8) << std::hex
+                         << reg_data << "\tbinary:" << std::bitset<32>(reg_data)
+                         << endl;
+                    cout.fill(' ');
+                    std::cout.flags(flagsSaved);
+                }
+            } else {
+                try {
+                    int reg_num = stoi(str);
+                    int reg_data = regs[reg_num].data;
+                    cout << "\nregister: $" << reg_num
+                         << "\tint:" << std::setw(9) << reg_data;
+                    cout.fill('0');
+                    cout << "\thex(16):0x" << std::setw(8) << std::hex
+                         << reg_data << "\tbinary:" << std::bitset<32>(reg_data)
+                         << endl;
+                    cout.fill(' ');
+                    std::cout.flags(flagsSaved);
+                } catch (const std::invalid_argument &e) {
+                    cout << "[" << str << "]: "
+                         << "invalid argument" << endl;
+                }
             }
 
-        }else if (str == "m" || str == "memo"){ // print memory
+        } else if (str == "m" || str == "memo") { // print memory
             cout << "input start address:";
             getline(cin, str);
             string start_addr_str = str;
@@ -78,30 +96,30 @@ int main(int argc, char *argv[]){
                 int start_addr = stoi(start_addr_str);
                 int end_addr = stoi(end_addr_str);
                 memo.print_word_by_addr(start_addr, end_addr);
-            }catch (const std::invalid_argument& e) {
-                cout << "[" << str << "]: " << "invalid argument" << endl;
+            } catch (const std::invalid_argument &e) {
+                cout << "[" << str << "]: "
+                     << "invalid argument" << endl;
             }
 
-        }else if (str == "exit"){ // exit
+        } else if (str == "exit") { // exit
             return 0;
-        }else{
-            print_usage_while();
+        } else {
+            print_usage();
         }
-        if(end_flag){
+        if (end_flag) {
             cout << "program end!" << endl;
         }
-        cout << "\n >> ";;
+        cout << "\n >> ";
+        ;
     }
     return 0;
 }
 
-
-void print_usage_while(){
+void print_usage() {
     cerr << " How to use mipsim:\n"
-        << "\ts | step | \\n\t: run step by step\n"
-        << "\ta | all\t\t: run all\n"
-        << "\tr | reg\t\t: print register\n"
-        << "\tm | memo\t: print memory\n"
-        << "\texit\t\t: exit program"
-        << endl;
+         << "\ts | step | \\n\t: run step by step\n"
+         << "\ta | all\t\t: run all\n"
+         << "\tr | reg\t\t: print register\n"
+         << "\tm | memo\t: print memory\n"
+         << "\texit\t\t: exit program" << endl;
 }
