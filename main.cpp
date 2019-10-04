@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <time.h>
 
 using namespace std;
 
@@ -26,7 +27,7 @@ int main(int argc, char *argv[]) {
     loader ld(argv[1]);
     memory memo;
     reg regs[32];
-    bool verbose = false;
+    bool verbose = true;
     controller controller(&ld, &memo, regs, &verbose);
 
     string str;
@@ -46,9 +47,17 @@ int main(int argc, char *argv[]) {
             };
 
         } else if (str == "a" || str == "all") { // run all
+            clock_t start = clock();
+            int count = 0;
+            while (controller.exec_step()) {
+                count++;
+            };
+            clock_t end = clock();
+            const double time =
+                static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
+            cout << "time " << time << "[ms]\n";
+            cout << count << "instructions" << endl;
 
-            while (controller.exec_step())
-                ;
             end_flag = true;
 
         } else if (str == "r" || str == "reg") { // print register

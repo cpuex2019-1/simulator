@@ -1,5 +1,5 @@
 Main:
-        addi $4, $0, 8  # fib(immediate)
+        addi $4, $0, 11  # fib(immediate)
         jal	Fibonacci
 		j	Exit
 
