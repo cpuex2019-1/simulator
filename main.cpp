@@ -1,6 +1,7 @@
 
 // main.cpp
 //
+
 #include "controller.h"
 #include "loader.h"
 #include "memory.h"
@@ -11,7 +12,6 @@
 #include <iostream>
 #include <string>
 #include <time.h>
-
 using namespace std;
 
 void print_usage();
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
             if (verbose) {
                 ld.print_label_map();
-                ld.print_program_map();
+                ld.print_raw_program();
             }
 
             if (!controller.exec_step()) {

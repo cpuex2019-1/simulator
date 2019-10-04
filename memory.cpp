@@ -21,7 +21,7 @@ sim_byte memory::read_byte(sim_addr addr) {
     if (0 <= addr && addr < memorySize) {
         return table[addr];
     } else {
-        cout << "invalid address" << endl;
+        cout << "invalid read address:" << addr << endl;
         exit(1);
     }
 }
@@ -35,7 +35,7 @@ sim_word memory::read_word(sim_addr addr) {
                (unsigned int)table[addr + 3];
         return word;
     } else {
-        cout << "invalid address" << endl;
+        cout << "invalid read address:" << addr << endl;
         exit(1);
     }
 }
@@ -44,7 +44,7 @@ void memory::write_byte(sim_addr addr, sim_byte byte_data) {
     if (addr < memorySize) {
         table[addr] = byte_data;
     } else {
-        cout << "invalid address" << endl;
+        cout << "invalid write address:" << addr << endl;
         exit(1);
     }
 }
@@ -56,7 +56,7 @@ void memory::write_word(sim_addr addr, sim_word word_data) {
         table[addr + 2] = (unsigned char)(word_data >> 8 * 1);
         table[addr + 3] = (unsigned char)(word_data);
     } else {
-        cout << "invalid address" << endl;
+        cout << "invalid write address:" << addr << endl;
         exit(1);
     }
 }

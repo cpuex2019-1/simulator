@@ -2,6 +2,7 @@
 //
 
 #include "loader.h"
+#include "asm.h"
 #include <iostream>
 #include <regex>
 #include <string>
@@ -10,37 +11,121 @@ using namespace std;
 
 // constructor
 loader::loader(const char *fname) {
-    input.open(fname);
-    if (!input) {
-        cerr << "can't open file " << fname << endl;
-        exit(1);
-    }
+    file_name = fname;
     line_num = 0; // reset line number
     end_line_num = load_file();
-    vector<string> first;
-    first.insert(first.begin(), "program begin hear");
+    vector<int> first;
+    first.push_back(634);
     program_map.insert(program_map.begin(), first); // ignore number 0
+    raw_program.insert(raw_program.begin(),
+                       "program begin hear"); // ignore number 0
 }
 
 // destructor
+/*
 loader::~loader() {
-    if (input.is_open())
-        input.close();
+
+}
+*/
+int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
+    regex sep("([+-]?)([0-9]+)\\(\\$(\\d+)\\)");
+    sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),
+                               sep, 3);
+
+    string base_str = iter->str();
+    int reg_num = 0;
+    try {
+        reg_num = stoi(base_str);
+        return reg_num;
+    } catch (const std::invalid_argument &e) {
+        cout << "[" << base_plus_offset << "]: "
+             << "invalid argument" << endl;
+        exit(1);
+    }
+}
+int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
+    regex sep("([+-]?)([0-9]+)\\(\\$(\\d+)\\)");
+    sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),
+                               sep, {1, 2});
+
+    string sign = iter->str();
+    iter++;
+    string offset_str = iter->str();
+    int offset = 0;
+    try {
+        offset = stoi(offset_str); // convert string to int
+        if (sign == "-") {
+            return -offset;
+        } else {
+            return offset;
+        }
+    } catch (const std::invalid_argument &e) {
+        cout << "[" << base_plus_offset << "]: "
+             << "invalid argument" << endl;
+        exit(1);
+    }
+}
+
+int loader::get_reg_num(string reg_str) {
+    regex sep("\\$(\\d+)");
+    sregex_token_iterator iter(reg_str.begin(), reg_str.end(), sep, 1);
+    unsigned int reg_num =
+        stoi(iter->str()); // convert string to int to unsigned int
+    return reg_num;
+}
+
+int loader::get_immediate(string immediate_str) {
+    regex sep("([+-]?)([0-9]+)");
+    sregex_token_iterator iter(immediate_str.begin(), immediate_str.end(), sep,
+                               {1, 2});
+    string sign = iter->str();
+    iter++;
+    int immediate = stoi(iter->str()); // convert string to int to unsigned int
+
+    if (sign == "-") {
+        return -immediate;
+    } else {
+        return immediate;
+    }
 }
 
 int loader::load_file() {
+    // load label
+    ifstream input;
+    input.open(file_name);
+    if (!input) {
+        cerr << "can't open file " << file_name << endl;
+        exit(1);
+    }
     string linebuf;
+    while (!input.eof()) {
+        line_num++; // increment before processing the line
+        getline(input, linebuf);
+        load_line_label(linebuf);
+    }
+    if (input.is_open()) {
+        input.close();
+    }
+
+    // load program
+    line_num = 0;
+    input.open(file_name);
+    if (!input) {
+        cerr << "can't open file " << file_name << endl;
+        exit(1);
+    }
     while (!input.eof()) {
         line_num++; // increment before processing the line
         getline(input, linebuf);
         load_line(linebuf);
     }
+    if (input.is_open()) {
+        input.close();
+    }
     return line_num;
 }
 
-// load line
-void loader::load_line(string line) {
-
+void loader::load_line_label(string line) {
     // delete comment
     regex comment_pattern("#.*$"); // #から末尾まで
     sregex_token_iterator iter1(line.begin(), line.end(), comment_pattern, -1);
@@ -66,6 +151,31 @@ void loader::load_line(string line) {
     if (label_str != "") {
         label_map.insert(std::make_pair(label_str, line_num));
     }
+}
+
+// load line
+void loader::load_line(string line) {
+
+    // delete comment
+    regex comment_pattern("#.*$"); // #から末尾まで
+    sregex_token_iterator iter1(line.begin(), line.end(), comment_pattern, -1);
+    sregex_token_iterator end1;
+    string line_not_comment = "";
+    for (; iter1 != end1; iter1++) {
+        line_not_comment = line_not_comment + iter1->str();
+    }
+
+    // get label
+    regex label_pattern("^[\\t ]*(?:([A-Za-z][\\w.]*)[:])?[\\t ]*");
+    sregex_token_iterator iter2(line_not_comment.begin(),
+                                line_not_comment.end(), label_pattern,
+                                {1, -1}); // group1: label, 残り: コード
+    sregex_token_iterator end;
+    iter2++;
+    string res_str = "";
+    for (; iter2 != end; iter2++) {
+        res_str = res_str + iter2->str();
+    }
 
     // split opecode and residual and remove redundant spases
     vector<string> code;
@@ -78,6 +188,7 @@ void loader::load_line(string line) {
     for (; iter3 != end; iter3++) {
         res = res + iter3->str();
     }
+    raw_program.push_back(opecode_str + "\t" + res);
     // process operand (split res by ",")
     regex sep2(",");
     sregex_token_iterator iter4(res.begin(), res.end(), sep2, -1);
@@ -85,7 +196,321 @@ void loader::load_line(string line) {
         code.push_back(iter4->str());
     }
 
-    program_map.push_back(code);
+    vector<int> formatted_code = format_code(code);
+
+    program_map.push_back(formatted_code);
+}
+
+vector<int> loader::format_code(vector<string> code) {
+    auto iter = code.begin();
+    string opecode = *iter;
+    iter++;
+    vector<int> result;
+
+    if (opecode == "add") { // ADD rd <- rs + rt
+        result.push_back(ADD);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "addi") { // ADDI rd <- rs + immediate
+        result.push_back(ADDI);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int immediate = get_immediate(*iter);
+        result.push_back(immediate);
+
+    } else if (opecode == "sub") { // SUB rd <- rs - rt
+        result.push_back(SUB);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "mul") { // MUL rd <- rs * rt
+        result.push_back(MUL);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "div") { // DIV rd <- rs / rt
+        result.push_back(DIV);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "mod") { // MOD rd <- rs % rt
+        result.push_back(MOD);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "slt") { // SLT Rd = if Rs < Rt then 1 else 0
+        result.push_back(SLT);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "and") { // AND rd <- rs & rt
+        result.push_back(AND);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "andi") { // ADNI rd <- rs & immediate
+        result.push_back(ANDI);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int immediate = get_immediate(*iter);
+        result.push_back(immediate);
+
+    } else if (opecode == "or") { // OR rd <- rs | rt
+        result.push_back(OR);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "ori") { // ORI rd <- rs & immediate
+        result.push_back(ORI);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int immediate = get_immediate(*iter);
+        result.push_back(immediate);
+
+    } else if (opecode == "nor") { // NOR rd <- ~(rs | rt)
+        result.push_back(NOR);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "xor") { // XOR rd <- rs ^ rt
+        result.push_back(XOR);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "xori") { // XORI rd <- rs & immediate
+        result.push_back(XORI);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int immediate = get_immediate(*iter);
+        result.push_back(immediate);
+
+    } else if (opecode == "sra") { // SRA rd <- rs >> sb (arithmetic)
+        result.push_back(ORI);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int sb = get_immediate(*iter);
+        result.push_back(sb);
+
+    } else if (opecode == "srl") { // SRL rd <- rs >> sb (logical)
+        result.push_back(SRL);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "sll") { // SLL rd <- rs << sb (logical)
+        result.push_back(SLL);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "lw") { // LW rd, offset(base)
+        result.push_back(LW);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int reg = get_reg_by_base_plus_offset(*iter);
+        result.push_back(reg);
+        int offset = get_offset_by_base_plus_offset(*iter);
+        result.push_back(offset);
+
+    } else if (opecode == "lb") { // LB rd, offset(base)
+        result.push_back(LB);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int reg = get_reg_by_base_plus_offset(*iter);
+        result.push_back(reg);
+        int offset = get_offset_by_base_plus_offset(*iter);
+        result.push_back(offset);
+
+    } else if (opecode == "sw") {
+        result.push_back(SW);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int reg = get_reg_by_base_plus_offset(*iter);
+        result.push_back(reg);
+        int offset = get_offset_by_base_plus_offset(*iter);
+        result.push_back(offset);
+
+    } else if (opecode == "sb") { // sb rd, offset(base)
+        result.push_back(SB);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int reg = get_reg_by_base_plus_offset(*iter);
+        result.push_back(reg);
+        int offset = get_offset_by_base_plus_offset(*iter);
+        result.push_back(offset);
+
+    } else if (opecode == "mov" || opecode == "move") { // mov rd <- rs
+        result.push_back(MOV);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+
+    } else if (opecode == "bc") { // BC label(pc+offset<<2)
+        result.push_back(BC);
+        string label_str = *iter;
+        int label_num = get_line_num_by_label(label_str);
+        result.push_back(label_num);
+
+    } else if (opecode == "beq") { // BEQ rs rt label(pc+offset<<2)
+        result.push_back(BEQ);
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+        iter++;
+        string label_str = *iter;
+        int label_num = get_line_num_by_label(label_str);
+        result.push_back(label_num);
+
+    } else if (opecode == "bne") { // BNE rs rt label(pc+offset<<2)
+        result.push_back(BNE);
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+        iter++;
+        string label_str = *iter;
+        int label_num = get_line_num_by_label(label_str);
+        result.push_back(label_num);
+
+    } else if (opecode == "j") { // J label
+        result.push_back(J);
+        string label_str = *iter;
+        int label_num = get_line_num_by_label(label_str);
+        result.push_back(label_num);
+
+    } else if (opecode == "jr") { // JR rs
+        result.push_back(JR);
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+
+    } else if (opecode ==
+               "jal") { // JAL label (next instruction addr is line_num*4)
+        result.push_back(JAL);
+        string label_str = *iter;
+        int label_num = get_line_num_by_label(label_str);
+        result.push_back(label_num);
+
+    } else if (opecode == "jalr") { // JALR rd, rs
+        result.push_back(JALR);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+    } else if (opecode == "nop") { // nop
+        result.push_back(JALR);
+    } else if (opecode == "out") { // output 未対応
+        result.push_back(OUT);
+    } else {
+        if (opecode != "") {
+            cout << "invalid instruction" << endl;
+            exit(1);
+        }
+        result.push_back(NOP);
+    }
+    return result;
 }
 
 // public
@@ -99,13 +524,17 @@ int loader::get_line_num_by_label(string label) {
         return label_map[label];
     }
 }
-vector<string> loader::get_program_by_label(string label) {
+vector<int> loader::get_program_by_label(string label) {
     int line_num_of_label = get_line_num_by_label(label);
     return program_map[line_num_of_label];
 }
 
-vector<string> loader::get_program_by_line_num(int l_num) {
+vector<int> loader::get_program_by_line_num(int l_num) {
     return program_map[l_num];
+}
+
+string loader::get_raw_program_by_line_num(int l_num) {
+    return raw_program[l_num];
 }
 
 void loader::print_label_map() {
@@ -125,6 +554,17 @@ void loader::print_program_map() {
                 cout << *itr_str << "\t";
             }
             cout << endl;
+        }
+        line++;
+    }
+}
+
+void loader::print_raw_program() {
+    cout << "raw_program\n";
+    int line = 0;
+    for (auto itr = raw_program.begin(); itr != raw_program.end(); ++itr) {
+        if (line != 0) {
+            cout << "\t" << line << ":\t" << *itr << "\n";
         }
         line++;
     }
