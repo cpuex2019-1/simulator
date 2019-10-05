@@ -2,7 +2,7 @@ CXX = g++
 PROG = mipsim
 CXXFLAGS = -Wall -O2 -std=c++11
 
-SRCS :=  loader.cpp memory.cpp register.cpp controller.cpp main.cpp
+SRCS :=  print.cpp loader.cpp memory.cpp register.cpp controller.cpp main.cpp
 OBJS := $(SRCS:%.cpp=%.o)
 
 

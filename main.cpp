@@ -3,44 +3,40 @@
 //
 
 #include "controller.h"
+#include "global.h"
 #include "loader.h"
 #include "memory.h"
+#include "print.h"
 #include "register.h"
 #include <bitset>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
+#include <stdio.h>
 #include <string>
 #include <time.h>
 using namespace std;
 
-void print_usage();
+Log log_level = DEBUG;
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        cerr << "usage: " << argv[0] << " <program name>" << endl;
+        printf("usage: %s <program name>\n", argv[0]);
         return 1;
     }
     print_usage();
 
-    // load program
-    loader ld(argv[1]);
-    memory memo;
+    loader ld(argv[1], &log_level); // load program
+    memory memo(&log_level);
     reg regs[32];
-    bool verbose = true;
-    controller controller(&ld, &memo, regs, &verbose);
+
+    controller controller(&ld, &memo, regs, &log_level);
 
     string str;
 
     bool end_flag = false;
-    cout << "\n >> ";
+    print_prompt();
     while (getline(cin, str)) {
         if (str == "s" || str == "step" || str == "") { // run step by step
-
-            if (verbose) {
-                ld.print_label_map();
-                ld.print_raw_program();
-            }
 
             if (!controller.exec_step()) {
                 end_flag = true;
@@ -55,87 +51,95 @@ int main(int argc, char *argv[]) {
             clock_t end = clock();
             const double time =
                 static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
-            cout << "time " << time << "[ms]\n";
-            cout << count << "instructions" << endl;
+
+            printf("time %lf [ms]\n", time);
+            printf("%d instructions\n", count);
 
             end_flag = true;
 
         } else if (str == "r" || str == "reg") { // print register
-            cout << "which register? ( input 0~31 or a (all) ) :";
+            printf("which register? ( input 0~31 or a (all) ) : ");
             getline(cin, str);
-
-            std::ios::fmtflags flagsSaved = std::cout.flags();
 
             if (str == "all" || str == "a") {
                 for (int i = 0; i < 32; i++) {
                     int reg_data = regs[i].data;
-                    cout << " $" << i << "\tint:" << std::setw(9) << reg_data;
-                    cout.fill('0');
-                    cout << "\thex(16):0x" << std::setw(8) << std::hex
-                         << reg_data << "\tbinary:" << std::bitset<32>(reg_data)
-                         << endl;
-                    cout.fill(' ');
-                    std::cout.flags(flagsSaved);
+                    printf(" $%2d\tint:%9d\thex(16):%8x\tbinary:", i, reg_data,
+                           reg_data);
+                    print_binary(reg_data);
+                    printf("\n");
                 }
             } else {
                 try {
                     int reg_num = stoi(str);
                     int reg_data = regs[reg_num].data;
-                    cout << "\nregister: $" << reg_num
-                         << "\tint:" << std::setw(9) << reg_data;
-                    cout.fill('0');
-                    cout << "\thex(16):0x" << std::setw(8) << std::hex
-                         << reg_data << "\tbinary:" << std::bitset<32>(reg_data)
-                         << endl;
-                    cout.fill(' ');
-                    std::cout.flags(flagsSaved);
+                    printf("register: $%2d\tint:%9d\thex(16):%8x\tbinary:",
+                           reg_num, reg_data, ((unsigned int)reg_data));
+                    print_binary(reg_data);
+                    printf("\n");
                 } catch (const std::invalid_argument &e) {
-                    cout << "[" << str << "]: "
-                         << "invalid argument" << endl;
+                    if (log_level >= ERROR) {
+                        printf("ERROR\tinvalid argument: [%s]\n", e.what());
+                    }
                 }
             }
 
         } else if (str == "m" || str == "memo") { // print memory
-            cout << "input start address:";
+            printf("input start address: ");
             getline(cin, str);
             string start_addr_str = str;
-            cout << "input end address:";
+            printf("input end address: ");
             getline(cin, str);
             string end_addr_str = str;
 
+            int start_addr;
+            int end_addr;
             try {
-                int start_addr = stoi(start_addr_str);
-                int end_addr = stoi(end_addr_str);
+                start_addr = stoi(start_addr_str);
+                end_addr = stoi(end_addr_str);
                 memo.print_word_by_addr(start_addr, end_addr);
             } catch (const std::invalid_argument &e) {
-                cout << "[" << str << "]: "
-                     << "invalid argument" << endl;
+                if (log_level >= ERROR) {
+                    printf("ERROR\tinvalid argument: %s\n", e.what());
+                    printf("ERROR\tPlease input Multiples of 4\n");
+                }
             }
 
-        } else if (str == "verb") { //
-            verbose = true;
-        } else if (str == "normal") { //
-            verbose = false;
+        } else if (str == "p" || str == "program") { // print program
+            ld.print_label_map();
+            ld.print_raw_program();
+
+        } else if (str == "l" || str == "log") {
+            printf("select log level (warn < info < debug < trace) : ");
+            getline(cin, str);
+            if (str == "warn") { //
+                log_level = WARN;
+            } else if (str == "info") { //
+                log_level = INFO;
+            } else if (str == "debug") { //
+                log_level = DEBUG;
+            } else if (str == "TRACE") {
+                log_level = TRACE;
+            } else {
+                if (log_level >= ERROR) {
+                    printf("ERROR\tinvalid argument: %s\n", str.c_str());
+                }
+            }
+
         } else if (str == "exit") { // exit
             return 0;
+
         } else {
-            print_usage();
+            if (log_level >= ERROR) {
+                printf("ERROR\tinvalid command: %s\n", str.c_str());
+                print_usage();
+            }
         }
+
         if (end_flag) {
-            cout << "program end!" << endl;
+            printf("\nprogram end!\n");
         }
-        cout << "\n >> ";
-        ;
+        print_prompt();
     }
     return 0;
-}
-
-void print_usage() {
-    cerr << " How to use mipsim:\n"
-         << "\ts | step | \\n\t: run step by step\n"
-         << "\ta | all\t\t: run all\n"
-         << "\tr | reg\t\t: print register\n"
-         << "\tnormal\t\t: normal mode\n"
-         << "\tverb\t\t: verbose mode\n"
-         << "\texit\t\t: exit program" << endl;
 }

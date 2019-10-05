@@ -7,9 +7,11 @@
 
 class memory {
     sim_byte *table;
-public:
-    //constructor
-    memory();
+    Log *log_level;
+
+  public:
+    // constructor
+    memory(Log *l_level);
     // destructor
     ~memory();
 
@@ -19,7 +21,7 @@ public:
     void write_word(sim_addr addr, sim_word word_data);
 
     // print_memory_word from s_addr to e_addr
-    void print_word_by_addr(sim_addr s_addr,sim_addr e_addr);
+    void print_word_by_addr(sim_addr s_addr, sim_addr e_addr);
 };
 
 #endif

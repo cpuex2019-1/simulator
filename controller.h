@@ -3,6 +3,7 @@
 #ifndef EXECUTER_H
 #define EXECUTER_H
 
+#include "global.h"
 #include "loader.h"
 #include "memory.h"
 #include "register.h"
@@ -12,7 +13,7 @@ class controller {
     memory *memo;
     loader *ld;
     reg *regs;
-    bool *verbose;
+    Log *log_level;
     // current line number being processed
     int line_num;
     void exec_code(vector<int> line_vec);
@@ -22,7 +23,7 @@ class controller {
 
   public:
     // constructor
-    controller(loader *l, memory *m, reg *r, bool *verb);
+    controller(loader *l, memory *m, reg *r, Log *l_level);
 
     bool exec_step();
 };

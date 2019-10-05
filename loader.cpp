@@ -3,15 +3,17 @@
 
 #include "loader.h"
 #include "asm.h"
-#include <iostream>
+#include "global.h"
 #include <regex>
+#include <stdio.h>
 #include <string>
 #include <vector>
 using namespace std;
 
 // constructor
-loader::loader(const char *fname) {
+loader::loader(const char *fname, Log *l_level) {
     file_name = fname;
+    log_level = l_level;
     line_num = 0; // reset line number
     end_line_num = load_file();
     vector<int> first;
@@ -38,8 +40,10 @@ int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
         reg_num = stoi(base_str);
         return reg_num;
     } catch (const std::invalid_argument &e) {
-        cout << "[" << base_plus_offset << "]: "
-             << "invalid argument" << endl;
+        if (*log_level >= FATAL) {
+            printf("FATAL\tinvalid base plus offset: [%s]\n",
+                   base_plus_offset.c_str());
+        }
         exit(1);
     }
 }
@@ -60,8 +64,10 @@ int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
             return offset;
         }
     } catch (const std::invalid_argument &e) {
-        cout << "[" << base_plus_offset << "]: "
-             << "invalid argument" << endl;
+        if (*log_level >= FATAL) {
+            printf("FATAL\tinvalid base plus offset: [%s]\n",
+                   base_plus_offset.c_str());
+        }
         exit(1);
     }
 }
@@ -94,7 +100,9 @@ int loader::load_file() {
     ifstream input;
     input.open(file_name);
     if (!input) {
-        cerr << "can't open file " << file_name << endl;
+        if (*log_level >= FATAL) {
+            printf("can't open file: %s\n", file_name);
+        }
         exit(1);
     }
     string linebuf;
@@ -111,7 +119,9 @@ int loader::load_file() {
     line_num = 0;
     input.open(file_name);
     if (!input) {
-        cerr << "can't open file " << file_name << endl;
+        if (*log_level >= FATAL) {
+            printf("can't open file: %s\n", file_name);
+        }
         exit(1);
     }
     while (!input.eof()) {
@@ -122,6 +132,7 @@ int loader::load_file() {
     if (input.is_open()) {
         input.close();
     }
+
     return line_num;
 }
 
@@ -505,7 +516,10 @@ vector<int> loader::format_code(vector<string> code) {
         result.push_back(OUT);
     } else {
         if (opecode != "") {
-            cout << "invalid instruction" << endl;
+            if (*log_level >= FATAL) {
+                printf("FATAL\tinvalid opecode:%s (line:%d)", opecode.c_str(),
+                       line_num);
+            }
             exit(1);
         }
         result.push_back(NOP);
@@ -518,7 +532,9 @@ vector<int> loader::format_code(vector<string> code) {
 int loader::get_line_num_by_label(string label) {
     auto it = label_map.find(label);
     if (it == label_map.end()) {
-        cout << "not found label: " << label << endl;
+        if (*log_level >= FATAL) {
+            printf("FATAL\tnot found label: %s", label.c_str());
+        }
         exit(1);
     } else {
         return label_map[label];
@@ -538,33 +554,32 @@ string loader::get_raw_program_by_line_num(int l_num) {
 }
 
 void loader::print_label_map() {
-    cout << "label_map\n";
+    printf("label map\n");
     for (auto itr = label_map.begin(); itr != label_map.end(); ++itr) {
-        cout << "\t" << itr->first << ":\t" << itr->second << "\n";
+        printf("\t%s :\t%d\n", itr->first.c_str(), itr->second);
     }
 }
 void loader::print_program_map() {
-    cout << "program_map\n";
+    printf("program map\n");
     int line = 0;
     for (auto itr = program_map.begin(); itr != program_map.end(); ++itr) {
         if (line != 0) {
-            cout << "\t" << line << ":\t";
-            for (auto itr_str = itr->begin(); itr_str != itr->end();
-                 ++itr_str) {
-                cout << *itr_str << "\t";
+            for (auto itr_int = itr->begin(); itr_int != itr->end();
+                 ++itr_int) {
+                printf("%d\t", *itr_int);
             }
-            cout << endl;
+            printf("\n");
         }
         line++;
     }
 }
 
 void loader::print_raw_program() {
-    cout << "raw_program\n";
+    printf("raw program\n");
     int line = 0;
     for (auto itr = raw_program.begin(); itr != raw_program.end(); ++itr) {
         if (line != 0) {
-            cout << "\t" << line << ":\t" << *itr << "\n";
+            printf("%8d:\t%s\n", line, itr->c_str());
         }
         line++;
     }

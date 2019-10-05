@@ -3,12 +3,14 @@
 
 #include "memory.h"
 #include "global.h"
+#include "print.h"
 #include <bitset>
-#include <iostream>
+#include <stdio.h>
 using namespace std;
 
 // constructor
-memory::memory() {
+memory::memory(Log *l_level) {
+    log_level = l_level;
     table = new sim_byte[memorySize];
     for (sim_addr i = 0; i < memorySize; i++) {
         table[i] = 0x0;
@@ -21,7 +23,9 @@ sim_byte memory::read_byte(sim_addr addr) {
     if (0 <= addr && addr < memorySize) {
         return table[addr];
     } else {
-        cout << "invalid read address:" << addr << endl;
+        if (*log_level >= FATAL) {
+            printf("FATAL\tinvalid read address: [%d]\n", addr);
+        }
         exit(1);
     }
 }
@@ -35,7 +39,9 @@ sim_word memory::read_word(sim_addr addr) {
                (unsigned int)table[addr + 3];
         return word;
     } else {
-        cout << "invalid read address:" << addr << endl;
+        if (*log_level >= FATAL) {
+            printf("FATAL\tinvalid read address: [%d]\n", addr);
+        }
         exit(1);
     }
 }
@@ -44,7 +50,9 @@ void memory::write_byte(sim_addr addr, sim_byte byte_data) {
     if (addr < memorySize) {
         table[addr] = byte_data;
     } else {
-        cout << "invalid write address:" << addr << endl;
+        if (*log_level >= FATAL) {
+            printf("FATAL\tinvalid write address: [%d]\n", addr);
+        }
         exit(1);
     }
 }
@@ -56,7 +64,9 @@ void memory::write_word(sim_addr addr, sim_word word_data) {
         table[addr + 2] = (unsigned char)(word_data >> 8 * 1);
         table[addr + 3] = (unsigned char)(word_data);
     } else {
-        cout << "invalid write address:" << addr << endl;
+        if (*log_level >= FATAL) {
+            printf("FATAL\tinvalid write address: [%d]\n", addr);
+        }
         exit(1);
     }
 }
@@ -67,11 +77,14 @@ void memory::print_word_by_addr(sim_addr s_addr, sim_addr e_addr) {
         e_addr % 4 == 0 && s_addr <= e_addr) {
         for (sim_addr addr = s_addr; addr <= e_addr; addr += 4) {
             sim_word word = read_word(addr);
-            cout << addr << ":\t" << (int)word << "\t" << std::bitset<32>(word)
-                 << endl;
+            printf("%9d:\t%9d\t%8x\t", addr, table[addr], table[addr]);
+            print_binary(word);
+            printf("\n");
         }
     } else {
-        cout << "invalid address" << endl;
-        exit(1);
+        if (*log_level >= ERROR) {
+            printf("ERROR\tinvalid address: [%d] to [%d]\n", s_addr, e_addr);
+            printf("ERROR\tPlease input Multiples of 4\n");
+        }
     }
 }

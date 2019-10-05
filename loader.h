@@ -13,6 +13,9 @@ using namespace std;
 class loader {
     // program file name
     const char *file_name;
+
+    Log *log_level;
+
     // current line number
     int line_num;
     // label
@@ -36,7 +39,7 @@ class loader {
     int end_line_num;
 
     // constructor
-    loader(const char *fname);
+    loader(const char *fname, Log *l_level);
     // destructor
     //~loader();
 

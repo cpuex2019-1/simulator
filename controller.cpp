@@ -3,16 +3,17 @@
 
 #include "controller.h"
 #include "asm.h"
-#include <iostream>
+#include "global.h"
 #include <regex>
+#include <stdio.h>
 #include <string>
 using namespace std;
 
-controller::controller(loader *l, memory *m, reg r[], bool *verb) {
+controller::controller(loader *l, memory *m, reg r[], Log *l_level) {
     ld = l;
     memo = m;
     regs = r;
-    verbose = verb;
+    log_level = l_level;
     line_num = 1; // (line_num-1)*4 is addr for instruction?
     regs[0].data = 0;
     regs[29].data = memorySize - 4; // init sp;
@@ -22,20 +23,23 @@ bool controller::exec_step() {
 
     vector<int> line_vec = ld->get_program_by_line_num(line_num);
 
-    /*
+    if (*log_level >= INFO) {
         // raw_programを出力
         string one_raw_program = ld->get_raw_program_by_line_num(line_num);
-
-        cout << "\n" << line_num << ":\t" << one_raw_program << "\t(\t";
-        for (auto itr_str = line_vec.begin(); itr_str != line_vec.end();
-             ++itr_str) {
-            cout << *itr_str << "\t";
+        printf("INFO\t%d:\t%s", line_num, one_raw_program.c_str());
+        if (*log_level >= DEBUG) {
+            printf("\t(DEBUG\t");
+            for (auto itr_str = line_vec.begin(); itr_str != line_vec.end();
+                 ++itr_str) {
+                printf("%d\t", *itr_str);
+            }
+            printf(")");
         }
-        cout << ")" << endl;
-    */
-    exec_code(line_vec);
 
-    // cout << endl;
+        printf("\n");
+    }
+
+    exec_code(line_vec);
 
     if (line_num >= ld->end_line_num) {
         return false;
@@ -57,13 +61,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rs_data = regs[rs].data;
         int rt = *iter;
         int rt_data = regs[rt].data;
-        regs[rd].data = rs_data + regs[rt].data;
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " + rt($" << rt
-                 << "):" << rt_data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d + rt($%d):%d\n", rd, rs, rs_data,
+                   rt, rt_data);
+        }
+        regs[rd].data = rs_data + regs[rt].data;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -76,14 +83,15 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int immediate = *iter;
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data
-                 << " + immediate:" << immediate << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d + immediate:%d\n", rd, rs, rs_data,
+                   immediate);
         }
         regs[rd].data = regs[rs].data + immediate;
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
         line_num++;
 
@@ -95,13 +103,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rs_data = regs[rs].data;
         int rt = *iter;
         int rt_data = regs[rt].data;
-        regs[rd].data = rs_data - regs[rt].data;
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " - rt($" << rt
-                 << "):" << rt_data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d - rt($%d):%d\n", rd, rs, rs_data,
+                   rt, rt_data);
+        }
+        regs[rd].data = rs_data - regs[rt].data;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -114,13 +125,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rs_data = regs[rs].data;
         int rt = *iter;
         int rt_data = regs[rt].data;
-        regs[rd].data = rs_data * regs[rt].data;
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " * rt($" << rt
-                 << "):" << rt_data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs, rs_data,
+                   rt, rt_data);
+        }
+        regs[rd].data = rs_data * regs[rt].data;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -133,15 +147,17 @@ void controller::exec_code(vector<int> line_vec) {
         int rs_data = regs[rs].data;
         int rt = *iter;
         int rt_data = regs[rt].data;
-        regs[rd].data = rs_data / regs[rt].data;
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " / rt($" << rt
-                 << "):" << rt_data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs, rs_data,
+                   rt, rt_data);
         }
-
+        regs[rd].data = rs_data / regs[rt].data;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
         line_num++;
 
     } else if (opecode == MOD) { // MOD rd <- rs % rt
@@ -152,15 +168,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rs_data = regs[rs].data;
         int rt = *iter;
         int rt_data = regs[rt].data;
-        regs[rd].data = regs[rs].data % regs[rt].data;
-
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " % rt($" << rt
-                 << "):" << rt_data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs, rs_data,
+                   rt, rt_data);
         }
-
+        regs[rd].data = rs_data % regs[rt].data;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
         line_num++;
 
     } else if (opecode == SLT) { // SLT Rd = if Rs < Rt then 1 else 0
@@ -172,17 +189,21 @@ void controller::exec_code(vector<int> line_vec) {
         int rt = *iter;
         int rt_data = regs[rt].data;
 
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- if (rs($%d):%d < rt($%d):%d) then 1 else 0\n",
+                   rd, rs, rs_data, rt, rt_data);
+        }
         if (regs[rs].data < regs[rt].data) {
             regs[rd].data = 1;
         } else {
             regs[rd].data = 0;
         }
-        if (*verbose == true) {
-            cout << "rd($" << rd << ")"
-                 << " <- if rs($" << rs << "):" << rs_data << " < rt($" << rt
-                 << "):" << rt_data << " then 1 else 0" << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
+
         line_num++;
 
     } else if (opecode == AND) { // AND rd <- rs & rt
@@ -193,15 +214,17 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rt = *iter;
         int rt_data = regs[rt].data;
-        regs[rd].data = rs_data & regs[rt].data;
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " & rt($" << rt
-                 << "):" << rt_data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d & rt($%d):%d\n", rd, rs, rs_data,
+                   rt, rt_data);
         }
-
+        regs[rd].data = rs_data & regs[rt].data;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
         line_num++;
 
     } else if (opecode == ANDI) { // ANDI rd <- rs & immediate
@@ -212,15 +235,16 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int immediate = *iter;
 
-        regs[rd].data = regs[rs].data & immediate;
-
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data
-                 << " & immediate:" << immediate << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d & immediate:%d\n", rd, rs, rs_data,
+                   immediate);
         }
-
+        regs[rd].data = regs[rs].data & immediate;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
         line_num++;
 
     } else if (opecode == OR) { // OR rd <- rs | rt
@@ -231,13 +255,16 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rt = *iter;
         int rt_data = regs[rt].data;
-        regs[rd].data = rs_data | regs[rt].data;
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " | rt($" << rt
-                 << "):" << rt_data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d | rt($%d):%d\n", rd, rs, rs_data,
+                   rt, rt_data);
+        }
+        regs[rd].data = rs_data | regs[rt].data;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -250,13 +277,15 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int immediate = *iter;
 
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d | immediate:%d\n", rd, rs, rs_data,
+                   immediate);
+        }
         regs[rd].data = regs[rs].data | immediate;
-
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data
-                 << " | immediate:" << immediate << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -269,13 +298,16 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rt = *iter;
         int rt_data = regs[rt].data;
-        regs[rd].data = ~(rs_data | regs[rt].data);
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- ~(rs($" << rs << "):" << rs_data << " | rt($" << rt
-                 << "):" << rt_data << ")" << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- ~(rs($%d):%d | rt($%d):%d)\n", rd, rs, rs_data,
+                   rt, rt_data);
+        }
+        regs[rd].data = ~(rs_data | regs[rt].data);
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -288,13 +320,15 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rt = *iter;
         int rt_data = regs[rt].data;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d ^ rt($%d):%d\n", rd, rs, rs_data,
+                   rt, rt_data);
+        }
         regs[rd].data = rs_data ^ regs[rt].data;
-
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " ^ rt($" << rt
-                 << "):" << rt_data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -309,11 +343,15 @@ void controller::exec_code(vector<int> line_vec) {
 
         regs[rd].data = regs[rs].data ^ immediate;
 
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data
-                 << " ^ immediate:" << immediate << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d ^ immediate:%d\n", rd, rs, rs_data,
+                   immediate);
+        }
+        regs[rd].data = regs[rs].data ^ immediate;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -325,13 +363,15 @@ void controller::exec_code(vector<int> line_vec) {
         int rs_data = regs[rs].data;
         int sb = *iter;
 
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d >> sb:%d (arithmetic)\n", rd, rs,
+                   rs_data, sb);
+        }
         regs[rd].data = regs[rs].data >> sb;
-
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " >> sb:" << sb
-                 << " (arithmetic)" << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -343,13 +383,15 @@ void controller::exec_code(vector<int> line_vec) {
         int rs_data = regs[rs].data;
         int sb = *iter;
 
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d >> sb:%d (logical)\n", rd, rs,
+                   rs_data, sb);
+        }
         regs[rd].data = (int)((unsigned int)regs[rs].data >> (unsigned int)sb);
-
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " >> sb:" << sb
-                 << " (logical)" << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -361,13 +403,15 @@ void controller::exec_code(vector<int> line_vec) {
         int rs_data = regs[rs].data;
         int sb = *iter;
 
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d >> sb:%d (logical)\n", rd, rs,
+                   rs_data, sb);
+        }
         regs[rd].data = (int)((unsigned int)regs[rs].data << (unsigned int)sb);
-
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):"
-                 << " <- rs($" << rs << "):" << rs_data << " << sb:" << sb
-                 << " (logical)" << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -379,12 +423,17 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int offset = *iter;
         int addr = regs[reg].data + offset;
-        regs[rd].data = memo->read_word(addr);
-        if (*verbose == true) {
-            cout << "rd($" << rd << ") <-"
-                 << "\tmemo[" << addr << "]" << endl;
-            cout << "reg[" << rd << "]:" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- memory[%d]:%d\n", rd, addr,
+                   memo->read_word(addr));
         }
+        regs[rd].data = memo->read_word(addr);
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+
         line_num++;
 
     } else if (opecode == LB) { // LB rd, offset(base)
@@ -395,11 +444,14 @@ void controller::exec_code(vector<int> line_vec) {
         int offset = *iter;
         int addr = regs[reg].data + offset;
         unsigned char data = memo->read_byte(addr);
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- memory[%d]:%c\n", rd, addr, data);
+        }
         regs[rd].data = (regs[rd].data & 0xffffff00) | (unsigned int)data;
-        if (*verbose == true) {
-            cout << "rd($" << rd << ") <-"
-                 << "\tmemo[" << addr << "]" << endl;
-            cout << "reg[" << rd << "]:" << regs[rd].data << endl;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
         line_num++;
 
@@ -410,12 +462,17 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int offset = *iter;
         int addr = regs[reg].data + offset;
-        memo->write_word(addr, regs[rd].data);
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):" << regs[rd].data << "\taddr:" << addr
-                 << endl;
-            cout << "memory[" << addr << "]:" << memo->read_word(addr) << endl;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tmemory[%d]:%d\n", addr, memo->read_word(addr));
+            printf("\tmemory[%d] <- rd($%d):%d\n", addr, rd, regs[rd].data);
         }
+        memo->write_word(addr, regs[rd].data);
+        if (*log_level >= DEBUG) {
+            printf("\tmemory[%d]:%d\n", addr, memo->read_word(addr));
+        }
+
         line_num++;
 
     } else if (opecode == SB) { // SB rd, offset(base)
@@ -425,28 +482,42 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int offset = *iter;
         int addr = regs[reg].data + offset;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tmemory[%d]:%d\n", addr, memo->read_byte(addr));
+            printf("\tmemory[%d] <- rd($%d):%d\n", addr, rd, regs[reg].data);
+        }
         memo->write_byte(addr,
                          (unsigned char)((regs[rd].data << 8 * 3) >> 8 * 3));
-        if (*verbose == true) {
-            cout << "rd($" << rd << "):" << regs[rd].data << "\taddr:" << addr
-                 << endl;
-            cout << "memory[" << addr << "]:" << memo->read_word(addr) << endl;
+        if (*log_level >= DEBUG) {
+            printf("\tmemory[%d]:%d\n", addr, memo->read_byte(addr));
         }
+
         line_num++;
 
     } else if (opecode == MOV) { // MOV rd <- rs
         int rd = *iter;
         iter++;
         int rs = *iter;
-        regs[rd].data = regs[rs].data;
-        if (*verbose == true) {
-            cout << "rd($" << rd << ")"
-                 << " <- rs($" << rs << "):" << regs[rs].data << endl;
-            cout << "rd($" << rd << "):" << regs[rd].data;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            if (*log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+                printf("\trd($%d) <- rs($%d):%d\n", rd, rs, regs[rs].data);
+            }
+            regs[rd].data = regs[rs].data;
+            if (*log_level >= DEBUG) {
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+            }
         }
         line_num++;
 
     } else if (opecode == BC) { // BC label(pc+offset<<2)
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tline_num:%d to %d\n", line_num, *iter);
+        }
         line_num = *iter;
 
     } else if (opecode == BEQ) { // BEQ rs rt label(pc+offset<<2)
@@ -459,10 +530,12 @@ void controller::exec_code(vector<int> line_vec) {
         } else {
             line_num++;
         }
-        if (*verbose == true) {
-            cout << "rs($" << rs << "):" << regs[rs].data << "  rt($" << rt
-                 << "):" << regs[rt].data << endl;
-            cout << "next line:" << line_num;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tline_num <- if (rs($%d):%d == rt($%d):%d) then %d else "
+                   "next line\n",
+                   rs, regs[rs].data, rt, regs[rt].data, *iter);
         }
 
     } else if (opecode == BNE) { // BNE rs rt label(pc+offset<<2)
@@ -475,35 +548,74 @@ void controller::exec_code(vector<int> line_vec) {
         } else {
             line_num++;
         }
-        if (*verbose == true) {
-            cout << "rs($" << rs << "):" << regs[rs].data << "  rt($" << rt
-                 << "):" << regs[rt].data << endl;
-            cout << "next line:" << line_num;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tline_num <- if (rs($%d):%d != rt($%d):%d) then %d else "
+                   "next line\n",
+                   rs, regs[rs].data, rt, regs[rt].data, *iter);
         }
 
     } else if (opecode == J) { // J label
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tline_num:%d to %d\n", line_num, *iter);
+        }
         line_num = *iter;
 
     } else if (opecode == JR) { // JR rs
         int rs = *iter;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trs($%d):%d\n", rs, regs[rs].data);
+            printf("\tline_num:%d to %d(rs/4+1)\n", line_num,
+                   ((regs[rs].data / 4) + 1));
+        }
         line_num =
             (regs[rs].data / 4) + 1; // convert program addr to line number;
 
-    } else if (opecode ==
-               JAL) { // JAL label (next instruction addr is line_num*4)
+    } else if (opecode == JAL) { // JAL label (next addr is line_num*4)
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\t$31:%d\n", regs[31].data);
+            printf("\t$31 <- return addr:%d\n", line_num * 4);
+        }
         regs[31].data = line_num * 4;
+        if (*log_level >= DEBUG) {
+            printf("\tline_num:%d to %d\n", line_num, *iter);
+        }
         line_num = *iter;
 
     } else if (opecode == JALR) { // JALR rd, rs
-        int rs = *iter;
-        iter++;
         int rd = *iter;
+        iter++;
+        int rs = *iter;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\tline_num <- (rs($%d):%d)*4+1 \trd($%d) <- return addr: "
+                   "%d\n ",
+                   rs, regs[rs].data, rd, line_num * 4);
+        }
         regs[rd].data = line_num * 4;
+        if (*log_level >= DEBUG) {
+            printf("\tline_num:%d to %d\trd($%d):%d\n", line_num,
+                   (regs[rs].data / 4 + 1), rd, regs[rd].data);
+        }
         line_num = (regs[rs].data / 4 + 1);
+
     } else if (opecode == NOP) { // nop
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tNOP\n");
+        }
         line_num++;
 
     } else if (opecode == OUT) { // output 未対応
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tOUT\n");
+        }
         line_num++;
 
     } else {
