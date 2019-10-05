@@ -1,7 +1,5 @@
 # simulator (mipsim)
-
 ## version 2.0
-
 ### how to use
 Make sure you can use `g++` and `c++11`, then, compile the programs:
 ```
@@ -15,9 +13,11 @@ $ ./mipsim test/test.s
 Type commands to execute assembler.
 ```
 How to use mipsim:
-	s | step | \n	: run step by step
-	a | all		: run all
-	r | reg		: print register
-	m | memo	: print memory
-	exit		: exit program
+	   s | step | \n	: run step by step
+	   a | all		: run all
+	   r | reg		: print register
+	   m | memo	: print memory from start to end
+	   p | program	: print program and line number
+	   l | log		: change log level
+	   exit		: exit program
 ```
