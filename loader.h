@@ -37,7 +37,6 @@ class loader {
 
   public:
     int end_line_num;
-
     // constructor
     loader(const char *fname, Log *l_level);
     // destructor

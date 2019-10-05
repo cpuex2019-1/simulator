@@ -17,13 +17,13 @@
 using namespace std;
 
 Log log_level = DEBUG;
+int break_p = -1;
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         printf("usage: %s <program name>\n", argv[0]);
         return 1;
     }
-    print_usage();
 
     loader ld(argv[1], &log_level); // load program
     memory memo(&log_level);
@@ -32,30 +32,43 @@ int main(int argc, char *argv[]) {
     controller controller(&ld, &memo, regs, &log_level);
 
     string str;
-
     bool end_flag = false;
+    print_usage();
     print_prompt();
     while (getline(cin, str)) {
         if (str == "s" || str == "step" || str == "") { // run step by step
-
-            if (!controller.exec_step()) {
+            if (log_level >= TRACE) {
+                ld.print_label_map();
+                ld.print_raw_program();
+            }
+            if (controller.exec_step(break_p) == END) {
                 end_flag = true;
             };
 
         } else if (str == "a" || str == "all") { // run all
             clock_t start = clock();
             int count = 0;
-            while (controller.exec_step()) {
+            Status status = ACTIVE;
+            while (status == ACTIVE) {
+                status = controller.exec_step(break_p);
                 count++;
             };
             clock_t end = clock();
             const double time =
                 static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
 
+            if (status == BREAK) {
+                printf("\nbreakpoint!\n");
+                string one_raw_program =
+                    ld.get_raw_program_by_line_num(controller.line_num);
+                printf("[next instruction]\t%d:\t%s\n\n", controller.line_num,
+                       one_raw_program.c_str());
+
+            } else if (status == END) {
+                end_flag = true;
+            };
             printf("time %lf [ms]\n", time);
             printf("%d instructions\n", count);
-
-            end_flag = true;
 
         } else if (str == "r" || str == "reg") { // print register
             printf("which register? ( input 0~31 or a (all) ) : ");
@@ -108,6 +121,22 @@ int main(int argc, char *argv[]) {
         } else if (str == "p" || str == "program") { // print program
             ld.print_label_map();
             ld.print_raw_program();
+            printf("now processing line: %d\n", controller.line_num);
+
+        } else if (str == "b" || str == "break") { // set break break_point
+            ld.print_label_map();
+            ld.print_raw_program();
+            printf("\nset break break_point by line number : ");
+            getline(cin, str);
+
+            try {
+                break_p = stoi(str);
+            } catch (const std::invalid_argument &e) {
+                if (log_level >= ERROR) {
+                    printf("ERROR\tinvalid argument: %s\n", e.what());
+                    printf("ERROR\tPlease input integer\n");
+                }
+            }
 
         } else if (str == "l" || str == "log") {
             printf("select log level (warn < info < debug < trace) : ");
@@ -118,7 +147,7 @@ int main(int argc, char *argv[]) {
                 log_level = INFO;
             } else if (str == "debug") { //
                 log_level = DEBUG;
-            } else if (str == "TRACE") {
+            } else if (str == "trace") {
                 log_level = TRACE;
             } else {
                 if (log_level >= ERROR) {

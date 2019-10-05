@@ -1,5 +1,5 @@
 # simulator (mipsim)
-## version 2.0
+## version 3.0
 ### how to use
 Make sure you can use `g++` and `c++11`, then, compile the programs:
 ```
@@ -18,6 +18,7 @@ How to use mipsim:
 	   r | reg		: print register
 	   m | memo	: print memory from start to end
 	   p | program	: print program and line number
+	   b | break	: set break break_point
 	   l | log		: change log level
 	   exit		: exit program
 ```

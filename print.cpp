@@ -17,6 +17,7 @@ void print_usage() {
     \tr | reg\t\t: print register\n \
     \tm | memo\t: print memory from start to end\n \
     \tp | program\t: print program and line number\n \
+    \tb | break\t: set break break_point\n \
     \tl | log\t\t: change log level\n \
     \texit\t\t: exit program\n");
 }
