@@ -18,7 +18,7 @@ How to use mipsim:
 	   r | reg		: print register
 	   m | memo	: print memory from start to end
 	   p | program	: print program and line number
-	   b | break	: set break break_point
+	   b | break	: set breakpoint
 	   l | log		: change log level
 	   exit		: exit program
 ```

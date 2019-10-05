@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
             ld.print_raw_program();
             printf("now processing line: %d\n", controller.line_num);
 
-        } else if (str == "b" || str == "break") { // set break break_point
+        } else if (str == "b" || str == "break") { // set breakpoint
             ld.print_label_map();
             ld.print_raw_program();
             printf("\nset break break_point by line number : ");
