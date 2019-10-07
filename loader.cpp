@@ -33,56 +33,81 @@ int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
     regex sep("([+-]?)(0|[1-9][0-9]*)\\(\\$(3[0-1]|[1-2][0-9]|[0-9])\\)");
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),
                                sep, 3);
-
-    string base_str = iter->str();
-    int reg_num = 0;
-    try {
-        reg_num = stoi(base_str);
-        return reg_num;
-    } catch (const std::invalid_argument &e) {
+    sregex_token_iterator end;
+    if (iter == end) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tinvalid base plus offset: [%s]\n",
+            printf("FATAL\tline:%d\tinvalid base plus offset[%s]\n", line_num,
                    base_plus_offset.c_str());
         }
         exit(1);
+    } else {
+        string base_str = iter->str();
+        int reg_num = 0;
+        try {
+            reg_num = stoi(base_str);
+            return reg_num;
+        } catch (const std::invalid_argument &e) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tinvalid base plus offset: [%s]\n",
+                       base_plus_offset.c_str());
+            }
+            exit(1);
+        }
     }
 }
 int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
     regex sep("([+-]?)(0|[1-9][0-9]*)\\(\\$(3[0-1]|[1-2][0-9]|[0-9])\\)");
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),
                                sep, {1, 2});
-
-    string sign = iter->str();
-    iter++;
-    string offset_str = iter->str();
-    int offset = 0;
-    try {
-        offset = stoi(offset_str); // convert string to int
-        if (sign == "-") {
-            return -offset;
-        } else {
-            return offset;
-        }
-    } catch (const std::invalid_argument &e) {
+    sregex_token_iterator end;
+    if (iter == end) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tinvalid base plus offset: [%s]\n",
+            printf("FATAL\tline:%d\tinvalid base plus offset[%s]\n", line_num,
                    base_plus_offset.c_str());
         }
         exit(1);
+    } else {
+        string sign = iter->str();
+        iter++;
+        string offset_str = iter->str();
+        int offset = 0;
+        try {
+            offset = stoi(offset_str); // convert string to int
+            if (sign == "-") {
+                return -offset;
+            } else {
+                return offset;
+            }
+        } catch (const std::invalid_argument &e) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tinvalid base plus offset: [%s]\n",
+                       base_plus_offset.c_str());
+            }
+            exit(1);
+        }
     }
 }
 
 int loader::get_reg_num(string reg_str) {
     regex sep("\\$(3[0-1]|[1-2][0-9]|[0-9])");
     sregex_token_iterator iter(reg_str.begin(), reg_str.end(), sep, 1);
-    try {
-        int reg_num = stoi(iter->str()); // convert string to int
-        return reg_num;
-    } catch (const std::invalid_argument &e) {
+    sregex_token_iterator end;
+    if (iter == end) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tinvalid register: [%s]\n", iter->str().c_str());
+            printf("FATAL\tline:%d\tinvalid register[%s]\n", line_num,
+                   reg_str.c_str());
         }
         exit(1);
+    } else {
+        try {
+            int reg_num = stoi(iter->str()); // convert string to int
+            return reg_num;
+        } catch (const std::invalid_argument &e) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tinvalid register: [%s]\n", iter->str().c_str());
+            }
+            exit(1);
+        }
     }
 }
 
@@ -90,23 +115,40 @@ int loader::get_immediate(string immediate_str) {
     regex sep("([+-]?)(0|[1-9][0-9]*)"); //([+-]?)([0-9]+)
     sregex_token_iterator iter(immediate_str.begin(), immediate_str.end(), sep,
                                {1, 2});
-    string sign = iter->str();
-    iter++;
-    try {
-        int immediate =
-            stoi(iter->str()); // convert string to int to unsigned int
-
-        if (sign == "-") {
-            return -immediate;
-        } else {
-            return immediate;
-        }
-    } catch (const std::invalid_argument &e) {
+    sregex_token_iterator end;
+    if (iter == end) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tinvalid immediate: %s[%s]\n", sign.c_str(),
-                   iter->str().c_str());
+            printf("FATAL\tline:%d\tinvalid immediate[%s]\n", line_num,
+                   immediate_str.c_str());
         }
         exit(1);
+    } else {
+        string sign = iter->str();
+        iter++;
+        if (iter == end) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tline:%d\tinvalid immediate[%s]\n", line_num,
+                       immediate_str.c_str());
+            }
+            exit(1);
+        } else {
+            try {
+                int immediate =
+                    stoi(iter->str()); // convert string to int to unsigned int
+
+                if (sign == "-") {
+                    return -immediate;
+                } else {
+                    return immediate;
+                }
+            } catch (const std::invalid_argument &e) {
+                if (*log_level >= FATAL) {
+                    printf("FATAL\tinvalid immediate: %s[%s]\n", sign.c_str(),
+                           iter->str().c_str());
+                }
+                exit(1);
+            }
+        }
     }
 }
 
