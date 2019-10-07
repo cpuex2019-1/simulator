@@ -30,7 +30,7 @@ loader::~loader() {
 }
 */
 int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
-    regex sep("([+-]?)([0-9]+)\\(\\$(\\d+)\\)");
+    regex sep("([+-]?)(0|[1-9][0-9]*)\\(\\$(3[0-1]|[1-2][0-9]|[0-9])\\)");
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),
                                sep, 3);
 
@@ -48,7 +48,7 @@ int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
     }
 }
 int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
-    regex sep("([+-]?)([0-9]+)\\(\\$(\\d+)\\)");
+    regex sep("([+-]?)(0|[1-9][0-9]*)\\(\\$(3[0-1]|[1-2][0-9]|[0-9])\\)");
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),
                                sep, {1, 2});
 
@@ -73,25 +73,40 @@ int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
 }
 
 int loader::get_reg_num(string reg_str) {
-    regex sep("\\$(\\d+)");
+    regex sep("\\$(3[0-1]|[1-2][0-9]|[0-9])");
     sregex_token_iterator iter(reg_str.begin(), reg_str.end(), sep, 1);
-    unsigned int reg_num =
-        stoi(iter->str()); // convert string to int to unsigned int
-    return reg_num;
+    try {
+        int reg_num = stoi(iter->str()); // convert string to int
+        return reg_num;
+    } catch (const std::invalid_argument &e) {
+        if (*log_level >= FATAL) {
+            printf("FATAL\tinvalid register: [%s]\n", iter->str().c_str());
+        }
+        exit(1);
+    }
 }
 
 int loader::get_immediate(string immediate_str) {
-    regex sep("([+-]?)([0-9]+)");
+    regex sep("([+-]?)(0|[1-9][0-9]*)"); //([+-]?)([0-9]+)
     sregex_token_iterator iter(immediate_str.begin(), immediate_str.end(), sep,
                                {1, 2});
     string sign = iter->str();
     iter++;
-    int immediate = stoi(iter->str()); // convert string to int to unsigned int
+    try {
+        int immediate =
+            stoi(iter->str()); // convert string to int to unsigned int
 
-    if (sign == "-") {
-        return -immediate;
-    } else {
-        return immediate;
+        if (sign == "-") {
+            return -immediate;
+        } else {
+            return immediate;
+        }
+    } catch (const std::invalid_argument &e) {
+        if (*log_level >= FATAL) {
+            printf("FATAL\tinvalid immediate: %s[%s]\n", sign.c_str(),
+                   iter->str().c_str());
+        }
+        exit(1);
     }
 }
 
@@ -147,7 +162,7 @@ void loader::load_line_label(string line) {
     }
 
     // get label
-    regex label_pattern("^[\\t ]*(?:([A-Za-z][\\w.]*)[:])?[\\t ]*");
+    regex label_pattern("^[\\t ]*(?:([A-Za-z][\\w\\.]*)[:])?[\\t ]*");
     sregex_token_iterator iter2(line_not_comment.begin(),
                                 line_not_comment.end(), label_pattern,
                                 {1, -1}); // group1: label, 残り: コード
@@ -177,7 +192,7 @@ void loader::load_line(string line) {
     }
 
     // get label
-    regex label_pattern("^[\\t ]*(?:([A-Za-z][\\w.]*)[:])?[\\t ]*");
+    regex label_pattern("^[\\t ]*(?:([A-Za-z][\\w\\.]*)[:])?[\\t ]*");
     sregex_token_iterator iter2(line_not_comment.begin(),
                                 line_not_comment.end(), label_pattern,
                                 {1, -1}); // group1: label, 残り: コード
@@ -200,6 +215,7 @@ void loader::load_line(string line) {
         res = res + iter3->str();
     }
     raw_program.push_back(opecode_str + "\t" + res);
+
     // process operand (split res by ",")
     regex sep2(",");
     sregex_token_iterator iter4(res.begin(), res.end(), sep2, -1);
