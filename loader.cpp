@@ -442,7 +442,7 @@ vector<int> loader::format_code(vector<string> code) {
         result.push_back(sb);
 
     } else if (opecode == "srli") { // SRLI rd <- rs >> sb (logical)
-        result.push_back(SRL);
+        result.push_back(SRLI);
         int rd = get_reg_num(*iter);
         result.push_back(rd);
         iter++;
@@ -608,8 +608,8 @@ vector<int> loader::format_code(vector<string> code) {
     } else {
         if (opecode != "") {
             if (*log_level >= FATAL) {
-                printf("FATAL\tinvalid opecode:%s (line:%d)", opecode.c_str(),
-                       line_num);
+                printf("FATAL\tline:%d\tinvalid opecode:%s\n", line_num,
+                       opecode.c_str());
             }
             exit(1);
         }
@@ -624,7 +624,8 @@ int loader::get_line_num_by_label(string label) {
     auto it = label_map.find(label);
     if (it == label_map.end()) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tnot found label: %s", label.c_str());
+            printf("FATAL\tline:%d\tnot found label: %s\n", line_num,
+                   label.c_str());
         }
         exit(1);
     } else {

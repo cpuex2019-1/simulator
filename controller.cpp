@@ -149,7 +149,7 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs,
+            printf("\trd($%d) <- rs($%d):%d / rt($%d):%d\n", rd, rs,
                    regs[rs].data, rt, regs[rt].data);
         }
         regs[rd].data = regs[rs].data / regs[rt].data;
@@ -168,7 +168,7 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs,
+            printf("\trd($%d) <- rs($%d):%d MOD rt($%d):%d\n", rd, rs,
                    regs[rs].data, rt, regs[rt].data);
         }
         regs[rd].data = regs[rs].data % regs[rt].data;
@@ -396,7 +396,7 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d >> sb:%d (logical)\n", rd, rs,
+            printf("\trd($%d) <- rs($%d):%d << sb:%d (logical)\n", rd, rs,
                    regs[rs].data, sb);
         }
 
@@ -418,10 +418,11 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (arithmetic)\n", rd,
-                   rs, regs[rs].data, rt, regs[rt].data);
+            printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d [4:0] (arithmetic)\n",
+                   rd, rs, regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = regs[rs].data >> regs[rt].data;
+        unsigned int mask = 0x1F; // 下位5ビットの取り出し
+        regs[rd].data = regs[rs].data >> (mask & regs[rt].data);
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -438,12 +439,12 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (logical)\n", rd, rs,
-                   regs[rs].data, rt, regs[rt].data);
+            printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d [4:0] (logical)\n",
+                   rd, rs, regs[rs].data, rt, regs[rt].data);
         }
-
-        regs[rd].data =
-            (int)((unsigned int)regs[rs].data >> (unsigned int)regs[rt].data);
+        unsigned int mask = 0x1F; // 下位5ビットの取り出し
+        regs[rd].data = (int)((unsigned int)regs[rs].data >>
+                              (mask & (unsigned int)regs[rt].data));
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -461,12 +462,12 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (logical)\n", rd, rs,
-                   regs[rs].data, rt, regs[rt].data);
+            printf("\trd($%d) <- rs($%d):%d << rt($%d):%d [4:0] (logical)\n",
+                   rd, rs, regs[rs].data, rt, regs[rt].data);
         }
-
-        regs[rd].data =
-            (int)((unsigned int)regs[rs].data << (unsigned int)regs[rt].data);
+        unsigned int mask = 0x1F; // 下位5ビットの取り出し
+        regs[rd].data = (int)((unsigned int)regs[rs].data
+                              << (mask & (unsigned int)regs[rt].data));
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -510,7 +511,7 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- memory[%d]:%c\n", rd, addr, data);
+            printf("\trd($%d) <- memory[%d]:%hhu\n", rd, addr, data);
         }
         regs[rd].data = (regs[rd].data & 0xffffff00) | (unsigned int)data;
         if (*log_level >= DEBUG) {
