@@ -4,7 +4,6 @@
 #include "loader.h"
 #include "asm.h"
 #include "global.h"
-#include <algorithm>
 #include <regex>
 #include <stdio.h>
 #include <string>
@@ -216,8 +215,6 @@ void loader::load_line(string line) {
 vector<int> loader::format_code(vector<string> code) {
     auto iter = code.begin();
     string opecode = *iter;
-    std::transform(opecode.begin(), opecode.end(), opecode.begin(),
-                   std::tolower); // capital letter to small letter
     iter++;
     vector<int> result;
 
@@ -375,8 +372,8 @@ vector<int> loader::format_code(vector<string> code) {
         int immediate = get_immediate(*iter);
         result.push_back(immediate);
 
-    } else if (opecode == "sra") { // SRA rd <- rs >> sb (arithmetic)
-        result.push_back(ORI);
+    } else if (opecode == "srai") { // SRAI rd <- rs >> sb (arithmetic)
+        result.push_back(SRAI);
         int rd = get_reg_num(*iter);
         result.push_back(rd);
         iter++;
@@ -386,7 +383,40 @@ vector<int> loader::format_code(vector<string> code) {
         int sb = get_immediate(*iter);
         result.push_back(sb);
 
-    } else if (opecode == "srl") { // SRL rd <- rs >> sb (logical)
+    } else if (opecode == "srli") { // SRLI rd <- rs >> sb (logical)
+        result.push_back(SRL);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int sb = get_immediate(*iter);
+        result.push_back(sb);
+
+    } else if (opecode == "slli") { // SLLI rd <- rs << sb (logical)
+        result.push_back(SLLI);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int sb = get_immediate(*iter);
+        result.push_back(sb);
+
+    } else if (opecode == "sra") { // SRA rd <- rs >> rt (arithmetic)
+        result.push_back(SRA);
+        int rd = get_reg_num(*iter);
+        result.push_back(rd);
+        iter++;
+        int rs = get_reg_num(*iter);
+        result.push_back(rs);
+        iter++;
+        int rt = get_reg_num(*iter);
+        result.push_back(rt);
+
+    } else if (opecode == "srl") { // SRL rd <- rs >> rt (logical)
         result.push_back(SRL);
         int rd = get_reg_num(*iter);
         result.push_back(rd);
@@ -397,7 +427,7 @@ vector<int> loader::format_code(vector<string> code) {
         int rt = get_reg_num(*iter);
         result.push_back(rt);
 
-    } else if (opecode == "sll") { // SLL rd <- rs << sb (logical)
+    } else if (opecode == "sll") { // SLLI rd <- rs << rt (logical)
         result.push_back(SLL);
         int rd = get_reg_num(*iter);
         result.push_back(rd);

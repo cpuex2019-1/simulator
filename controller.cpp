@@ -366,10 +366,11 @@ void controller::exec_code(vector<int> line_vec) {
 
         line_num++;
 
-    } else if (opecode == SRA) { // SRA rd <- rs >> sb (arithmetic)
+    } else if (opecode == SRAI) { // SRAI rd <- rs >> sb (arithmetic)
         int rd = *iter;
         iter++;
         int rs = *iter;
+        iter++;
         int rs_data = regs[rs].data;
         int sb = *iter;
 
@@ -386,10 +387,11 @@ void controller::exec_code(vector<int> line_vec) {
 
         line_num++;
 
-    } else if (opecode == SRL) { // SRL rd <- rs >> sb (logical)
+    } else if (opecode == SRLI) { // SRLI rd <- rs >> sb (logical)
         int rd = *iter;
         iter++;
         int rs = *iter;
+        iter++;
         int rs_data = regs[rs].data;
         int sb = *iter;
 
@@ -408,10 +410,11 @@ void controller::exec_code(vector<int> line_vec) {
 
         line_num++;
 
-    } else if (opecode == SLL) { // SLL rd <- rs << sb (logical)
+    } else if (opecode == SLLI) { // SLLI rd <- rs << sb (logical)
         int rd = *iter;
         iter++;
         int rs = *iter;
+        iter++;
         int rs_data = regs[rs].data;
         int sb = *iter;
 
@@ -423,6 +426,78 @@ void controller::exec_code(vector<int> line_vec) {
         }
 
         regs[rd].data = (int)((unsigned int)regs[rs].data << (unsigned int)sb);
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+
+        line_num++;
+
+    } else if (opecode == SRA) { // SRA rd <- rs >> rt (arithmetic)
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        int rt = *iter;
+        int rs_data = regs[rs].data;
+        int rt_data = regs[rt].data;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (arithmetic)\n", rd,
+                   rs, rs_data, rt, rt_data);
+        }
+        regs[rd].data = regs[rs].data >> rt_data;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+
+        line_num++;
+
+    } else if (opecode == SRL) { // SRL rd <- rs >> rt (logical)
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        int rt = *iter;
+        int rs_data = regs[rs].data;
+        int rt_data = regs[rt].data;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (logical)\n", rd, rs,
+                   rs_data, rt, rt_data);
+        }
+
+        regs[rd].data =
+            (int)((unsigned int)regs[rs].data >> (unsigned int)rt_data);
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+
+        line_num++;
+
+    } else if (opecode == SLL) { // SLL rd <- rs << rt (logical)
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        int rt = *iter;
+        int rs_data = regs[rs].data;
+        int rt_data = regs[rt].data;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (logical)\n", rd, rs,
+                   rs_data, rt, rt_data);
+        }
+
+        regs[rd].data =
+            (int)((unsigned int)regs[rs].data << (unsigned int)rt_data);
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
