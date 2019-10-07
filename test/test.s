@@ -1,7 +1,7 @@
-arith_logic:
+arith_logic: #シミュレータデバッグ用（ループするかも）
     addi    $1, $0, 2
     addi    $2, $0, 3
-    j   bne
+    j   Bne
     add     $3, $2, $1
     sub     $3, $2, $1
     mul     $3, $2, $1
