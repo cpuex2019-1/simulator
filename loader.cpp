@@ -4,6 +4,7 @@
 #include "loader.h"
 #include "asm.h"
 #include "global.h"
+#include <algorithm>
 #include <regex>
 #include <stdio.h>
 #include <string>
@@ -215,6 +216,8 @@ void loader::load_line(string line) {
 vector<int> loader::format_code(vector<string> code) {
     auto iter = code.begin();
     string opecode = *iter;
+    std::transform(opecode.begin(), opecode.end(), opecode.begin(),
+                   std::tolower); // capital letter to small letter
     iter++;
     vector<int> result;
 
