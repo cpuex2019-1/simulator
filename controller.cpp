@@ -60,18 +60,16 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        int rs_data = regs[rs].data;
         int rt = *iter;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d + rt($%d):%d\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- rs($%d):%d + rt($%d):%d\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
 
-        regs[rd].data = rs_data + regs[rt].data;
+        regs[rd].data = regs[rs].data + regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -83,15 +81,14 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int immediate = *iter;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d + immediate:%d\n", rd, rs, rs_data,
-                   immediate);
+            printf("\trd($%d) <- rs($%d):%d + immediate:%d\n", rd, rs,
+                   regs[rs].data, immediate);
         }
 
         regs[rd].data = regs[rs].data + immediate;
@@ -107,17 +104,15 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        int rs_data = regs[rs].data;
         int rt = *iter;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d - rt($%d):%d\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- rs($%d):%d - rt($%d):%d\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = rs_data - regs[rt].data;
+        regs[rd].data = regs[rs].data - regs[rt].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -129,17 +124,15 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        int rs_data = regs[rs].data;
         int rt = *iter;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = rs_data * regs[rt].data;
+        regs[rd].data = regs[rs].data * regs[rt].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -151,17 +144,15 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        int rs_data = regs[rs].data;
         int rt = *iter;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = rs_data / regs[rt].data;
+        regs[rd].data = regs[rs].data / regs[rt].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -172,16 +163,15 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        int rs_data = regs[rs].data;
         int rt = *iter;
-        int rt_data = regs[rt].data;
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = rs_data % regs[rt].data;
+        regs[rd].data = regs[rs].data % regs[rt].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -191,16 +181,14 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int rt = *iter;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- if (rs($%d):%d < rt($%d):%d) then 1 else 0\n",
-                   rd, rs, rs_data, rt, rt_data);
+                   rd, rs, regs[rs].data, rt, regs[rt].data);
         }
         if (regs[rs].data < regs[rt].data) {
             regs[rd].data = 1;
@@ -217,18 +205,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int rt = *iter;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d & rt($%d):%d\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- rs($%d):%d & rt($%d):%d\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = rs_data & regs[rt].data;
+        regs[rd].data = regs[rs].data & regs[rt].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -238,15 +224,14 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int immediate = *iter;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d & immediate:%d\n", rd, rs, rs_data,
-                   immediate);
+            printf("\trd($%d) <- rs($%d):%d & immediate:%d\n", rd, rs,
+                   regs[rs].data, immediate);
         }
 
         regs[rd].data = regs[rs].data & immediate;
@@ -261,18 +246,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int rt = *iter;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d | rt($%d):%d\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- rs($%d):%d | rt($%d):%d\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = rs_data | regs[rt].data;
+        regs[rd].data = regs[rs].data | regs[rt].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -283,15 +266,14 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int immediate = *iter;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d | immediate:%d\n", rd, rs, rs_data,
-                   immediate);
+            printf("\trd($%d) <- rs($%d):%d | immediate:%d\n", rd, rs,
+                   regs[rs].data, immediate);
         }
         regs[rd].data = regs[rs].data | immediate;
         if (*log_level >= DEBUG) {
@@ -304,18 +286,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int rt = *iter;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- ~(rs($%d):%d | rt($%d):%d)\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- ~(rs($%d):%d | rt($%d):%d)\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = ~(rs_data | regs[rt].data);
+        regs[rd].data = ~(regs[rs].data | regs[rt].data);
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -326,17 +306,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int rt = *iter;
-        int rt_data = regs[rt].data;
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d ^ rt($%d):%d\n", rd, rs, rs_data,
-                   rt, rt_data);
+            printf("\trd($%d) <- rs($%d):%d ^ rt($%d):%d\n", rd, rs,
+                   regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = rs_data ^ regs[rt].data;
+        regs[rd].data = regs[rs].data ^ regs[rt].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -347,7 +326,6 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
-        int rs_data = regs[rs].data;
         iter++;
         int immediate = *iter;
 
@@ -356,8 +334,8 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d ^ immediate:%d\n", rd, rs, rs_data,
-                   immediate);
+            printf("\trd($%d) <- rs($%d):%d ^ immediate:%d\n", rd, rs,
+                   regs[rs].data, immediate);
         }
         regs[rd].data = regs[rs].data ^ immediate;
         if (*log_level >= DEBUG) {
@@ -371,14 +349,13 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        int rs_data = regs[rs].data;
         int sb = *iter;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d >> sb:%d (arithmetic)\n", rd, rs,
-                   rs_data, sb);
+                   regs[rs].data, sb);
         }
         regs[rd].data = regs[rs].data >> sb;
         if (*log_level >= DEBUG) {
@@ -392,14 +369,13 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        int rs_data = regs[rs].data;
         int sb = *iter;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d >> sb:%d (logical)\n", rd, rs,
-                   rs_data, sb);
+                   regs[rs].data, sb);
         }
 
         regs[rd].data = (int)((unsigned int)regs[rs].data >> (unsigned int)sb);
@@ -415,14 +391,13 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        int rs_data = regs[rs].data;
         int sb = *iter;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d >> sb:%d (logical)\n", rd, rs,
-                   rs_data, sb);
+                   regs[rs].data, sb);
         }
 
         regs[rd].data = (int)((unsigned int)regs[rs].data << (unsigned int)sb);
@@ -439,16 +414,14 @@ void controller::exec_code(vector<int> line_vec) {
         int rs = *iter;
         iter++;
         int rt = *iter;
-        int rs_data = regs[rs].data;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (arithmetic)\n", rd,
-                   rs, rs_data, rt, rt_data);
+                   rs, regs[rs].data, rt, regs[rt].data);
         }
-        regs[rd].data = regs[rs].data >> rt_data;
+        regs[rd].data = regs[rs].data >> regs[rt].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -461,18 +434,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rs = *iter;
         iter++;
         int rt = *iter;
-        int rs_data = regs[rs].data;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (logical)\n", rd, rs,
-                   rs_data, rt, rt_data);
+                   regs[rs].data, rt, regs[rt].data);
         }
 
         regs[rd].data =
-            (int)((unsigned int)regs[rs].data >> (unsigned int)rt_data);
+            (int)((unsigned int)regs[rs].data >> (unsigned int)regs[rt].data);
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -486,18 +457,16 @@ void controller::exec_code(vector<int> line_vec) {
         int rs = *iter;
         iter++;
         int rt = *iter;
-        int rs_data = regs[rs].data;
-        int rt_data = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d (logical)\n", rd, rs,
-                   rs_data, rt, rt_data);
+                   regs[rs].data, rt, regs[rt].data);
         }
 
         regs[rd].data =
-            (int)((unsigned int)regs[rs].data << (unsigned int)rt_data);
+            (int)((unsigned int)regs[rs].data << (unsigned int)regs[rt].data);
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -511,9 +480,10 @@ void controller::exec_code(vector<int> line_vec) {
         int reg = *iter;
         iter++;
         int offset = *iter;
-        int addr = regs[reg].data + offset;
-        if (*log_level >= DEBUG) {
 
+        int addr = regs[reg].data + offset;
+
+        if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- memory[%d]:%d\n", rd, addr,
@@ -533,8 +503,10 @@ void controller::exec_code(vector<int> line_vec) {
         int reg = *iter;
         iter++;
         int offset = *iter;
+
         int addr = regs[reg].data + offset;
         unsigned char data = memo->read_byte(addr);
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -552,6 +524,7 @@ void controller::exec_code(vector<int> line_vec) {
         int reg = *iter;
         iter++;
         int offset = *iter;
+
         int addr = regs[reg].data + offset;
 
         if (*log_level >= DEBUG) {
@@ -559,9 +532,7 @@ void controller::exec_code(vector<int> line_vec) {
             printf("\tmemory[%d]:%d\n", addr, memo->read_word(addr));
             printf("\tmemory[%d] <- rd($%d):%d\n", addr, rd, regs[rd].data);
         }
-
         memo->write_word(addr, regs[rd].data);
-
         if (*log_level >= DEBUG) {
             printf("\tmemory[%d]:%d\n", addr, memo->read_word(addr));
         }
@@ -574,7 +545,9 @@ void controller::exec_code(vector<int> line_vec) {
         int reg = *iter;
         iter++;
         int offset = *iter;
+
         int addr = regs[reg].data + offset;
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:%d\n", addr, memo->read_byte(addr));
@@ -598,9 +571,7 @@ void controller::exec_code(vector<int> line_vec) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d\n", rd, rs, regs[rs].data);
         }
-
         regs[rd].data = regs[rs].data;
-
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -619,6 +590,7 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rt = *iter;
         iter++;
+
         if (regs[rs].data == regs[rt].data) {
             line_num = *iter;
         } else {
@@ -637,11 +609,13 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rt = *iter;
         iter++;
+
         if (regs[rs].data != regs[rt].data) {
             line_num = *iter;
         } else {
             line_num++;
         }
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tline_num <- if (rs($%d):%d != rt($%d):%d) then %d else "
@@ -658,6 +632,7 @@ void controller::exec_code(vector<int> line_vec) {
 
     } else if (opecode == JR) { // JR rs
         int rs = *iter;
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trs($%d):%d\n", rs, regs[rs].data);
@@ -684,6 +659,7 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         iter++;
         int rs = *iter;
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);

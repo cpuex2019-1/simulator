@@ -16,19 +16,22 @@ arith_logic:
     xor     $3, $2, $1
     xori    $3, $2, 10
     addi    $2, $0, -3
-    sra    $3, $2, 2
-    srl    $3, $2, 2
-    sll    $3, $2, 2
+    srai    $3, $2, 2
+    srli    $3, $2, 2
+    slli    $3, $2, 2
+    sra    $3, $2, $1
+    srl    $3, $2, $1
+    sll    $3, $2, $1
 data_move:
     sw  $2, 0($29)
     sb  $2, -4($29)
     lw  $3, 0($29)
     lb  $3, -4($29)
     mov $3, $0
-bne:
-    bne $2,  $1,  beq
-    bc  beq
+Bne:
+    bne $2,  $1,  Beq
+    bc  Beq
         addi    $1, $0, 2
-beq:
-    beq $2,  $1,  bne
-    bc  beq
+Beq:
+    beq $2,  $1,  Bne
+    bc  Beq
