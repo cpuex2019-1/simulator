@@ -552,7 +552,7 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:%d\n", addr, memo->read_byte(addr));
-            printf("\tmemory[%d] <- rd($%d):%d\n", addr, rd, regs[reg].data);
+            printf("\tmemory[%d] <- rd($%d):%d\n", addr, rd, regs[rd].data);
         }
         memo->write_byte(addr,
                          (unsigned char)((regs[rd].data << 8 * 3) >> 8 * 3));

@@ -1,4 +1,4 @@
-Main:   addi $4, $0, +15 # fib(immediate)
+Main:   addi $4, $0, 30 # fib(immediate)
         jal	Fibonacci.a
 		j	Exit
 Fibonacci.a:	addi	$29,	$29,	-8	#shelter of registers

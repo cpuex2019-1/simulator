@@ -25,11 +25,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    loader ld(argv[1], &log_level); // load program
+    loader *ld = new loader(argv[1], &log_level); // load program
     memory memo(&log_level);
     reg regs[32];
 
-    controller controller(&ld, &memo, regs, &log_level);
+    controller controller(ld, &memo, regs, &log_level);
 
     string str;
     bool end_flag = false;
@@ -38,8 +38,8 @@ int main(int argc, char *argv[]) {
     while (getline(cin, str)) {
         if (str == "s" || str == "step" || str == "") { // run step by step
             if (log_level >= TRACE) {
-                ld.print_label_map();
-                ld.print_raw_program();
+                ld->print_label_map();
+                ld->print_raw_program();
             }
             if (controller.exec_step(break_p) == END) {
                 end_flag = true;
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
             if (status == BREAK) {
                 printf("\nbreakpoint!\n");
                 string one_raw_program =
-                    ld.get_raw_program_by_line_num(controller.line_num);
+                    ld->get_raw_program_by_line_num(controller.line_num);
                 printf("[next instruction]\t%d:\t%s\n\n", controller.line_num,
                        one_raw_program.c_str());
 
@@ -119,13 +119,13 @@ int main(int argc, char *argv[]) {
             }
 
         } else if (str == "p" || str == "program") { // print program
-            ld.print_label_map();
-            ld.print_raw_program();
+            ld->print_label_map();
+            ld->print_raw_program();
             printf("now processing line: %d\n", controller.line_num);
 
         } else if (str == "b" || str == "break") { // set breakpoint
-            ld.print_label_map();
-            ld.print_raw_program();
+            ld->print_label_map();
+            ld->print_raw_program();
             printf("\nset break break_point by line number : ");
             getline(cin, str);
 
