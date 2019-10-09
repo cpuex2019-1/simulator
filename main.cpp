@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     memory memo(&log_level);
     reg regs[32];
 
-    controller controller(ld, &memo, regs, &log_level);
+    controller controller(argv[1], ld, &memo, regs, &log_level);
 
     string str;
     bool end_flag = false;

@@ -1179,6 +1179,19 @@ vector<int> loader::format_code(vector<string> code) {
         result.push_back(JALR);
     } else if (opecode == "out") { // output 未対応
         result.push_back(OUT);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rs = get_reg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
     } else {
         if (opecode != "") {
             if (*log_level >= FATAL) {

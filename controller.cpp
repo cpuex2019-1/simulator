@@ -6,10 +6,12 @@
 #include "global.h"
 #include <regex>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 using namespace std;
 
-controller::controller(loader *l, memory *m, reg r[], Log *l_level) {
+controller::controller(const char *fname, loader *l, memory *m, reg r[],
+                       Log *l_level) {
     ld = l;
     memo = m;
     regs = r;
@@ -18,7 +20,20 @@ controller::controller(loader *l, memory *m, reg r[], Log *l_level) {
 
     regs[0].data = 0;
     regs[29].data = memorySize - 4; // init sp;
+
+    // for output
+    string filename = fname;
+    filename.pop_back(); // 最後のsを削除
+    filename = filename + "out";
+    outputfile = fopen(filename.c_str(), "w");
+    if (outputfile == NULL) { // オープンに失敗した場合
+        printf("cannot open file\n");
+        exit(1);
+    }
 }
+
+// destructor
+controller::~controller() { fclose(outputfile); }
 
 Status controller::exec_step(int break_point) {
 
@@ -45,6 +60,7 @@ Status controller::exec_step(int break_point) {
     if (line_num == break_point) {
         return BREAK;
     } else if (line_num >= ld->end_line_num) {
+        fclose(outputfile);
         return END;
     }
 
@@ -694,11 +710,13 @@ void controller::exec_code(vector<int> line_vec) {
         }
         line_num++;
 
-    } else if (opecode == OUT) { // output 未対応
+    } else if (opecode == OUT) { // out rs
+        int rs = *iter;
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\tOUT\n");
+            printf("\tOUT rs($%d):%d\n", rs, regs[rs].data);
         }
+        fprintf(outputfile, "%d\n", regs[rs].data);
         line_num++;
 
     } else {

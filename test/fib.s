@@ -1,4 +1,4 @@
-Main:   addi $4, $0, 30 # fib(immediate)
+Main:   addi $4, $0, 8 # fib(immediate)
         jal	Fibonacci.a
 		j	Exit
 Fibonacci.a:	addi	$29,	$29,	-8	#shelter of registers
@@ -24,3 +24,4 @@ Return:		lw	$31,	0($29)		#shelter of registers
 		addi	$29,	$29,	8
 		jr	$31
 Exit:
+    out $2
