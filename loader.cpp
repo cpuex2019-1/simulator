@@ -336,10 +336,10 @@ void loader::load_line(string line) {
             raw_program.push_back("\t\t" + opecode_str + "\t" + res);
         }
 
-        line_num++; // increment before processing the line
         vector<int> formatted_code = format_code(code);
         program_map.push_back(formatted_code);
         label_str_tmp = "";
+        line_num++; // increment before processing the line
     }
 }
 
@@ -1080,7 +1080,8 @@ vector<int> loader::format_code(vector<string> code) {
             } else {
                 string label_str = *iter;
                 int label_num = get_line_num_by_label(label_str);
-                result.push_back(label_num);
+                result.push_back(label_num - line_num);
+                // printf("line_num:%d, label_num:%d\n", line_num, label_num);
             }
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
@@ -1110,7 +1111,7 @@ vector<int> loader::format_code(vector<string> code) {
             } else {
                 string label_str = *iter;
                 int label_num = get_line_num_by_label(label_str);
-                result.push_back(label_num);
+                result.push_back(label_num - line_num);
             }
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
@@ -1140,7 +1141,7 @@ vector<int> loader::format_code(vector<string> code) {
             } else {
                 string label_str = *iter;
                 int label_num = get_line_num_by_label(label_str);
-                result.push_back(label_num);
+                result.push_back(label_num - line_num);
             }
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,

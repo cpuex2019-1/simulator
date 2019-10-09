@@ -132,11 +132,11 @@ int main(int argc, char *argv[]) {
         } else if (str == "b" || str == "break") { // set breakpoint
             // ld->print_label_map();
             ld->print_raw_program();
-            printf("\nset break break_point by line number : ");
+            printf("\nset break break_point by program address : ");
             getline(cin, str);
 
             try {
-                break_p = stoi(str);
+                break_p = stoi(str) / 4;
             } catch (const std::invalid_argument &e) {
                 if (log_level >= ERROR) {
                     printf("ERROR\tinvalid argument: %s\n", e.what());
