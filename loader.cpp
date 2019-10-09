@@ -10,17 +10,17 @@
 #include <vector>
 using namespace std;
 
+string label_str_tmp;
+
 // constructor
 loader::loader(const char *fname, Log *l_level) {
     file_name = fname;
     log_level = l_level;
+    load_line_num = 0;
     line_num = 0; // reset line number
 
     vector<int> first;
     first.push_back(634);
-    program_map.insert(program_map.begin(), first); // ignore number 0
-    raw_program.insert(raw_program.begin(),
-                       "program begin hear"); // ignore number 0
 
     end_line_num = load_file();
 }
@@ -38,8 +38,8 @@ int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
     sregex_token_iterator end;
     if (iter == end) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tline:%d\tinvalid base plus offset[%s]\n", line_num,
-                   base_plus_offset.c_str());
+            printf("FATAL\tline:%d\tinvalid base plus offset[%s]\n",
+                   load_line_num, base_plus_offset.c_str());
         }
         exit(1);
     } else {
@@ -51,7 +51,7 @@ int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
         } catch (const std::invalid_argument &e) {
             if (*log_level >= FATAL) {
                 printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
-                       line_num, base_plus_offset.c_str());
+                       load_line_num, base_plus_offset.c_str());
             }
             exit(1);
         }
@@ -64,8 +64,8 @@ int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
     sregex_token_iterator end;
     if (iter == end) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tline:%d\tinvalid base plus offset[%s]\n", line_num,
-                   base_plus_offset.c_str());
+            printf("FATAL\tline:%d\tinvalid base plus offset[%s]\n",
+                   load_line_num, base_plus_offset.c_str());
         }
         exit(1);
     } else {
@@ -83,7 +83,7 @@ int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
         } catch (const std::invalid_argument &e) {
             if (*log_level >= FATAL) {
                 printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
-                       line_num, base_plus_offset.c_str());
+                       load_line_num, base_plus_offset.c_str());
             }
             exit(1);
         }
@@ -96,7 +96,7 @@ int loader::get_reg_num(string reg_str) {
     sregex_token_iterator end;
     if (iter == end) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tline:%d\tinvalid register[%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid register[%s]\n", load_line_num,
                    reg_str.c_str());
         }
         exit(1);
@@ -107,7 +107,7 @@ int loader::get_reg_num(string reg_str) {
         } catch (const std::invalid_argument &e) {
             if (*log_level >= FATAL) {
                 printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
-                       line_num, reg_str.c_str());
+                       load_line_num, reg_str.c_str());
             }
             exit(1);
         }
@@ -121,7 +121,7 @@ int loader::get_immediate(string immediate_str) {
     sregex_token_iterator end;
     if (iter == end) {
         if (*log_level >= FATAL) {
-            printf("FATAL\tline:%d\tinvalid immediate[%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid immediate[%s]\n", load_line_num,
                    immediate_str.c_str());
         }
         exit(1);
@@ -130,7 +130,7 @@ int loader::get_immediate(string immediate_str) {
         iter++;
         if (iter == end) {
             if (*log_level >= FATAL) {
-                printf("FATAL\tline:%d\tinvalid immediate[%s]\n", line_num,
+                printf("FATAL\tline:%d\tinvalid immediate[%s]\n", load_line_num,
                        immediate_str.c_str());
             }
             exit(1);
@@ -147,7 +147,7 @@ int loader::get_immediate(string immediate_str) {
             } catch (const std::invalid_argument &e) {
                 if (*log_level >= FATAL) {
                     printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
-                           line_num, immediate_str.c_str());
+                           load_line_num, immediate_str.c_str());
                 }
                 exit(1);
             }
@@ -167,7 +167,7 @@ int loader::load_file() {
     }
     string linebuf;
     while (!input.eof()) {
-        line_num++; // increment before processing the line
+        load_line_num++;
         getline(input, linebuf);
         load_line_label(linebuf);
     }
@@ -177,6 +177,7 @@ int loader::load_file() {
 
     // load program
     line_num = 0;
+    load_line_num = 0;
     input.open(file_name);
     if (!input) {
         if (*log_level >= FATAL) {
@@ -185,7 +186,7 @@ int loader::load_file() {
         exit(1);
     }
     while (!input.eof()) {
-        line_num++; // increment before processing the line
+        load_line_num++;
         getline(input, linebuf);
         load_line(linebuf);
     }
@@ -219,8 +220,20 @@ void loader::load_line_label(string line) {
         res_str = res_str + iter2->str();
     }
 
+    // remove redundant spases
+    vector<string> code;
+    regex sep1("[\\t ]+");
+    sregex_token_iterator iter3(res_str.begin(), res_str.end(), sep1, -1);
+    string res = "";
+    for (; iter3 != end; iter3++) {
+        res = res + iter3->str();
+    }
+
     if (label_str != "") {
         label_map.insert(std::make_pair(label_str, line_num));
+    }
+    if (res != "") { // 命令がある場合
+        line_num++;  // increment before processing the line
     }
 }
 
@@ -242,12 +255,15 @@ void loader::load_line(string line) {
                                 line_not_comment.end(), label_pattern,
                                 {1, -1}); // group1: label, 残り: コード
     sregex_token_iterator end;
+    string label_str = iter2->str();
     iter2++;
     string res_str = "";
     for (; iter2 != end; iter2++) {
         res_str = res_str + iter2->str();
     }
-
+    if (label_str != "") {
+        label_str_tmp = label_str;
+    }
     // split opecode and residual and remove redundant spases
     vector<string> code;
     regex sep1("[\\t ]+");
@@ -259,7 +275,6 @@ void loader::load_line(string line) {
     for (; iter3 != end; iter3++) {
         res = res + iter3->str();
     }
-    raw_program.push_back(opecode_str + "\t" + res);
 
     // process operand (split res by ",")
     regex sep2(",");
@@ -268,9 +283,19 @@ void loader::load_line(string line) {
         code.push_back(iter4->str());
     }
 
-    vector<int> formatted_code = format_code(code);
+    if (code[0] != "") {
+        if (label_str_tmp != "") {
+            raw_program.push_back(label_str_tmp + ":\t" + opecode_str + "\t" +
+                                  res);
+        } else {
+            raw_program.push_back("\t\t" + opecode_str + "\t" + res);
+        }
 
-    program_map.push_back(formatted_code);
+        line_num++; // increment before processing the line
+        vector<int> formatted_code = format_code(code);
+        program_map.push_back(formatted_code);
+        label_str_tmp = "";
+    }
 }
 
 vector<int> loader::format_code(vector<string> code) {
@@ -304,7 +329,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -334,7 +359,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -364,7 +389,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -394,7 +419,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -424,7 +449,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -454,7 +479,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -484,7 +509,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -514,7 +539,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -544,7 +569,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -574,7 +599,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -604,7 +629,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -634,7 +659,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -664,7 +689,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -694,7 +719,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -724,7 +749,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -754,7 +779,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -784,7 +809,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -814,7 +839,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -844,7 +869,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -874,7 +899,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -899,7 +924,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -924,7 +949,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -949,7 +974,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -974,7 +999,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -997,7 +1022,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -1013,7 +1038,7 @@ vector<int> loader::format_code(vector<string> code) {
                 result.push_back(label_num);
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -1043,7 +1068,7 @@ vector<int> loader::format_code(vector<string> code) {
                 result.push_back(label_num);
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -1073,7 +1098,7 @@ vector<int> loader::format_code(vector<string> code) {
                 result.push_back(label_num);
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -1089,7 +1114,7 @@ vector<int> loader::format_code(vector<string> code) {
                 result.push_back(label_num);
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -1105,7 +1130,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -1122,7 +1147,7 @@ vector<int> loader::format_code(vector<string> code) {
                 result.push_back(label_num);
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -1145,7 +1170,7 @@ vector<int> loader::format_code(vector<string> code) {
                 iter++;
             }
         } catch (int arg_num) {
-            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", line_num,
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
@@ -1157,7 +1182,7 @@ vector<int> loader::format_code(vector<string> code) {
     } else {
         if (opecode != "") {
             if (*log_level >= FATAL) {
-                printf("FATAL\tline:%d\tinvalid opecode:%s\n", line_num,
+                printf("FATAL\tline:%d\tinvalid opecode:%s\n", load_line_num,
                        opecode.c_str());
             }
             exit(1);
@@ -1197,31 +1222,28 @@ string loader::get_raw_program_by_line_num(int l_num) {
 void loader::print_label_map() {
     printf("label map\n");
     for (auto itr = label_map.begin(); itr != label_map.end(); ++itr) {
-        printf("\t%s :\t%d\n", itr->first.c_str(), itr->second);
+        printf("\t%s :\t%d\n", itr->first.c_str(), (itr->second) * 4);
     }
 }
 void loader::print_program_map() {
     printf("program map\n");
     int line = 0;
     for (auto itr = program_map.begin(); itr != program_map.end(); ++itr) {
-        if (line != 0) {
-            for (auto itr_int = itr->begin(); itr_int != itr->end();
-                 ++itr_int) {
-                printf("%d\t", *itr_int);
-            }
-            printf("\n");
+        for (auto itr_int = itr->begin(); itr_int != itr->end(); ++itr_int) {
+            printf("%d\t", *itr_int);
         }
+        printf("\n");
+
         line++;
     }
 }
 
 void loader::print_raw_program() {
-    printf("raw program\n");
+    printf("instruction memory\n");
     int line = 0;
     for (auto itr = raw_program.begin(); itr != raw_program.end(); ++itr) {
-        if (line != 0) {
-            printf("%8d:\t%s\n", line, itr->c_str());
-        }
+        printf("%8d:\t%s\n", line * 4, itr->c_str());
+
         line++;
     }
 }

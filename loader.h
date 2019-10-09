@@ -18,6 +18,7 @@ class loader {
 
     // current line number
     int line_num;
+    int load_line_num;
     // label
     map<string, int> label_map;
     // program

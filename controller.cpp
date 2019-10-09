@@ -14,7 +14,8 @@ controller::controller(loader *l, memory *m, reg r[], Log *l_level) {
     memo = m;
     regs = r;
     log_level = l_level;
-    line_num = 1; // (line_num-1)*4 is addr for instruction?
+    line_num = 0;
+
     regs[0].data = 0;
     regs[29].data = memorySize - 4; // init sp;
 }
@@ -26,7 +27,7 @@ Status controller::exec_step(int break_point) {
     if (*log_level >= INFO) {
         // raw_programを出力
         string one_raw_program = ld->get_raw_program_by_line_num(line_num);
-        printf("INFO\t%d:\t%s", line_num, one_raw_program.c_str());
+        printf("INFO\t%d:\t%s", line_num * 4, one_raw_program.c_str());
         if (*log_level >= TRACE) {
             printf("\t(TRACE\t");
             for (auto itr_str = line_vec.begin(); itr_str != line_vec.end();
@@ -582,7 +583,7 @@ void controller::exec_code(vector<int> line_vec) {
     } else if (opecode == BC) { // BC label(pc+offset<<2)
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\tline_num:%d to %d\n", line_num, *iter);
+            printf("\tprogram counter:%d to %d\n", line_num * 4, (*iter) * 4);
         }
         line_num = *iter;
 
@@ -591,18 +592,25 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rt = *iter;
         iter++;
+        int label_line = *iter;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tprogram counter <- if (rs($%d):%d == rt($%d):%d) then %d "
+                   "else "
+                   "%d\n",
+                   rs, regs[rs].data, rt, regs[rt].data, label_line * 4,
+                   line_num * 4 + 4);
+        }
 
         if (regs[rs].data == regs[rt].data) {
-            line_num = *iter;
+            line_num = label_line;
         } else {
             line_num++;
         }
 
         if (*log_level >= DEBUG) {
-            printf("DEBUG\n");
-            printf("\tline_num <- if (rs($%d):%d == rt($%d):%d) then %d else "
-                   "next_line\n",
-                   rs, regs[rs].data, rt, regs[rt].data, *iter);
+            printf("\tprogram counter:%d\n", line_num * 4);
         }
 
     } else if (opecode == BNE) { // BNE rs rt label(pc+offset<<2)
@@ -610,24 +618,30 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rt = *iter;
         iter++;
-
-        if (regs[rs].data != regs[rt].data) {
-            line_num = *iter;
-        } else {
-            line_num++;
-        }
+        int label_line = *iter;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\tline_num <- if (rs($%d):%d != rt($%d):%d) then %d else "
-                   "next_line\n",
-                   rs, regs[rs].data, rt, regs[rt].data, *iter);
+            printf("\tprogram counter <- if (rs($%d):%d != rt($%d):%d) then %d "
+                   "else "
+                   "%d\n",
+                   rs, regs[rs].data, rt, regs[rt].data, label_line * 4,
+                   line_num * 4 + 4);
+        }
+
+        if (regs[rs].data != regs[rt].data) {
+            line_num = label_line;
+        } else {
+            line_num++;
+        }
+        if (*log_level >= DEBUG) {
+            printf("\tprogram counter:%d\n", line_num * 4);
         }
 
     } else if (opecode == J) { // J label
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\tline_num:%d to %d\n", line_num, *iter);
+            printf("\tprogram counter:%d to %d\n", line_num * 4, (*iter) * 4);
         }
         line_num = *iter;
 
@@ -637,22 +651,20 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trs($%d):%d\n", rs, regs[rs].data);
-            printf("\tline_num:%d to %d(rs/4+1)\n", line_num,
-                   ((regs[rs].data / 4) + 1));
+            printf("\tprogram counter:%d to %d\n", line_num * 4, regs[rs].data);
         }
-        line_num =
-            (regs[rs].data / 4) + 1; // convert program addr to line number;
+        line_num = regs[rs].data / 4; // convert program addr to line number;
 
     } else if (opecode == JAL) { // JAL label (next addr is line_num*4)
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\t$31:%d\n", regs[31].data);
-            printf("\t$31 <- return addr:%d\n", line_num * 4);
+            printf("\t$31 <- return addr:%d\n", line_num * 4 + 4);
         }
-        regs[31].data = line_num * 4;
+        regs[31].data = line_num * 4 + 4;
         if (*log_level >= DEBUG) {
-            printf("\tline_num:%d to %d\n", line_num, *iter);
+            printf("\tprogram counter:%d to %d\n", line_num * 4, (*iter) * 4);
         }
         line_num = *iter;
 
@@ -664,16 +676,16 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\tline_num <- (rs($%d):%d)*4+1 \trd($%d) <- return addr: "
+            printf("\tprogram counter <- rs($%d):%d \trd($%d) <- return addr: "
                    "%d\n ",
-                   rs, regs[rs].data, rd, line_num * 4);
+                   rs, regs[rs].data, rd, line_num * 4 + 4);
         }
-        regs[rd].data = line_num * 4;
+        regs[rd].data = line_num * 4 + 4;
         if (*log_level >= DEBUG) {
-            printf("\tline_num:%d to %d\trd($%d):%d\n", line_num,
-                   (regs[rs].data / 4 + 1), rd, regs[rd].data);
+            printf("\tprogram counter:%d to %d\trd($%d):%d\n", line_num * 4,
+                   regs[rs].data, rd, regs[rd].data);
         }
-        line_num = (regs[rs].data / 4 + 1);
+        line_num = regs[rs].data / 4;
 
     } else if (opecode == NOP) { // nop
         if (*log_level >= DEBUG) {

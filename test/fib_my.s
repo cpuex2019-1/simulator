@@ -1,4 +1,3 @@
-#   main program starts
 Main:
     addi    $2, $0, 30
     jal fib.10
@@ -16,7 +15,7 @@ eq_else.24:
     sw  $2, 0($3)
     mov $30, $31
     mov $2, $5
-    sw  $30, ($3)
+    sw  $30, 4($3)
     addi    $3, $3, 8
     jal fib.10
     addi    $3, $3, -8
