@@ -949,6 +949,149 @@ vector<int> loader::format_code(vector<string> code) {
             exit(1);
         }
 
+    } else if (opecode == "fadd") { // FADD rd <- rs + rt
+        result.push_back(FADD);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                result.push_back(rd);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                int rt = get_reg_num(*iter);
+                result.push_back(rt);
+                iter++;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "fsub") { // FADD rd <- rs + rt
+        result.push_back(FSUB);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                result.push_back(rd);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                int rt = get_reg_num(*iter);
+                result.push_back(rt);
+                iter++;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "fmul") { // FADD rd <- rs + rt
+        result.push_back(FMUL);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                result.push_back(rd);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                int rt = get_reg_num(*iter);
+                result.push_back(rt);
+                iter++;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "fdiv") { // FADD rd <- rs + rt
+        result.push_back(FDIV);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                result.push_back(rd);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                int rt = get_reg_num(*iter);
+                result.push_back(rt);
+                iter++;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "sqrt") { // SQRT rd <- sqrt(rs)
+        result.push_back(SQRT);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                result.push_back(rd);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
     } else if (opecode == "lw") { // LW rd, offset(base)
         result.push_back(LW);
         try {
