@@ -247,11 +247,11 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d & immediate:%d\n", rd, rs,
-                   regs[rs].data, immediate);
+            printf("\trd($%d) <- rs($%d):%d & zero_extend(immediate):%d\n", rd,
+                   rs, regs[rs].data, immediate);
         }
 
-        regs[rd].data = regs[rs].data & immediate;
+        regs[rd].data = regs[rs].data & (immediate & 0xffff);
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -289,10 +289,10 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d | immediate:%d\n", rd, rs,
-                   regs[rs].data, immediate);
+            printf("\trd($%d) <- rs($%d):%d | zero_extend(immediate):%d\n", rd,
+                   rs, regs[rs].data, immediate);
         }
-        regs[rd].data = regs[rs].data | immediate;
+        regs[rd].data = regs[rs].data | (immediate & 0xffff);
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -351,10 +351,10 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d ^ immediate:%d\n", rd, rs,
-                   regs[rs].data, immediate);
+            printf("\trd($%d) <- rs($%d):%d ^ zero_extend(immediate):%d\n", rd,
+                   rs, regs[rs].data, immediate);
         }
-        regs[rd].data = regs[rs].data ^ immediate;
+        regs[rd].data = regs[rs].data ^ (immediate & 0xffff);
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
