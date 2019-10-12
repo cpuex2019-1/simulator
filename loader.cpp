@@ -949,7 +949,7 @@ vector<int> loader::format_code(vector<string> code) {
             exit(1);
         }
 
-    } else if (opecode == "fadd") { // FADD rd <- rs + rt
+    } else if (opecode == "fadd") { // FADD rd <- rs +. rt
         result.push_back(FADD);
         try {
             if (iter == code.end()) {
@@ -979,7 +979,7 @@ vector<int> loader::format_code(vector<string> code) {
             exit(1);
         }
 
-    } else if (opecode == "fsub") { // FADD rd <- rs + rt
+    } else if (opecode == "fsub") { // FSUB rd <- rs -. rt
         result.push_back(FSUB);
         try {
             if (iter == code.end()) {
@@ -1009,7 +1009,7 @@ vector<int> loader::format_code(vector<string> code) {
             exit(1);
         }
 
-    } else if (opecode == "fmul") { // FADD rd <- rs + rt
+    } else if (opecode == "fmul") { // FMUL rd <- rs *. rt
         result.push_back(FMUL);
         try {
             if (iter == code.end()) {
@@ -1039,7 +1039,7 @@ vector<int> loader::format_code(vector<string> code) {
             exit(1);
         }
 
-    } else if (opecode == "fdiv") { // FADD rd <- rs + rt
+    } else if (opecode == "fdiv") { // FDIV rd <- rs /. rt
         result.push_back(FDIV);
         try {
             if (iter == code.end()) {
