@@ -1,8 +1,20 @@
-arith_logic1: #シミュレータデバッグ用（ループするかも）
-    addi    $8, $0, ha(arith_logic2)
-    addi    $9, $0, lo(arith_logic2)
+arith_float:
+    addi    $4, $0, 16256   # 1.0の上位16bit
+    slli    $4, $4, 16
+    addi    $5, $0, 16448   # 3.0の上位16bit
+    slli    $5, $5, 16
+
+    fadd     $6, $5, $4
+    fsub     $6, $5, $4
+    fmul     $6, $5, $5
+    fdiv     $6, $4, $5
+    sqrt     $6, $5
+
+arith_logic1:
     addi    $1, $0, 2
     addi    $2, $0, 3
+    addi    $8, $0, ha(arith_logic2)
+    addi    $9, $0, lo(arith_logic2)
     bc  arith_logic3
 arith_logic2:
     add     $3, $0, $1

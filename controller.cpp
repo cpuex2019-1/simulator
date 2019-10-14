@@ -4,11 +4,17 @@
 #include "controller.h"
 #include "asm.h"
 #include "global.h"
+#include <cmath>
 #include <regex>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 using namespace std;
+
+union IntAndFloat {
+    int i;
+    float f;
+};
 
 controller::controller(const char *fname, loader *l, memory *m, reg r[],
                        Log *l_level) {
@@ -247,11 +253,11 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d & immediate:%d\n", rd, rs,
-                   regs[rs].data, immediate);
+            printf("\trd($%d) <- rs($%d):%d & zero_extend(immediate):%d\n", rd,
+                   rs, regs[rs].data, immediate);
         }
 
-        regs[rd].data = regs[rs].data & immediate;
+        regs[rd].data = regs[rs].data & (immediate & 0xffff);
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -289,10 +295,10 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d | immediate:%d\n", rd, rs,
-                   regs[rs].data, immediate);
+            printf("\trd($%d) <- rs($%d):%d | zero_extend(immediate):%d\n", rd,
+                   rs, regs[rs].data, immediate);
         }
-        regs[rd].data = regs[rs].data | immediate;
+        regs[rd].data = regs[rs].data | (immediate & 0xffff);
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -351,10 +357,10 @@ void controller::exec_code(vector<int> line_vec) {
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d ^ immediate:%d\n", rd, rs,
-                   regs[rs].data, immediate);
+            printf("\trd($%d) <- rs($%d):%d ^ zero_extend(immediate):%d\n", rd,
+                   rs, regs[rs].data, immediate);
         }
-        regs[rd].data = regs[rs].data ^ immediate;
+        regs[rd].data = regs[rs].data ^ (immediate & 0xffff);
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
@@ -488,6 +494,133 @@ void controller::exec_code(vector<int> line_vec) {
 
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+
+        line_num++;
+
+    } else if (opecode == FADD) { // FADD rd <- rs +. rt
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        int rt = *iter;
+        union IntAndFloat rd_iandf, rs_iandf, rt_iandf;
+        rd_iandf.i = regs[rd].data;
+        rs_iandf.i = regs[rs].data;
+        rt_iandf.i = regs[rt].data;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($%d) <- rs($%d):%f +. rt($%d):%f\n", rd, rs,
+                   rs_iandf.f, rt, rt_iandf.f);
+        }
+        rd_iandf.f = rs_iandf.f + rt_iandf.f;
+        regs[rd].data = rd_iandf.i;
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+        }
+
+        line_num++;
+
+    } else if (opecode == FSUB) { // FSUB rd <- rs -. rt
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        int rt = *iter;
+        union IntAndFloat rd_iandf, rs_iandf, rt_iandf;
+        rd_iandf.i = regs[rd].data;
+        rs_iandf.i = regs[rs].data;
+        rt_iandf.i = regs[rt].data;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($%d) <- rs($%d):%f -. rt($%d):%f\n", rd, rs,
+                   rs_iandf.f, rt, rt_iandf.f);
+        }
+        rd_iandf.f = rs_iandf.f - rt_iandf.f;
+        regs[rd].data = rd_iandf.i;
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+        }
+
+        line_num++;
+
+    } else if (opecode == FMUL) { // FMUL rd <- rs *. rt
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        int rt = *iter;
+        union IntAndFloat rd_iandf, rs_iandf, rt_iandf;
+        rd_iandf.i = regs[rd].data;
+        rs_iandf.i = regs[rs].data;
+        rt_iandf.i = regs[rt].data;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($%d) <- rs($%d):%f *. rt($%d):%f\n", rd, rs,
+                   rs_iandf.f, rt, rt_iandf.f);
+        }
+        rd_iandf.f = rs_iandf.f * rt_iandf.f;
+        regs[rd].data = rd_iandf.i;
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+        }
+
+        line_num++;
+
+    } else if (opecode == FDIV) { // FDIV rd <- rs /. rt
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        int rt = *iter;
+        union IntAndFloat rd_iandf, rs_iandf, rt_iandf;
+        rd_iandf.i = regs[rd].data;
+        rs_iandf.i = regs[rs].data;
+        rt_iandf.i = regs[rt].data;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($%d) <- rs($%d):%f /. rt($%d):%f\n", rd, rs,
+                   rs_iandf.f, rt, rt_iandf.f);
+        }
+        rd_iandf.f = rs_iandf.f / rt_iandf.f;
+        regs[rd].data = rd_iandf.i;
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+        }
+
+        line_num++;
+
+    } else if (opecode == SQRT) { // SQRT rd <- sqrt(rs)
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        union IntAndFloat rd_iandf, rs_iandf;
+        rd_iandf.i = regs[rd].data;
+        rs_iandf.i = regs[rs].data;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($%d) <- sqrt(rs($%d):%f)\n", rd, rs, rs_iandf.f);
+        }
+        rd_iandf.f = sqrt(rs_iandf.f);
+        regs[rd].data = rd_iandf.i;
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%f\n", rd, rd_iandf.f);
         }
 
         line_num++;
