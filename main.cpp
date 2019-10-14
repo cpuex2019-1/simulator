@@ -25,11 +25,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    loader ld(argv[1], &log_level); // load program
+    loader *ld = new loader(argv[1], &log_level); // load program
     memory memo(&log_level);
     reg regs[32];
 
-    controller controller(&ld, &memo, regs, &log_level);
+    controller controller(argv[1], ld, &memo, regs, &log_level);
 
     string str;
     bool end_flag = false;
@@ -37,38 +37,43 @@ int main(int argc, char *argv[]) {
     print_prompt();
     while (getline(cin, str)) {
         if (str == "s" || str == "step" || str == "") { // run step by step
-            if (log_level >= TRACE) {
-                ld.print_label_map();
-                ld.print_raw_program();
+
+            if (!end_flag) {
+                if (log_level >= TRACE) {
+                    // ld->print_label_map();
+                    ld->print_raw_program();
+                }
+                if (controller.exec_step(break_p) == END) {
+                    end_flag = true;
+                };
             }
-            if (controller.exec_step(break_p) == END) {
-                end_flag = true;
-            };
 
         } else if (str == "a" || str == "all") { // run all
-            clock_t start = clock();
-            int count = 0;
-            Status status = ACTIVE;
-            while (status == ACTIVE) {
-                status = controller.exec_step(break_p);
-                count++;
-            };
-            clock_t end = clock();
-            const double time =
-                static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
+            if (!end_flag) {
+                clock_t start = clock();
+                int count = 0;
+                Status status = ACTIVE;
+                while (status == ACTIVE) {
+                    status = controller.exec_step(break_p);
+                    count++;
+                };
+                clock_t end = clock();
+                const double time =
+                    static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
 
-            if (status == BREAK) {
-                printf("\nbreakpoint!\n");
-                string one_raw_program =
-                    ld.get_raw_program_by_line_num(controller.line_num);
-                printf("[next instruction]\t%d:\t%s\n\n", controller.line_num,
-                       one_raw_program.c_str());
+                if (status == BREAK) {
+                    printf("\nbreakpoint!\n");
+                    string one_raw_program =
+                        ld->get_raw_program_by_line_num(controller.line_num);
+                    printf("[next instruction]\t%d:\t%s\n\n",
+                           controller.line_num, one_raw_program.c_str());
 
-            } else if (status == END) {
-                end_flag = true;
-            };
-            printf("time %lf [ms]\n", time);
-            printf("%d instructions\n", count);
+                } else if (status == END) {
+                    end_flag = true;
+                };
+                printf("time %lf [ms]\n", time);
+                printf("%d instructions\n", count);
+            }
 
         } else if (str == "r" || str == "reg") { // print register
             printf("which register? ( input 0~31 or a (all) ) : ");
@@ -119,18 +124,19 @@ int main(int argc, char *argv[]) {
             }
 
         } else if (str == "p" || str == "program") { // print program
-            ld.print_label_map();
-            ld.print_raw_program();
-            printf("now processing line: %d\n", controller.line_num);
+            ld->print_label_map();
+            ld->print_raw_program();
+            printf("now processing program addr: %d\n",
+                   controller.line_num * 4);
 
         } else if (str == "b" || str == "break") { // set breakpoint
-            ld.print_label_map();
-            ld.print_raw_program();
-            printf("\nset break break_point by line number : ");
+            // ld->print_label_map();
+            ld->print_raw_program();
+            printf("\nset break break_point by program address : ");
             getline(cin, str);
 
             try {
-                break_p = stoi(str);
+                break_p = stoi(str) / 4;
             } catch (const std::invalid_argument &e) {
                 if (log_level >= ERROR) {
                     printf("ERROR\tinvalid argument: %s\n", e.what());
