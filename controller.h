@@ -30,7 +30,8 @@ class controller {
     int line_num;
 
     // constructor
-    controller(const char *fname, loader *l, memory *m, reg *r, Log *l_level);
+    controller(const char *fname, loader *l, memory *m, reg *r, freg *fr,
+               Log *l_level);
     // destructor
     ~controller();
 

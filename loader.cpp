@@ -114,6 +114,30 @@ int loader::get_reg_num(string reg_str) {
     }
 }
 
+int loader::get_freg_num(string reg_str) {
+    regex sep("^\\$f(3[0-1]|[1-2][0-9]|[0-9])$");
+    sregex_token_iterator iter(reg_str.begin(), reg_str.end(), sep, 1);
+    sregex_token_iterator end;
+    if (iter == end) {
+        if (*log_level >= FATAL) {
+            printf("FATAL\tline:%d\tinvalid register[%s]\n", load_line_num,
+                   reg_str.c_str());
+        }
+        exit(1);
+    } else {
+        try {
+            int reg_num = stoi(iter->str()); // convert string to int
+            return reg_num;
+        } catch (const std::invalid_argument &e) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
+                       load_line_num, reg_str.c_str());
+            }
+            exit(1);
+        }
+    }
+}
+
 int loader::get_immediate(string init_immediate_str) {
     // check immediate
     string immediate_str = init_immediate_str;
@@ -1015,21 +1039,21 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rd = get_reg_num(*iter);
+                int rd = get_freg_num(*iter);
                 result.push_back(rd);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 2;
             } else {
-                int rs = get_reg_num(*iter);
+                int rs = get_freg_num(*iter);
                 result.push_back(rs);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 3;
             } else {
-                int rt = get_reg_num(*iter);
+                int rt = get_freg_num(*iter);
                 result.push_back(rt);
                 iter++;
             }
@@ -1048,21 +1072,21 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rd = get_reg_num(*iter);
+                int rd = get_freg_num(*iter);
                 result.push_back(rd);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 2;
             } else {
-                int rs = get_reg_num(*iter);
+                int rs = get_freg_num(*iter);
                 result.push_back(rs);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 3;
             } else {
-                int rt = get_reg_num(*iter);
+                int rt = get_freg_num(*iter);
                 result.push_back(rt);
                 iter++;
             }
@@ -1081,21 +1105,21 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rd = get_reg_num(*iter);
+                int rd = get_freg_num(*iter);
                 result.push_back(rd);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 2;
             } else {
-                int rs = get_reg_num(*iter);
+                int rs = get_freg_num(*iter);
                 result.push_back(rs);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 3;
             } else {
-                int rt = get_reg_num(*iter);
+                int rt = get_freg_num(*iter);
                 result.push_back(rt);
                 iter++;
             }
@@ -1114,21 +1138,21 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rd = get_reg_num(*iter);
+                int rd = get_freg_num(*iter);
                 result.push_back(rd);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 2;
             } else {
-                int rs = get_reg_num(*iter);
+                int rs = get_freg_num(*iter);
                 result.push_back(rs);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 3;
             } else {
-                int rt = get_reg_num(*iter);
+                int rt = get_freg_num(*iter);
                 result.push_back(rt);
                 iter++;
             }
@@ -1147,6 +1171,33 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
+                int rd = get_freg_num(*iter);
+                result.push_back(rd);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_freg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 3;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "sltf") { // SLTF Rd = if Rs < Rt then 1 else 0
+        // *rd is a general register
+        result.push_back(SLTF);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
                 int rd = get_reg_num(*iter);
                 result.push_back(rd);
                 iter++;
@@ -1154,12 +1205,19 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 2;
             } else {
-                int rs = get_reg_num(*iter);
+                int rs = get_freg_num(*iter);
                 result.push_back(rs);
                 iter++;
             }
-            if (iter != code.end()) {
+            if (iter == code.end()) {
                 throw 3;
+            } else {
+                int rt = get_freg_num(*iter);
+                result.push_back(rt);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
             }
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
@@ -1311,7 +1369,7 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rd = get_reg_num(*iter);
+                int rd = get_freg_num(*iter);
                 result.push_back(rd);
                 iter++;
             }
@@ -1339,7 +1397,7 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rt = get_reg_num(*iter);
+                int rt = get_freg_num(*iter);
                 result.push_back(rt);
                 iter++;
             }
@@ -1367,14 +1425,14 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rd = get_reg_num(*iter);
+                int rd = get_freg_num(*iter);
                 result.push_back(rd);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 2;
             } else {
-                int rs = get_reg_num(*iter);
+                int rs = get_freg_num(*iter);
                 result.push_back(rs);
                 iter++;
             }
@@ -1643,7 +1701,7 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rd = get_reg_num(*iter);
+                int rd = get_freg_num(*iter);
                 result.push_back(rd);
                 iter++;
             }
@@ -1662,7 +1720,7 @@ vector<int> loader::format_code(vector<string> code) {
             if (iter == code.end()) {
                 throw 1;
             } else {
-                int rs = get_reg_num(*iter);
+                int rs = get_freg_num(*iter);
                 result.push_back(rs);
                 iter++;
             }
