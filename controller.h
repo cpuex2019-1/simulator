@@ -15,6 +15,7 @@ class controller {
     memory *memo;
     loader *ld;
     reg *regs;
+    freg *fregs;
     Log *log_level;
     string filename;
     FILE *outputfile; // 出力ストリーム

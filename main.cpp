@@ -28,8 +28,9 @@ int main(int argc, char *argv[]) {
     loader *ld = new loader(argv[1], &log_level); // load program
     memory memo(&log_level);
     reg regs[32];
+    freg fregs[32];
 
-    controller controller(argv[1], ld, &memo, regs, &log_level);
+    controller controller(argv[1], ld, &memo, regs, fregs, &log_level);
 
     string str;
     bool end_flag = false;

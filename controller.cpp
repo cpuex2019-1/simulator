@@ -17,10 +17,11 @@ union IntAndFloat {
 };
 
 controller::controller(const char *fname, loader *l, memory *m, reg r[],
-                       Log *l_level) {
+                       freg fr[], Log *l_level) {
     ld = l;
     memo = m;
     regs = r;
+    fregs = fr;
     log_level = l_level;
     line_num = 0;
 

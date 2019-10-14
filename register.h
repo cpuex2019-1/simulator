@@ -1,14 +1,25 @@
 // register.h:
 //
-#ifndef   REGISTER_H
-#define   REGISTER_H
+#ifndef REGISTER_H
+#define REGISTER_H
 
 #include "global.h"
 
-class reg{
-public:
+union IntAndFloat {
+    int i;
+    float f;
+};
+
+class reg {
+  public:
     int data;
     reg();
 };
 
-#endif 
+class freg {
+  public:
+    IntAndFloat data;
+    freg();
+};
+
+#endif
