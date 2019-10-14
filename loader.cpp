@@ -1481,7 +1481,7 @@ vector<int> loader::format_code(vector<string> code) {
 
     } else if (opecode == "nop") { // nop
         result.push_back(JALR);
-    } else if (opecode == "out") { // output 未対応
+    } else if (opecode == "out") { // output
         result.push_back(OUT);
         try {
             if (iter == code.end()) {
@@ -1564,7 +1564,6 @@ void loader::print_raw_program() {
     int line = 0;
     for (auto itr = raw_program.begin(); itr != raw_program.end(); ++itr) {
         printf("%8d:\t%s\n", line * 4, itr->c_str());
-
         line++;
     }
 }
