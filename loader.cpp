@@ -120,14 +120,14 @@ int loader::get_reg_num(string reg_str) {
             return reg_num;
         } catch (std::out_of_range &e) {
             if (*log_level >= FATAL) {
-                printf("FATAL\tline:%d\tinvalid base plus offset: "
+                printf("FATAL\tline:%d\tinvalid register: "
                        "[%s](out_of_range)\n",
                        load_line_num, reg_str.c_str());
             }
             exit(1);
         } catch (...) {
             if (*log_level >= FATAL) {
-                printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
+                printf("FATAL\tline:%d\tinvalid register: [%s]\n",
                        load_line_num, reg_str.c_str());
             }
             exit(1);
@@ -151,14 +151,14 @@ int loader::get_freg_num(string reg_str) {
             return reg_num;
         } catch (std::out_of_range &e) {
             if (*log_level >= FATAL) {
-                printf("FATAL\tline:%d\tinvalid base plus offset: "
+                printf("FATAL\tline:%d\tinvalid register: "
                        "[%s](out_of_range)\n",
                        load_line_num, reg_str.c_str());
             }
             exit(1);
         } catch (...) {
             if (*log_level >= FATAL) {
-                printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
+                printf("FATAL\tline:%d\tinvalid register: [%s]\n",
                        load_line_num, reg_str.c_str());
             }
             exit(1);
@@ -212,7 +212,7 @@ int loader::get_arith_immediate(string init_immediate_str) {
 
             } catch (std::out_of_range &e) {
                 if (*log_level >= FATAL) {
-                    printf("FATAL\tline:%d\tinvalid base plus offset: "
+                    printf("FATAL\tline:%d\tinvalid immediate: "
                            "[%s](out_of_range)\n",
                            load_line_num, immediate_str.c_str());
                 }
@@ -261,7 +261,7 @@ int loader::get_arith_immediate(string init_immediate_str) {
                     }
                 } catch (std::out_of_range &e) {
                     if (*log_level >= FATAL) {
-                        printf("FATAL\tline:%d\tinvalid base plus offset: "
+                        printf("FATAL\tline:%d\tinvalid immediate: "
                                "[%s](out_of_range)\n",
                                load_line_num, immediate_str.c_str());
                     }
@@ -327,7 +327,7 @@ int loader::get_logic_immediate(string init_immediate_str) {
 
             } catch (std::out_of_range &e) {
                 if (*log_level >= FATAL) {
-                    printf("FATAL\tline:%d\tinvalid base plus offset: "
+                    printf("FATAL\tline:%d\tinvalid immediate: "
                            "[%s](out_of_range)\n",
                            load_line_num, immediate_str.c_str());
                 }
@@ -376,7 +376,7 @@ int loader::get_logic_immediate(string init_immediate_str) {
                     }
                 } catch (std::out_of_range &e) {
                     if (*log_level >= FATAL) {
-                        printf("FATAL\tline:%d\tinvalid base plus offset: "
+                        printf("FATAL\tline:%d\tinvalid immediate: "
                                "[%s](out_of_range)\n",
                                load_line_num, immediate_str.c_str());
                     }
