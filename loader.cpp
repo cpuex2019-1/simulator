@@ -1310,6 +1310,32 @@ vector<int> loader::format_code(vector<string> code) {
             exit(1);
         }
 
+    } else if (opecode == "fneg") { // FNEG rd <- sqrt(rs)
+        result.push_back(FNEG);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_freg_num(*iter);
+                result.push_back(rd);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_freg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 3;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
     } else if (opecode == "sltf") { // SLTF Rd = if Rs < Rt then 1 else 0
         // *rd is a general register
         result.push_back(SLTF);
