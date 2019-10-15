@@ -209,7 +209,6 @@ int loader::get_arith_immediate(string init_immediate_str) {
                         exit(1);
                     }
                 }
-
             } catch (std::out_of_range &e) {
                 if (*log_level >= FATAL) {
                     printf("FATAL\tline:%d\tinvalid immediate: "
@@ -242,31 +241,16 @@ int loader::get_arith_immediate(string init_immediate_str) {
                 }
                 exit(1);
             } else {
-                try {
-                    string label_str =
-                        iter->str(); // convert string to int to unsigned int
-                    int label_num = get_line_num_by_label(label_str);
-                    unsigned int label_addr = ((unsigned int)label_num) * 4;
+                string label_str =
+                    iter->str(); // convert string to int to unsigned int
+                int label_num = get_line_num_by_label(label_str);
+                unsigned int label_addr = ((unsigned int)label_num) * 4;
 
-                    if (halo == "ha") {
-                        return label_addr >> 16;
-                    } else if (halo == "lo") {
-                        return (label_addr << 16) >> 16;
-                    } else {
-                        if (*log_level >= FATAL) {
-                            printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
-                                   load_line_num, immediate_str.c_str());
-                        }
-                        exit(1);
-                    }
-                } catch (std::out_of_range &e) {
-                    if (*log_level >= FATAL) {
-                        printf("FATAL\tline:%d\tinvalid immediate: "
-                               "[%s](out_of_range)\n",
-                               load_line_num, immediate_str.c_str());
-                    }
-                    exit(1);
-                } catch (...) {
+                if (halo == "ha") {
+                    return label_addr >> 16;
+                } else if (halo == "lo") {
+                    return (label_addr << 16) >> 16;
+                } else {
                     if (*log_level >= FATAL) {
                         printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
                                load_line_num, immediate_str.c_str());
@@ -357,31 +341,16 @@ int loader::get_logic_immediate(string init_immediate_str) {
                 }
                 exit(1);
             } else {
-                try {
-                    string label_str =
-                        iter->str(); // convert string to int to unsigned int
-                    int label_num = get_line_num_by_label(label_str);
-                    unsigned int label_addr = ((unsigned int)label_num) * 4;
+                string label_str =
+                    iter->str(); // convert string to int to unsigned int
+                int label_num = get_line_num_by_label(label_str);
+                unsigned int label_addr = ((unsigned int)label_num) * 4;
 
-                    if (halo == "ha") {
-                        return label_addr >> 16;
-                    } else if (halo == "lo") {
-                        return (label_addr << 16) >> 16;
-                    } else {
-                        if (*log_level >= FATAL) {
-                            printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
-                                   load_line_num, immediate_str.c_str());
-                        }
-                        exit(1);
-                    }
-                } catch (std::out_of_range &e) {
-                    if (*log_level >= FATAL) {
-                        printf("FATAL\tline:%d\tinvalid immediate: "
-                               "[%s](out_of_range)\n",
-                               load_line_num, immediate_str.c_str());
-                    }
-                    exit(1);
-                } catch (...) {
+                if (halo == "ha") {
+                    return label_addr >> 16;
+                } else if (halo == "lo") {
+                    return (label_addr << 16) >> 16;
+                } else {
                     if (*log_level >= FATAL) {
                         printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
                                load_line_num, immediate_str.c_str());
