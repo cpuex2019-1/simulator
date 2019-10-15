@@ -29,11 +29,15 @@ enum Asm {
     FMUL,
     FDIV,
     SQRT,
+    SLTF,
     LW,
     LB,
     SW,
     SB,
     MOV,
+    LF,
+    SF,
+    MOVF,
     BC,
     BEQ,
     BNE,
@@ -41,8 +45,13 @@ enum Asm {
     JR,
     JAL,
     JALR,
+    INB,
+    IN,
+    OUTB,
+    OUT,
+    INF,
+    OUTF,
     NOP,
-    OUT
 };
 
 #endif

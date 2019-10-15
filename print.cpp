@@ -1,7 +1,10 @@
 // print.cpp:
 //
 
-#include <stdio.h>
+#include "print.h"
+#include "register.h"
+#include <cstdio>
+
 void print_binary(int data) {
     unsigned int v = (unsigned int)data;
     unsigned int mask = 1 << 31;
@@ -20,4 +23,20 @@ void print_usage() {
     \tb | break\t: set breakpoint\n \
     \tl | log\t\t: change log level\n \
     \texit\t\t: exit program\n");
+}
+
+void print_reg(int reg_num, reg *regs) {
+    int reg_data = regs[reg_num].data;
+    printf(" $%2d\tint:%9d\thex(16):%8x\tbinary:", reg_num, reg_data,
+           ((unsigned int)reg_data));
+    print_binary(reg_data);
+    printf("\n");
+}
+
+void print_freg(int freg_num, freg *fregs) {
+    IntAndFloat freg_data = fregs[freg_num].data;
+    printf(" $f%2d\tfloat:%9f\thex(16):%8x\tbinary:", freg_num, freg_data.f,
+           ((unsigned int)freg_data.i));
+    print_binary(freg_data.i);
+    printf("\n");
 }

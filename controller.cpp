@@ -5,41 +5,62 @@
 #include "asm.h"
 #include "global.h"
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
 #include <regex>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
 using namespace std;
 
-union IntAndFloat {
-    int i;
-    float f;
-};
-
 controller::controller(const char *fname, loader *l, memory *m, reg r[],
-                       Log *l_level) {
+                       freg fr[], Log *l_level) {
     ld = l;
     memo = m;
     regs = r;
+    fregs = fr;
     log_level = l_level;
+
     line_num = 0;
 
     regs[0].data = 0;
     regs[29].data = memorySize - 4; // init sp;
 
     // for output
-    string filename = fname;
-    filename.pop_back(); // 最後のsを削除
-    filename = filename + "out";
-    outputfile = fopen(filename.c_str(), "w");
-    if (outputfile == NULL) { // オープンに失敗した場合
-        printf("cannot open file\n");
-        exit(1);
+    if (ld->output_exist) {
+        string outputfile_name = fname;
+        outputfile_name.pop_back(); // 最後のsを削除
+        outputfile_name = outputfile_name + "out";
+        outputfile = fopen(outputfile_name.c_str(), "w");
+        if (outputfile == NULL) { // オープンに失敗した場合
+            printf("cannot open output file: %s\n", outputfile_name.c_str());
+            exit(1);
+        }
+    }
+
+    if (ld->input_exist) {
+        string inputfile_name = fname;
+        inputfile_name.pop_back(); // 最後のsを削除
+        inputfile_name = inputfile_name + "txt";
+        ifs.open(inputfile_name);
+        if (!ifs) { // オープンに失敗した場合
+            printf("cannot open input file: %s\n", inputfile_name.c_str());
+            exit(1);
+        }
+        /*
+        inputfile = fopen(inputfile_name.c_str(), "r");
+        if (inputfile == NULL) { // オープンに失敗した場合
+            printf("cannot open input file: %s\n", inputfile_name.c_str());
+            exit(1);
+        }
+        */
     }
 }
 
 // destructor
-controller::~controller() { fclose(outputfile); }
+controller::~controller() {
+    fclose(outputfile);
+    ifs.close();
+}
 
 Status controller::exec_step(int break_point) {
 
@@ -66,7 +87,6 @@ Status controller::exec_step(int break_point) {
     if (line_num == break_point) {
         return BREAK;
     } else if (line_num >= ld->end_line_num) {
-        fclose(outputfile);
         return END;
     }
 
@@ -504,22 +524,18 @@ void controller::exec_code(vector<int> line_vec) {
         int rs = *iter;
         iter++;
         int rt = *iter;
-        union IntAndFloat rd_iandf, rs_iandf, rt_iandf;
-        rd_iandf.i = regs[rd].data;
-        rs_iandf.i = regs[rs].data;
-        rt_iandf.i = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
-            printf("\trd($%d) <- rs($%d):%f +. rt($%d):%f\n", rd, rs,
-                   rs_iandf.f, rt, rt_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d) <- rs($f%d):%f +. rt($f%d):%f\n", rd, rs,
+                   fregs[rs].data.f, rt, fregs[rt].data.f);
         }
-        rd_iandf.f = rs_iandf.f + rt_iandf.f;
-        regs[rd].data = rd_iandf.i;
+
+        fregs[rd].data.f = fregs[rs].data.f + fregs[rt].data.f;
 
         if (*log_level >= DEBUG) {
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
         }
 
         line_num++;
@@ -530,22 +546,18 @@ void controller::exec_code(vector<int> line_vec) {
         int rs = *iter;
         iter++;
         int rt = *iter;
-        union IntAndFloat rd_iandf, rs_iandf, rt_iandf;
-        rd_iandf.i = regs[rd].data;
-        rs_iandf.i = regs[rs].data;
-        rt_iandf.i = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
-            printf("\trd($%d) <- rs($%d):%f -. rt($%d):%f\n", rd, rs,
-                   rs_iandf.f, rt, rt_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d) <- rs($f%d):%f -. rt($f%d):%f\n", rd, rs,
+                   fregs[rs].data.f, rt, fregs[rt].data.f);
         }
-        rd_iandf.f = rs_iandf.f - rt_iandf.f;
-        regs[rd].data = rd_iandf.i;
+
+        fregs[rd].data.f = fregs[rs].data.f - fregs[rt].data.f;
 
         if (*log_level >= DEBUG) {
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
         }
 
         line_num++;
@@ -556,22 +568,18 @@ void controller::exec_code(vector<int> line_vec) {
         int rs = *iter;
         iter++;
         int rt = *iter;
-        union IntAndFloat rd_iandf, rs_iandf, rt_iandf;
-        rd_iandf.i = regs[rd].data;
-        rs_iandf.i = regs[rs].data;
-        rt_iandf.i = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
-            printf("\trd($%d) <- rs($%d):%f *. rt($%d):%f\n", rd, rs,
-                   rs_iandf.f, rt, rt_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d) <- rs($f%d):%f *. rt($f%d):%f\n", rd, rs,
+                   fregs[rs].data.f, rt, fregs[rt].data.f);
         }
-        rd_iandf.f = rs_iandf.f * rt_iandf.f;
-        regs[rd].data = rd_iandf.i;
+
+        fregs[rd].data.f = fregs[rs].data.f * fregs[rt].data.f;
 
         if (*log_level >= DEBUG) {
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
         }
 
         line_num++;
@@ -582,22 +590,18 @@ void controller::exec_code(vector<int> line_vec) {
         int rs = *iter;
         iter++;
         int rt = *iter;
-        union IntAndFloat rd_iandf, rs_iandf, rt_iandf;
-        rd_iandf.i = regs[rd].data;
-        rs_iandf.i = regs[rs].data;
-        rt_iandf.i = regs[rt].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
-            printf("\trd($%d) <- rs($%d):%f /. rt($%d):%f\n", rd, rs,
-                   rs_iandf.f, rt, rt_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d) <- rs($f%d):%f /. rt($f%d):%f\n", rd, rs,
+                   fregs[rs].data.f, rt, fregs[rt].data.f);
         }
-        rd_iandf.f = rs_iandf.f / rt_iandf.f;
-        regs[rd].data = rd_iandf.i;
+
+        fregs[rd].data.f = fregs[rs].data.f / fregs[rt].data.f;
 
         if (*log_level >= DEBUG) {
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
         }
 
         line_num++;
@@ -607,20 +611,43 @@ void controller::exec_code(vector<int> line_vec) {
         iter++;
         int rs = *iter;
         iter++;
-        union IntAndFloat rd_iandf, rs_iandf;
-        rd_iandf.i = regs[rd].data;
-        rs_iandf.i = regs[rs].data;
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
-            printf("\trd($%d) <- sqrt(rs($%d):%f)\n", rd, rs, rs_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d) <- sqrt(rs($f%d):%f)\n", rd, rs,
+                   fregs[rs].data.f);
         }
-        rd_iandf.f = sqrt(rs_iandf.f);
-        regs[rd].data = rd_iandf.i;
+        fregs[rd].data.f = sqrt(fregs[rs].data.f);
 
         if (*log_level >= DEBUG) {
-            printf("\trd($%d):%f\n", rd, rd_iandf.f);
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+        }
+
+        line_num++;
+
+    } else if (opecode == SLTF) { // SLTF Rd[0] = if Rs < Rt then 1 else 0
+        // * rd is a general register
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+        int rt = *iter;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($f%d)[0] <- if (rs($f%d):%f < rt($f%d):%f) then 1 "
+                   "else 0\n",
+                   rd, rs, fregs[rs].data.f, rt, fregs[rt].data.f);
+        }
+        if (fregs[rs].data.f < fregs[rt].data.f) {
+            regs[rd].data = 1;
+        } else {
+            regs[rd].data = 0;
+        }
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
         line_num++;
@@ -725,6 +752,67 @@ void controller::exec_code(vector<int> line_vec) {
         regs[rd].data = regs[rs].data;
         if (*log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+
+        line_num++;
+
+    } else if (opecode == LF) { // LF rd, offset(base)
+        int rd = *iter;
+        iter++;
+        int base = *iter;
+        iter++;
+        int offset = *iter;
+
+        int addr = regs[base].data + offset;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d) <- memory[%d]:(hex)%8x\n", rd, addr,
+                   memo->read_word(addr));
+        }
+        fregs[rd].data.i = memo->read_word(addr);
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+        }
+
+        line_num++;
+
+    } else if (opecode == SF) {
+        int rd = *iter;
+        iter++;
+        int base = *iter;
+        iter++;
+        int offset = *iter;
+
+        int addr = regs[base].data + offset;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tmemory[%d]:(hex)%8x\n", addr, memo->read_word(addr));
+            printf("\tmemory[%d] <- rd($f%d):%f\n", addr, rd, fregs[rd].data.f);
+        }
+        memo->write_word(addr, fregs[rd].data.i);
+        if (*log_level >= DEBUG) {
+            printf("\tmemory[%d]:(hex)%8x\n", addr, memo->read_word(addr));
+        }
+
+        line_num++;
+
+    } else if (opecode == MOVF) { // MOVF rd <- rs
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d) <- rs($f%d):%f\n", rd, rs, fregs[rs].data.f);
+        }
+        fregs[rd].data.f = fregs[rs].data.f;
+        if (*log_level >= DEBUG) {
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
         }
 
         line_num++;
@@ -851,10 +939,50 @@ void controller::exec_code(vector<int> line_vec) {
                    regs[rd].data);
         }
 
-    } else if (opecode == NOP) { // nop
+    } else if (opecode == INB) { // INB rd
+        int rd = *iter;
+        char str;
+        ifs.get(str);
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\tNOP\n");
+            printf("\trd($%d):(hex)%08x <- get(char):%c\n", rd, regs[rd].data,
+                   str);
+        }
+
+        regs[rd].data = (int)((unsigned char)str);
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):(hex)%08x\n", rd, regs[rd].data);
+        }
+        line_num++;
+
+    } else if (opecode == IN) { // IN rd
+        int rd = *iter;
+        int tmp;
+        ifs >> tmp;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tIN rd($%d):%d <- get(int):%d\n", rd, regs[rd].data, tmp);
+        }
+
+        regs[rd].data = tmp;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+        line_num++;
+
+    } else if (opecode == OUTB) { // outb rs
+        int rs = *iter;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tOUTB rs($%d):(hex)%08x\n", rs, regs[rs].data);
+        }
+        char lower8 = (char)(((unsigned int)regs[rs].data) & 0xff);
+        fprintf(outputfile, "%c", lower8);
+
+        if (*log_level >= DEBUG) {
+            printf("\tout(char):%c\n", lower8);
         }
         line_num++;
 
@@ -864,7 +992,47 @@ void controller::exec_code(vector<int> line_vec) {
             printf("DEBUG\n");
             printf("\tOUT rs($%d):%d\n", rs, regs[rs].data);
         }
-        fprintf(outputfile, "%d\n", regs[rs].data);
+        fprintf(outputfile, "%d", regs[rs].data);
+        if (*log_level >= DEBUG) {
+            printf("\tout(char):%d\n",
+                   (char)(((unsigned int)regs[rs].data) & 0xff));
+        }
+        line_num++;
+
+    } else if (opecode == INF) { // INF rd
+        int rd = *iter;
+        float tmp;
+        ifs >> tmp;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tINF rd($f%d):%f <- get(float):%f\n", rd, fregs[rd].data.f,
+                   tmp);
+        }
+
+        fregs[rd].data.f = tmp;
+        if (*log_level >= DEBUG) {
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+        }
+        line_num++;
+
+    } else if (opecode == OUTF) { // OUTF rs
+        int rs = *iter;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tOUTF rs($%d):%f\n", rs, fregs[rs].data.f);
+        }
+        fprintf(outputfile, "%f", fregs[rs].data.f);
+        if (*log_level >= DEBUG) {
+            printf("\tout(float):%f\n", fregs[rs].data.f);
+        }
+        line_num++;
+
+    } else if (opecode == NOP) { // nop
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tNOP\n");
+        }
         line_num++;
 
     } else {

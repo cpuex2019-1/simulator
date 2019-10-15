@@ -7,6 +7,7 @@
 #include "loader.h"
 #include "memory.h"
 #include "register.h"
+#include <fstream>
 #include <string>
 
 enum Status { ACTIVE, BREAK, END };
@@ -15,9 +16,12 @@ class controller {
     memory *memo;
     loader *ld;
     reg *regs;
+    freg *fregs;
     Log *log_level;
     string filename;
-    FILE *outputfile; // 出力ストリーム
+    FILE *outputfile; // 出力
+    // FILE *inputfile;  // 入力
+    ifstream ifs; // 入力
 
     void exec_code(vector<int> line_vec);
     sim_addr get_addr_by_base_plus_offset(string base_plus_offset);
@@ -29,7 +33,8 @@ class controller {
     int line_num;
 
     // constructor
-    controller(const char *fname, loader *l, memory *m, reg *r, Log *l_level);
+    controller(const char *fname, loader *l, memory *m, reg *r, freg *fr,
+               Log *l_level);
     // destructor
     ~controller();
 
