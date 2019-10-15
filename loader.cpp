@@ -19,8 +19,8 @@ loader::loader(const char *fname, Log *l_level) {
     load_line_num = 0;
     line_num = 0; // reset line number
 
-    vector<int> first;
-    first.push_back(634);
+    output_exist = false;
+    input_exist = false;
 
     end_line_num = load_file();
 }
@@ -1619,7 +1619,7 @@ vector<int> loader::format_code(vector<string> code) {
             exit(1);
         }
 
-    } else if (opecode == "INB") { // INB rd
+    } else if (opecode == "inb") { // INB rd
         result.push_back(INB);
         try {
             if (iter == code.end()) {
@@ -1637,8 +1637,9 @@ vector<int> loader::format_code(vector<string> code) {
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
+        input_exist = true;
 
-    } else if (opecode == "IN") { // IN rd
+    } else if (opecode == "in") { // IN rd
         result.push_back(IN);
         try {
             if (iter == code.end()) {
@@ -1656,6 +1657,7 @@ vector<int> loader::format_code(vector<string> code) {
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
+        input_exist = true;
 
     } else if (opecode == "outb") { // OUTB rs
         result.push_back(OUTB);
@@ -1676,6 +1678,8 @@ vector<int> loader::format_code(vector<string> code) {
             exit(1);
         }
 
+        output_exist = true;
+
     } else if (opecode == "out") { // OUT rs
         result.push_back(OUT);
         try {
@@ -1694,8 +1698,9 @@ vector<int> loader::format_code(vector<string> code) {
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
+        output_exist = true;
 
-    } else if (opecode == "INF") { // INF rd
+    } else if (opecode == "inf") { // INF rd
         result.push_back(INF);
         try {
             if (iter == code.end()) {
@@ -1713,6 +1718,7 @@ vector<int> loader::format_code(vector<string> code) {
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
+        input_exist = true;
 
     } else if (opecode == "outf") { // OUTF rs
         result.push_back(OUTF);
@@ -1732,6 +1738,7 @@ vector<int> loader::format_code(vector<string> code) {
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
+        output_exist = true;
 
     } else if (opecode == "nop") { // nop
         result.push_back(JALR);

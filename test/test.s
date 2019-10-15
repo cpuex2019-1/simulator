@@ -1,14 +1,21 @@
+input_output:
+    inb     $1
+    outb    $1
+    in      $1
+    out     $1
+    inf     $f1
+    outf    $f1
 arith_float:
     addi    $4, $0, 16256   # 1.0の上位16bit
     slli    $4, $4, 16
     addi    $5, $0, 16448   # 3.0の上位16bit
     slli    $5, $5, 16
 
-    fadd     $6, $5, $4
-    fsub     $6, $5, $4
-    fmul     $6, $5, $5
-    fdiv     $6, $4, $5
-    sqrt     $6, $5
+    fadd     $f6, $f5, $f4
+    fsub     $f6, $f5, $f4
+    fmul     $f6, $f5, $f5
+    fdiv     $f6, $f4, $f5
+    sqrt     $f6, $f5
 
 arith_logic1:
     addi    $1, $0, 2

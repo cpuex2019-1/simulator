@@ -5,9 +5,10 @@
 #include "asm.h"
 #include "global.h"
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
 #include <regex>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
 using namespace std;
 
@@ -18,24 +19,48 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
     regs = r;
     fregs = fr;
     log_level = l_level;
+
     line_num = 0;
 
     regs[0].data = 0;
     regs[29].data = memorySize - 4; // init sp;
 
     // for output
-    string filename = fname;
-    filename.pop_back(); // 最後のsを削除
-    filename = filename + "out";
-    outputfile = fopen(filename.c_str(), "w");
-    if (outputfile == NULL) { // オープンに失敗した場合
-        printf("cannot open file\n");
-        exit(1);
+    if (ld->output_exist) {
+        string outputfile_name = fname;
+        outputfile_name.pop_back(); // 最後のsを削除
+        outputfile_name = outputfile_name + "out";
+        outputfile = fopen(outputfile_name.c_str(), "w");
+        if (outputfile == NULL) { // オープンに失敗した場合
+            printf("cannot open output file: %s\n", outputfile_name.c_str());
+            exit(1);
+        }
+    }
+
+    if (ld->input_exist) {
+        string inputfile_name = fname;
+        inputfile_name.pop_back(); // 最後のsを削除
+        inputfile_name = inputfile_name + "txt";
+        ifs.open(inputfile_name);
+        if (!ifs) { // オープンに失敗した場合
+            printf("cannot open input file: %s\n", inputfile_name.c_str());
+            exit(1);
+        }
+        /*
+        inputfile = fopen(inputfile_name.c_str(), "r");
+        if (inputfile == NULL) { // オープンに失敗した場合
+            printf("cannot open input file: %s\n", inputfile_name.c_str());
+            exit(1);
+        }
+        */
     }
 }
 
 // destructor
-controller::~controller() { fclose(outputfile); }
+controller::~controller() {
+    fclose(outputfile);
+    ifs.close();
+}
 
 Status controller::exec_step(int break_point) {
 
@@ -62,7 +87,6 @@ Status controller::exec_step(int break_point) {
     if (line_num == break_point) {
         return BREAK;
     } else if (line_num >= ld->end_line_num) {
-        fclose(outputfile);
         return END;
     }
 
@@ -786,7 +810,7 @@ void controller::exec_code(vector<int> line_vec) {
             printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             printf("\trd($f%d) <- rs($f%d):%f\n", rd, rs, fregs[rs].data.f);
         }
-        fregs[rd].data.f = fregs[rd].data.f;
+        fregs[rd].data.f = fregs[rs].data.f;
         if (*log_level >= DEBUG) {
             printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
         }
@@ -914,22 +938,52 @@ void controller::exec_code(vector<int> line_vec) {
             printf("\tprogram counter:%d\trd($%d):%d\n", line_num * 4, rd,
                    regs[rd].data);
         }
-        /*
-        } else if (opecode == INB) { // INB rd
-            int rd = *iter;
 
-        } else if (opecode == IN) { // IN rd
-            int rd = *iter;
-        */
+    } else if (opecode == INB) { // INB rd
+        int rd = *iter;
+        char str;
+        ifs.get(str);
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):(hex)%08x <- get(char):%c\n", rd, regs[rd].data,
+                   str);
+        }
+
+        regs[rd].data = (int)((unsigned char)str);
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):(hex)%08x\n", rd, regs[rd].data);
+        }
+        line_num++;
+
+    } else if (opecode == IN) { // IN rd
+        int rd = *iter;
+        int tmp;
+        ifs >> tmp;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tIN rd($%d):%d <- get(int):%d\n", rd, regs[rd].data, tmp);
+        }
+
+        regs[rd].data = tmp;
+        if (*log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+        line_num++;
+
     } else if (opecode == OUTB) { // outb rs
         int rs = *iter;
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\tOUT rs($%d):%d\n", rs, regs[rs].data);
+            printf("\tOUTB rs($%d):(hex)%08x\n", rs, regs[rs].data);
         }
-        unsigned char lower8 =
-            (unsigned char)(((unsigned int)regs[rs].data) & 0xff);
-        fprintf(outputfile, "%hhu", lower8);
+        char lower8 = (char)(((unsigned int)regs[rs].data) & 0xff);
+        fprintf(outputfile, "%c", lower8);
+
+        if (*log_level >= DEBUG) {
+            printf("\tout(char):%c\n", lower8);
+        }
         line_num++;
 
     } else if (opecode == OUT) { // out rs
@@ -939,6 +993,39 @@ void controller::exec_code(vector<int> line_vec) {
             printf("\tOUT rs($%d):%d\n", rs, regs[rs].data);
         }
         fprintf(outputfile, "%d", regs[rs].data);
+        if (*log_level >= DEBUG) {
+            printf("\tout(char):%d\n",
+                   (char)(((unsigned int)regs[rs].data) & 0xff));
+        }
+        line_num++;
+
+    } else if (opecode == INF) { // INF rd
+        int rd = *iter;
+        float tmp;
+        ifs >> tmp;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tINF rd($f%d):%f <- get(float):%f\n", rd, fregs[rd].data.f,
+                   tmp);
+        }
+
+        fregs[rd].data.f = tmp;
+        if (*log_level >= DEBUG) {
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+        }
+        line_num++;
+
+    } else if (opecode == OUTF) { // OUTF rs
+        int rs = *iter;
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tOUTF rs($%d):%f\n", rs, fregs[rs].data.f);
+        }
+        fprintf(outputfile, "%f", fregs[rs].data.f);
+        if (*log_level >= DEBUG) {
+            printf("\tout(float):%f\n", fregs[rs].data.f);
+        }
         line_num++;
 
     } else if (opecode == NOP) { // nop

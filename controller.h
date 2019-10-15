@@ -7,6 +7,7 @@
 #include "loader.h"
 #include "memory.h"
 #include "register.h"
+#include <fstream>
 #include <string>
 
 enum Status { ACTIVE, BREAK, END };
@@ -18,7 +19,9 @@ class controller {
     freg *fregs;
     Log *log_level;
     string filename;
-    FILE *outputfile; // 出力ストリーム
+    FILE *outputfile; // 出力
+    // FILE *inputfile;  // 入力
+    ifstream ifs; // 入力
 
     void exec_code(vector<int> line_vec);
     sim_addr get_addr_by_base_plus_offset(string base_plus_offset);
