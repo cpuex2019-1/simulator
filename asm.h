@@ -28,6 +28,7 @@ enum Asm {
     FSUB,
     FMUL,
     FDIV,
+    FNEG,
     SQRT,
     SLTF,
     LW,

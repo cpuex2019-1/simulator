@@ -20,6 +20,7 @@ arith_float:
     fsub     $f6, $f5, $f4
     fmul     $f6, $f5, $f5
     fdiv     $f6, $f4, $f5
+    fneg     $f6, $f4
     sqrt     $f6, $f5
     sltf     $1, $f5, $f4
     sf      $f6, 0($29)

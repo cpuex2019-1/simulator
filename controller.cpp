@@ -606,6 +606,26 @@ void controller::exec_code(vector<int> line_vec) {
 
         line_num++;
 
+    } else if (opecode == FNEG) { // FNEG rd <- -rs
+        int rd = *iter;
+        iter++;
+        int rs = *iter;
+        iter++;
+
+        if (*log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d) <- neg(rs($f%d):%f)\n", rd, rs,
+                   fregs[rs].data.f);
+        }
+        fregs[rd].data.f = -fregs[rs].data.f;
+
+        if (*log_level >= DEBUG) {
+            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+        }
+
+        line_num++;
+
     } else if (opecode == SQRT) { // SQRT rd <- sqrt(rs)
         int rd = *iter;
         iter++;
