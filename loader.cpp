@@ -48,7 +48,14 @@ int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
         try {
             reg_num = stoi(base_str);
             return reg_num;
-        } catch (const std::invalid_argument &e) {
+        } catch (std::out_of_range &e) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tline:%d\tinvalid base plus offset: "
+                       "[%s](out_of_range)\n",
+                       load_line_num, base_plus_offset.c_str());
+            }
+            exit(1);
+        } catch (...) {
             if (*log_level >= FATAL) {
                 printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
                        load_line_num, base_plus_offset.c_str());
@@ -80,7 +87,14 @@ int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
             } else {
                 return offset;
             }
-        } catch (const std::invalid_argument &e) {
+        } catch (std::out_of_range &e) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tline:%d\tinvalid base plus offset: "
+                       "[%s](out_of_range)\n",
+                       load_line_num, base_plus_offset.c_str());
+            }
+            exit(1);
+        } catch (...) {
             if (*log_level >= FATAL) {
                 printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
                        load_line_num, base_plus_offset.c_str());
@@ -104,9 +118,16 @@ int loader::get_reg_num(string reg_str) {
         try {
             int reg_num = stoi(iter->str()); // convert string to int
             return reg_num;
-        } catch (const std::invalid_argument &e) {
+        } catch (std::out_of_range &e) {
             if (*log_level >= FATAL) {
-                printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
+                printf("FATAL\tline:%d\tinvalid register: "
+                       "[%s](out_of_range)\n",
+                       load_line_num, reg_str.c_str());
+            }
+            exit(1);
+        } catch (...) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tline:%d\tinvalid register: [%s]\n",
                        load_line_num, reg_str.c_str());
             }
             exit(1);
@@ -128,9 +149,16 @@ int loader::get_freg_num(string reg_str) {
         try {
             int reg_num = stoi(iter->str()); // convert string to int
             return reg_num;
-        } catch (const std::invalid_argument &e) {
+        } catch (std::out_of_range &e) {
             if (*log_level >= FATAL) {
-                printf("FATAL\tline:%d\tinvalid base plus offset: [%s]\n",
+                printf("FATAL\tline:%d\tinvalid register: "
+                       "[%s](out_of_range)\n",
+                       load_line_num, reg_str.c_str());
+            }
+            exit(1);
+        } catch (...) {
+            if (*log_level >= FATAL) {
+                printf("FATAL\tline:%d\tinvalid register: [%s]\n",
                        load_line_num, reg_str.c_str());
             }
             exit(1);
@@ -181,8 +209,14 @@ int loader::get_arith_immediate(string init_immediate_str) {
                         exit(1);
                     }
                 }
-
-            } catch (const std::invalid_argument &e) {
+            } catch (std::out_of_range &e) {
+                if (*log_level >= FATAL) {
+                    printf("FATAL\tline:%d\tinvalid immediate: "
+                           "[%s](out_of_range)\n",
+                           load_line_num, immediate_str.c_str());
+                }
+                exit(1);
+            } catch (...) {
                 if (*log_level >= FATAL) {
                     printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
                            load_line_num, immediate_str.c_str());
@@ -207,24 +241,16 @@ int loader::get_arith_immediate(string init_immediate_str) {
                 }
                 exit(1);
             } else {
-                try {
-                    string label_str =
-                        iter->str(); // convert string to int to unsigned int
-                    int label_num = get_line_num_by_label(label_str);
-                    unsigned int label_addr = ((unsigned int)label_num) * 4;
+                string label_str =
+                    iter->str(); // convert string to int to unsigned int
+                int label_num = get_line_num_by_label(label_str);
+                unsigned int label_addr = ((unsigned int)label_num) * 4;
 
-                    if (halo == "ha") {
-                        return label_addr >> 16;
-                    } else if (halo == "lo") {
-                        return (label_addr << 16) >> 16;
-                    } else {
-                        if (*log_level >= FATAL) {
-                            printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
-                                   load_line_num, immediate_str.c_str());
-                        }
-                        exit(1);
-                    }
-                } catch (const std::invalid_argument &e) {
+                if (halo == "ha") {
+                    return label_addr >> 16;
+                } else if (halo == "lo") {
+                    return (label_addr << 16) >> 16;
+                } else {
                     if (*log_level >= FATAL) {
                         printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
                                load_line_num, immediate_str.c_str());
@@ -283,7 +309,14 @@ int loader::get_logic_immediate(string init_immediate_str) {
                     }
                 }
 
-            } catch (const std::invalid_argument &e) {
+            } catch (std::out_of_range &e) {
+                if (*log_level >= FATAL) {
+                    printf("FATAL\tline:%d\tinvalid immediate: "
+                           "[%s](out_of_range)\n",
+                           load_line_num, immediate_str.c_str());
+                }
+                exit(1);
+            } catch (...) {
                 if (*log_level >= FATAL) {
                     printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
                            load_line_num, immediate_str.c_str());
@@ -308,24 +341,16 @@ int loader::get_logic_immediate(string init_immediate_str) {
                 }
                 exit(1);
             } else {
-                try {
-                    string label_str =
-                        iter->str(); // convert string to int to unsigned int
-                    int label_num = get_line_num_by_label(label_str);
-                    unsigned int label_addr = ((unsigned int)label_num) * 4;
+                string label_str =
+                    iter->str(); // convert string to int to unsigned int
+                int label_num = get_line_num_by_label(label_str);
+                unsigned int label_addr = ((unsigned int)label_num) * 4;
 
-                    if (halo == "ha") {
-                        return label_addr >> 16;
-                    } else if (halo == "lo") {
-                        return (label_addr << 16) >> 16;
-                    } else {
-                        if (*log_level >= FATAL) {
-                            printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
-                                   load_line_num, immediate_str.c_str());
-                        }
-                        exit(1);
-                    }
-                } catch (const std::invalid_argument &e) {
+                if (halo == "ha") {
+                    return label_addr >> 16;
+                } else if (halo == "lo") {
+                    return (label_addr << 16) >> 16;
+                } else {
                     if (*log_level >= FATAL) {
                         printf("FATAL\tline:%d\tinvalid immediate: [%s]\n",
                                load_line_num, immediate_str.c_str());
@@ -1277,6 +1302,32 @@ vector<int> loader::format_code(vector<string> code) {
             }
             if (iter != code.end()) {
                 throw 4;
+            }
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "fneg") { // FNEG rd <- -rs
+        result.push_back(FNEG);
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_freg_num(*iter);
+                result.push_back(rd);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_freg_num(*iter);
+                result.push_back(rs);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 3;
             }
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
