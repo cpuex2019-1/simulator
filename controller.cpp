@@ -979,7 +979,9 @@ void controller::exec_code(vector<int> line_vec) {
     } else if (opecode == IN) { // IN rd
         int rd = *iter;
         int tmp;
-        ifs >> tmp;
+        if (!(ifs >> tmp)) {
+            tmp = -1;
+        }
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
@@ -1021,16 +1023,18 @@ void controller::exec_code(vector<int> line_vec) {
 
     } else if (opecode == INF) { // INF rd
         int rd = *iter;
-        float tmp;
-        ifs >> tmp;
+        IntAndFloat tmp;
+        if (!(ifs >> tmp.f)) {
+            tmp.i = -1;
+        }
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tINF rd($f%d):%f <- get(float):%f\n", rd, fregs[rd].data.f,
-                   tmp);
+                   tmp.f);
         }
 
-        fregs[rd].data.f = tmp;
+        fregs[rd].data.f = tmp.f;
         if (*log_level >= DEBUG) {
             printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
         }
