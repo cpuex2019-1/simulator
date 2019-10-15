@@ -77,29 +77,27 @@ int main(int argc, char *argv[]) {
             }
 
         } else if (str == "r" || str == "reg") { // print register
-            printf("which register? ( input 0~31 or a (all) ) : ");
+            printf("which register? (g(general) | f(float) | a(all)) : ");
             getline(cin, str);
 
             if (str == "all" || str == "a") {
+                printf("general registers\n");
                 for (int i = 0; i < 32; i++) {
-                    int reg_data = regs[i].data;
-                    printf(" $%2d\tint:%9d\thex(16):%8x\tbinary:", i, reg_data,
-                           reg_data);
-                    print_binary(reg_data);
-                    printf("\n");
+                    print_reg(i, regs);
                 }
-            } else {
-                try {
-                    int reg_num = stoi(str);
-                    int reg_data = regs[reg_num].data;
-                    printf("register: $%2d\tint:%9d\thex(16):%8x\tbinary:",
-                           reg_num, reg_data, ((unsigned int)reg_data));
-                    print_binary(reg_data);
-                    printf("\n");
-                } catch (const std::invalid_argument &e) {
-                    if (log_level >= ERROR) {
-                        printf("ERROR\tinvalid argument: [%s]\n", e.what());
-                    }
+                printf("\nfloat registers\n");
+                for (int i = 0; i < 32; i++) {
+                    print_freg(i, fregs);
+                }
+            } else if (str == "float" || str == "f") {
+                printf("\nfloat registers\n");
+                for (int i = 0; i < 32; i++) {
+                    print_freg(i, fregs);
+                }
+            } else if (str == "general" || str == "g") {
+                printf("\nfloat registers\n");
+                for (int i = 0; i < 32; i++) {
+                    print_reg(i, regs);
                 }
             }
 
