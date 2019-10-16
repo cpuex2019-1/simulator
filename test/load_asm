@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
 ln -sf ../../compiler/mytest/*.s .
+cp ../../compiler/raytracer/raytrace.s ./raytrace.s

@@ -30,7 +30,6 @@ enum Asm {
     FDIV,
     FNEG,
     SQRT,
-    FNEG,
     SLTF,
     LW,
     LB,
