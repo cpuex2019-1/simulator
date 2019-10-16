@@ -964,7 +964,9 @@ void controller::exec_code(vector<int> line_vec) {
         char str;
         ifs.get(str);
         if (ifs.eof()) {
-            printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                   line_num * 4, one_raw_program.c_str());
             exit(1);
         }
 
@@ -984,7 +986,9 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         int tmp;
         if (!(ifs >> tmp)) {
-            printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                   line_num * 4, one_raw_program.c_str());
             exit(1);
         }
 
@@ -1029,7 +1033,9 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         IntAndFloat tmp;
         if (!(ifs >> tmp.f)) {
-            printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                   line_num * 4, one_raw_program.c_str());
             exit(1);
         }
 
