@@ -964,9 +964,7 @@ void controller::exec_code(vector<int> line_vec) {
         char str;
         ifs.get(str);
         if (ifs.eof()) {
-            if (*log_level >= DEBUG) {
-                printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
-            }
+            printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
             exit(1);
         }
 
@@ -986,9 +984,7 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         int tmp;
         if (!(ifs >> tmp)) {
-            if (*log_level >= DEBUG) {
-                printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
-            }
+            printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
             exit(1);
         }
 
@@ -1033,9 +1029,7 @@ void controller::exec_code(vector<int> line_vec) {
         int rd = *iter;
         IntAndFloat tmp;
         if (!(ifs >> tmp.f)) {
-            if (*log_level >= DEBUG) {
-                printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
-            }
+            printf("FATAL\tread EOF! program address:%d\n", line_num * 4);
             exit(1);
         }
 
