@@ -24,14 +24,14 @@ sim_byte memory::read_byte(sim_addr addr) {
         return table[addr];
     } else {
         if (*log_level >= FATAL) {
-            printf("FATAL\tinvalid read address: [%d]\n", addr);
+            printf("FATAL\t[Byte] invalid read address: [%d]\n", addr);
         }
         exit(1);
     }
 }
 
 sim_word memory::read_word(sim_addr addr) {
-    if (addr < memorySize && addr % 4 == 0) {
+    if (0 <= addr && addr < memorySize && addr % 4 == 0) {
         sim_word word = 0x0;
         word = word | (unsigned int)table[addr] << 8 * 3 |
                (unsigned int)table[addr + 1] << 8 * 2 |
@@ -40,32 +40,32 @@ sim_word memory::read_word(sim_addr addr) {
         return word;
     } else {
         if (*log_level >= FATAL) {
-            printf("FATAL\tinvalid read address: [%d]\n", addr);
+            printf("FATAL\t[Word] invalid read address: [%d]\n", addr);
         }
         exit(1);
     }
 }
 
 void memory::write_byte(sim_addr addr, sim_byte byte_data) {
-    if (addr < memorySize) {
+    if (0 <= addr && addr < memorySize) {
         table[addr] = byte_data;
     } else {
         if (*log_level >= FATAL) {
-            printf("FATAL\tinvalid write address: [%d]\n", addr);
+            printf("FATAL\t[Byte] invalid write address: [%d]\n", addr);
         }
         exit(1);
     }
 }
 
 void memory::write_word(sim_addr addr, sim_word word_data) {
-    if (addr < memorySize && addr % 4 == 0) {
+    if (0 <= addr && addr < memorySize && addr % 4 == 0) {
         table[addr] = (unsigned char)(word_data >> 8 * 3);
         table[addr + 1] = (unsigned char)(word_data >> 8 * 2);
         table[addr + 2] = (unsigned char)(word_data >> 8 * 1);
         table[addr + 3] = (unsigned char)(word_data);
     } else {
         if (*log_level >= FATAL) {
-            printf("FATAL\tinvalid write address: [%d]\n", addr);
+            printf("FATAL\t[Word] invalid write address: [%d]\n", addr);
         }
         exit(1);
     }

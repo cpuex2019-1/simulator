@@ -15,7 +15,7 @@ const int regNum = 32;
 const int regBits = 32;
 const int hwordBits = 16;
 const int wordBits = 32;
-const unsigned int memorySize = 2147483644; // 2^31 -4
+const int memorySize = 2147483644; // 2^31 -4
 
 #endif
 // end of global.h

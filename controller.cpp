@@ -680,7 +680,13 @@ void controller::exec_code(vector<int> line_vec) {
         int offset = *iter;
 
         int addr = regs[reg].data + offset;
-
+        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -703,6 +709,13 @@ void controller::exec_code(vector<int> line_vec) {
         int offset = *iter;
 
         int addr = regs[reg].data + offset;
+        if (!(0 <= addr && addr < memorySize)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
         unsigned char data = memo->read_byte(addr);
 
         if (*log_level >= DEBUG) {
@@ -724,6 +737,13 @@ void controller::exec_code(vector<int> line_vec) {
         int offset = *iter;
 
         int addr = regs[reg].data + offset;
+        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
@@ -745,7 +765,13 @@ void controller::exec_code(vector<int> line_vec) {
         int offset = *iter;
 
         int addr = regs[reg].data + offset;
-
+        if (!(0 <= addr && addr < memorySize)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:%d\n", addr, memo->read_byte(addr));
@@ -785,6 +811,14 @@ void controller::exec_code(vector<int> line_vec) {
 
         int addr = regs[base].data + offset;
 
+        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
+
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
@@ -807,6 +841,13 @@ void controller::exec_code(vector<int> line_vec) {
         int offset = *iter;
 
         int addr = regs[base].data + offset;
+        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
 
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
