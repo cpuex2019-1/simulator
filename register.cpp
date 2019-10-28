@@ -5,4 +5,4 @@
 
 reg::reg() { data = 0; }
 
-freg::freg() { data.i = 0; }
+freg::freg() { data.f = 0.0; }

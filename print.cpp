@@ -12,6 +12,15 @@ void print_binary(int data) {
         putchar(mask & v ? '1' : '0');
     while (mask >>= 1);
 }
+void print_binary_with_space(unsigned int v) {
+    unsigned int mask = 1 << 31;
+    do {
+        if (0x2108420 & mask) { // 00000010000100001000010000100000
+            putchar(' ');
+        }
+        putchar(mask & v ? '1' : '0');
+    } while (mask >>= 1);
+}
 void print_prompt() { printf("\n >> "); }
 void print_usage() {
     printf(" How to use mipsim:\n \
