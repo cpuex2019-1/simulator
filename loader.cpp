@@ -1623,6 +1623,10 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "lw") { // LW rd, offset(base)
+        unsigned int op_bit = (0x23 << 26);
+        unsigned int rd_bit;
+        unsigned int base_bit;
+        unsigned int offset_bit;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1635,14 +1639,17 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 2;
             } else {
                 int reg = get_reg_by_base_plus_offset(*iter);
-                result.push_back(reg);
+                base_bit = ((unsigned int)reg << 16);
                 int offset = get_offset_by_base_plus_offset(*iter);
-                result.push_back(offset);
+                offset_bit = (unsigned int)offset & 0xffff;
                 iter++;
             }
             if (iter != code.end()) {
                 throw 3;
             }
+
+            unsigned int result = op_bit | rd_bit | base_bit | offset_bit;
+
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
@@ -1650,7 +1657,10 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "lb") { // LB rd, offset(base)
-        result.push_back(LB);
+        unsigned int op_bit = (0x20 << 26);
+        unsigned int rd_bit;
+        unsigned int base_bit;
+        unsigned int offset_bit;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1663,14 +1673,16 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 2;
             } else {
                 int reg = get_reg_by_base_plus_offset(*iter);
-                result.push_back(reg);
+                base_bit = ((unsigned int)reg << 16);
                 int offset = get_offset_by_base_plus_offset(*iter);
-                result.push_back(offset);
+                offset_bit = (unsigned int)offset & 0xffff;
                 iter++;
             }
             if (iter != code.end()) {
                 throw 3;
             }
+
+            unsigned int result = op_bit | rd_bit | base_bit | offset_bit;
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
@@ -1678,7 +1690,10 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "sw") {
-        result.push_back(SW);
+        unsigned int op_bit = (0x2B << 26);
+        unsigned int rd_bit;
+        unsigned int base_bit;
+        unsigned int offset_bit;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1691,14 +1706,16 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 2;
             } else {
                 int reg = get_reg_by_base_plus_offset(*iter);
-                result.push_back(reg);
+                base_bit = ((unsigned int)reg << 16);
                 int offset = get_offset_by_base_plus_offset(*iter);
-                result.push_back(offset);
+                offset_bit = (unsigned int)offset & 0xffff;
                 iter++;
             }
             if (iter != code.end()) {
                 throw 3;
             }
+
+            unsigned int result = op_bit | rd_bit | base_bit | offset_bit;
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
@@ -1706,7 +1723,10 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "sb") { // sb rd, offset(base)
-        result.push_back(SB);
+        unsigned int op_bit = (0x28 << 26);
+        unsigned int rd_bit;
+        unsigned int base_bit;
+        unsigned int offset_bit;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1719,14 +1739,16 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 2;
             } else {
                 int reg = get_reg_by_base_plus_offset(*iter);
-                result.push_back(reg);
+                base_bit = ((unsigned int)reg << 16);
                 int offset = get_offset_by_base_plus_offset(*iter);
-                result.push_back(offset);
+                offset_bit = (unsigned int)offset & 0xffff;
                 iter++;
             }
             if (iter != code.end()) {
                 throw 3;
             }
+
+            unsigned int result = op_bit | rd_bit | base_bit | offset_bit;
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
@@ -1734,7 +1756,12 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "mov" || opecode == "move") { // mov rd <- rs
-        result.push_back(MOV);
+        unsigned int op_bit = 0x0;
+        unsigned int rd_bit;
+        unsigned int rs_bit;
+        unsigned int rt_bit = 0x0;
+        unsigned int shamt_bit = 0x0;
+        unsigned int funct_bit = 0x20;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1753,6 +1780,9 @@ unsigned int loader::format_code(vector<string> code) {
             if (iter != code.end()) {
                 throw 3;
             }
+            unsigned int result =
+                op_bit | rd_bit | rs_bit | rt_bit | shamt_bit | funct_bit;
+
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
@@ -1760,7 +1790,10 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "lf") { // lf rd, offset(base)
-        result.push_back(LF);
+        unsigned int op_bit = (0x31 << 26);
+        unsigned int rd_bit;
+        unsigned int base_bit;
+        unsigned int offset_bit;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1773,14 +1806,17 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 2;
             } else {
                 int reg = get_reg_by_base_plus_offset(*iter);
-                result.push_back(reg);
+                base_bit = ((unsigned int)reg << 16);
                 int offset = get_offset_by_base_plus_offset(*iter);
-                result.push_back(offset);
+                offset_bit = (unsigned int)offset & 0xffff;
                 iter++;
             }
             if (iter != code.end()) {
                 throw 3;
             }
+
+            unsigned int result = op_bit | rd_bit | base_bit | offset_bit;
+
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
@@ -1788,7 +1824,10 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "sf") { // SF rt, offset(base)
-        result.push_back(SF);
+        unsigned int op_bit = (0x39 << 26);
+        unsigned int rd_bit;
+        unsigned int base_bit;
+        unsigned int offset_bit;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1801,14 +1840,17 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 2;
             } else {
                 int reg = get_reg_by_base_plus_offset(*iter);
-                result.push_back(reg);
+                base_bit = ((unsigned int)reg << 16);
                 int offset = get_offset_by_base_plus_offset(*iter);
-                result.push_back(offset);
+                offset_bit = (unsigned int)offset & 0xffff;
                 iter++;
             }
             if (iter != code.end()) {
                 throw 3;
             }
+
+            unsigned int result = op_bit | rd_bit | base_bit | offset_bit;
+
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
@@ -1816,7 +1858,12 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "movf") { // MOVF rd <- rs
-        result.push_back(MOVF);
+        unsigned int op_bit = (0x11 << 26);
+        unsigned int rd_bit;
+        unsigned int rs_bit;
+        unsigned int rt_bit = 0x0;
+        unsigned int shamt_bit = 0x0;
+        unsigned int funct_bit = 0x0;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1835,6 +1882,9 @@ unsigned int loader::format_code(vector<string> code) {
             if (iter != code.end()) {
                 throw 3;
             }
+            unsigned int result =
+                op_bit | rd_bit | rs_bit | rt_bit | shamt_bit | funct_bit;
+
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
