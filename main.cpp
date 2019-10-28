@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         } else if (str == "a" || str == "all") { // run all
             if (!end_flag) {
                 clock_t start = clock();
-                int count = 0;
+                long long int count = 0;
                 Status status = ACTIVE;
                 while (status == ACTIVE) {
                     status = controller.exec_step(break_p);
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
                     end_flag = true;
                 };
                 printf("time %lf [ms]\n", time);
-                printf("%d instructions\n", count);
+                printf("%lld instructions\n", count);
             }
 
         } else if (str == "r" || str == "reg") { // print register
