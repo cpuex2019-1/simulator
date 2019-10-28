@@ -387,7 +387,7 @@ int loader::load_file() {
     if (input.is_open()) {
         input.close();
     }
-
+    int end_line = line_num;
     // load program
     line_num = 0;
     load_line_num = 0;
@@ -408,7 +408,7 @@ int loader::load_file() {
         input.close();
     }
 
-    return line_num;
+    return end_line;
 }
 
 void loader::load_line_label(string line) {

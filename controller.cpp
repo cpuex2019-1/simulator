@@ -101,7 +101,7 @@ void controller::exec_code(unsigned int one_code) {
     unsigned int rt;
     unsigned int shamt = (one_code & shamt_mask) >> 6;
     unsigned int funct = one_code & funct_mask;
-    int immediate;
+    int immediate = 0;
     int sb;
     int reg;
     int offset;
@@ -711,7 +711,9 @@ void controller::exec_code(unsigned int one_code) {
         rs = (one_code & rd_mask) >> 21;
         rt = (one_code & rs_mask) >> 16;
         label_line = (one_code & addr_or_imm_mask);
-
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tprogram counter <- if (rs($%d):%d == rt($%d):%d) then "
@@ -737,7 +739,9 @@ void controller::exec_code(unsigned int one_code) {
         rs = (one_code & rd_mask) >> 21;
         rt = (one_code & rs_mask) >> 16;
         label_line = (one_code & addr_or_imm_mask);
-
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tprogram counter <- if (rs($%d):%d != rt($%d):%d) then "
@@ -788,9 +792,6 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
-        if ((immediate & 0x8000) == 0x8000) { //符号拡張
-            immediate = 0xffff0000 | immediate;
-        }
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -812,9 +813,6 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
-        if ((immediate & 0x8000) == 0x8000) { //符号拡張
-            immediate = 0xffff0000 | immediate;
-        }
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
@@ -833,9 +831,6 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
-        if ((immediate & 0x8000) == 0x8000) { //符号拡張
-            immediate = 0xffff0000 | immediate;
-        }
         regs[rd].data = regs[rs].data ^ immediate;
 
         if (*log_level >= DEBUG) {
@@ -999,6 +994,9 @@ void controller::exec_code(unsigned int one_code) {
 
     case 50: { // BC label(pc+offset<<2)
         offset = (one_code & address_mask);
+        if ((offset & 0x2000000) == 0x2000000) { //符号拡張
+            offset = 0xfc000000 | immediate;
+        }
         if (*log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tprogram counter:%d \n", line_num * 4);
@@ -1092,6 +1090,7 @@ void controller::exec_code(unsigned int one_code) {
                 break;
             }
             }
+            break;
         }
 
         case 3: {
@@ -1185,6 +1184,7 @@ void controller::exec_code(unsigned int one_code) {
                 break;
             }
             }
+            break;
         }
         }
 
