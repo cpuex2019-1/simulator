@@ -40,8 +40,6 @@ class loader {
     int get_freg_num(string reg_str);
     int get_logic_immediate(string immediate_str);
     int get_arith_immediate(string immediate_str);
-    void assemble();
-    void exec_code(vector<int> line_vec);
 
   public:
     int end_line_num;
@@ -54,8 +52,8 @@ class loader {
     //~loader();
 
     int get_line_num_by_label(string label);
-    vector<int> get_program_by_label(string label);
-    vector<int> get_program_by_line_num(int l_num);
+    // vector<int> get_program_by_label(string label);
+    int get_machine_code_by_line_num(int l_num);
     string get_raw_program_by_line_num(int l_num);
 
     // print
