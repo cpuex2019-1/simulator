@@ -651,26 +651,24 @@ void controller::exec_code(unsigned int one_code) {
             line_num++;
             break;
         }
-            /*
-            case 0:{// MOVF rd <- rs
-                rd = (one_code & rd_mask) >> 21;
-                rs = (one_code & rs_mask) >> 16;
 
-                if (*log_level >= DEBUG) {
-                    printf("DEBUG\n");
-                    printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
-                    printf("\trd($f%d) <- rs($f%d):%f\n", rd, rs,
-            fregs[rs].data.f);
-                }
-                fregs[rd].data.f = fregs[rs].data.f;
-                if (*log_level >= DEBUG) {
-                    printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
-                }
+        case 63: { // MOVF rd <- rs
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
 
-                line_num++;
-                break;
+            if (*log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d) <- rs($f%d):%f\n", rd, rs, fregs[rs].data.f);
             }
-            */
+            fregs[rd].data.f = fregs[rs].data.f;
+            if (*log_level >= DEBUG) {
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            }
+
+            line_num++;
+            break;
+        }
         }
         break;
     }

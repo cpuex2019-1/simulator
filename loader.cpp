@@ -1838,7 +1838,7 @@ unsigned int loader::format_code(vector<string> code) {
         unsigned int rs_bit = 0x0;
         unsigned int rt_bit = 0x0;
         unsigned int shamt_bit = 0x0;
-        unsigned int funct_bit = 0x0;
+        unsigned int funct_bit = 0x3f;
         try {
             if (iter == code.end()) {
                 throw 1;
