@@ -53,7 +53,7 @@ class loader {
 
     int get_line_num_by_label(string label);
     // vector<int> get_program_by_label(string label);
-    int get_machine_code_by_line_num(int l_num);
+    unsigned int get_machine_code_by_line_num(int l_num);
     string get_raw_program_by_line_num(int l_num);
 
     // print

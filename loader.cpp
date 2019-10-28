@@ -2267,7 +2267,7 @@ vector<int> loader::get_program_by_label(string label) {
 }
 */
 
-int loader::get_machine_code_by_line_num(int l_num) {
+unsigned int loader::get_machine_code_by_line_num(int l_num) {
     return machine_code[l_num];
 }
 
