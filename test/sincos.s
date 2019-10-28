@@ -1,0 +1,1 @@
+../../compiler/mytest/sincos.s

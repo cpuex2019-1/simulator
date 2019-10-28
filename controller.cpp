@@ -44,15 +44,8 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
         ifs.open(inputfile_name);
         if (!ifs) { // オープンに失敗した場合
             printf("cannot open input file: %s\n", inputfile_name.c_str());
-            exit(1);
+            // exit(1);
         }
-        /*
-        inputfile = fopen(inputfile_name.c_str(), "r");
-        if (inputfile == NULL) { // オープンに失敗した場合
-            printf("cannot open input file: %s\n", inputfile_name.c_str());
-            exit(1);
-        }
-        */
     }
 }
 
@@ -1003,44 +996,57 @@ void controller::exec_code(vector<int> line_vec) {
     } else if (opecode == INB) { // INB rd
         int rd = *iter;
         char str;
-        ifs.get(str);
-        if (ifs.eof()) {
-            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
-            printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
-                   line_num * 4, one_raw_program.c_str());
-            exit(1);
+        if (!ifs.get(str)) { // オープンに失敗した場合
+            printf("input file was not opened\n");
+            // exit(1);
+        } else {
+            if (ifs.eof()) {
+                string one_raw_program =
+                    ld->get_raw_program_by_line_num(line_num);
+                printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                       line_num * 4, one_raw_program.c_str());
+                exit(1);
+            }
+
+            if (*log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($%d):(hex)%08x <- get(char):%c\n", rd,
+                       regs[rd].data, str);
+            }
+
+            regs[rd].data = (int)((unsigned char)str);
+            if (*log_level >= DEBUG) {
+                printf("\trd($%d):(hex)%08x\n", rd, regs[rd].data);
+            }
         }
 
-        if (*log_level >= DEBUG) {
-            printf("DEBUG\n");
-            printf("\trd($%d):(hex)%08x <- get(char):%c\n", rd, regs[rd].data,
-                   str);
-        }
-
-        regs[rd].data = (int)((unsigned char)str);
-        if (*log_level >= DEBUG) {
-            printf("\trd($%d):(hex)%08x\n", rd, regs[rd].data);
-        }
         line_num++;
 
     } else if (opecode == IN) { // IN rd
         int rd = *iter;
         int tmp;
-        if (!(ifs >> tmp)) {
-            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
-            printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
-                   line_num * 4, one_raw_program.c_str());
-            exit(1);
-        }
+        if (!ifs) { // オープンに失敗した場合
+            printf("input file was not opened\n");
+            // exit(1);
+        } else {
+            if (!(ifs >> tmp)) {
+                string one_raw_program =
+                    ld->get_raw_program_by_line_num(line_num);
+                printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                       line_num * 4, one_raw_program.c_str());
+                exit(1);
+            }
 
-        if (*log_level >= DEBUG) {
-            printf("DEBUG\n");
-            printf("\tIN rd($%d):%d <- get(int):%d\n", rd, regs[rd].data, tmp);
-        }
+            if (*log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\tIN rd($%d):%d <- get(int):%d\n", rd, regs[rd].data,
+                       tmp);
+            }
 
-        regs[rd].data = tmp;
-        if (*log_level >= DEBUG) {
-            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            regs[rd].data = tmp;
+            if (*log_level >= DEBUG) {
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+            }
         }
         line_num++;
 
@@ -1073,22 +1079,28 @@ void controller::exec_code(vector<int> line_vec) {
     } else if (opecode == INF) { // INF rd
         int rd = *iter;
         IntAndFloat tmp;
-        if (!(ifs >> tmp.f)) {
-            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
-            printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
-                   line_num * 4, one_raw_program.c_str());
-            exit(1);
-        }
+        if (!ifs) { // オープンに失敗した場合
+            printf("input file was not opened\n");
+            // exit(1);
+        } else {
+            if (!(ifs >> tmp.f)) {
+                string one_raw_program =
+                    ld->get_raw_program_by_line_num(line_num);
+                printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                       line_num * 4, one_raw_program.c_str());
+                exit(1);
+            }
 
-        if (*log_level >= DEBUG) {
-            printf("DEBUG\n");
-            printf("\tINF rd($f%d):%f <- get(float):%f\n", rd, fregs[rd].data.f,
-                   tmp.f);
-        }
+            if (*log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\tINF rd($f%d):%f <- get(float):%f\n", rd,
+                       fregs[rd].data.f, tmp.f);
+            }
 
-        fregs[rd].data.f = tmp.f;
-        if (*log_level >= DEBUG) {
-            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            fregs[rd].data.f = tmp.f;
+            if (*log_level >= DEBUG) {
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            }
         }
         line_num++;
 
