@@ -22,14 +22,17 @@ class loader {
     // label
     map<string, int> label_map;
     // program
-    vector<vector<int>> program_map;
+    // vector<vector<int>> program_map;
+
+    // machine_code
+    vector<unsigned int> machine_code;
     // raw program string for print
     vector<string> raw_program;
 
     void load_line_label(string line);
     void load_line(string line);
     int load_file();
-    vector<int> format_code(vector<string>);
+    unsigned int format_code(vector<string>);
 
     int get_reg_by_base_plus_offset(string base_plus_offset);
     int get_offset_by_base_plus_offset(string base_plus_offset);
@@ -49,8 +52,8 @@ class loader {
     //~loader();
 
     int get_line_num_by_label(string label);
-    vector<int> get_program_by_label(string label);
-    vector<int> get_program_by_line_num(int l_num);
+    // vector<int> get_program_by_label(string label);
+    unsigned int get_machine_code_by_line_num(int l_num);
     string get_raw_program_by_line_num(int l_num);
 
     // print

@@ -23,7 +23,7 @@ class controller {
     // FILE *inputfile;  // 入力
     ifstream ifs; // 入力
 
-    void exec_code(vector<int> line_vec);
+    void exec_code(unsigned int one_code);
     sim_addr get_addr_by_base_plus_offset(string base_plus_offset);
     int get_reg_num(string reg_str);
     int get_immediate(string immediate_str);

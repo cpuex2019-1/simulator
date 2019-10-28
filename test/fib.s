@@ -1,4 +1,13 @@
-Main:   addi $4, $0, 8 # fib(immediate)
+#ifelse
+#time 9854.803000 [ms]
+#43080592 instructions
+#switch
+#time 9616.545000 [ms]
+#43080592 instructions
+#time 514.289000 [ms]
+#43080592 instructions
+
+Main:   addi $4, $0, 30 # fib(immediate)
         jal	Fibonacci.a
 		j	Exit
 Fibonacci.a:	addi	$29,	$29,	-8	#shelter of registers
