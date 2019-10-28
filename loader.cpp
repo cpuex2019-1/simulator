@@ -2243,6 +2243,14 @@ unsigned int loader::format_code(vector<string> code) {
         result = 0x0;
     }
 
+    if (*log_level >= TRACE) {
+        printf("\nDEBUG\tprogram address:%d", line_num * 4);
+        string one_raw_program = get_raw_program_by_line_num(line_num);
+        printf("\t%s\n", one_raw_program.c_str());
+        printf("hex(16):%08x\tbinary:", result);
+        print_binary_with_space(result);
+        printf("\n");
+    }
     return result;
 }
 

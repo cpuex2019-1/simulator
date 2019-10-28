@@ -41,7 +41,6 @@ int main(int argc, char *argv[]) {
 
             if (!end_flag) {
                 if (log_level >= TRACE) {
-                    // ld->print_label_map();
                     ld->print_raw_program();
                 }
                 if (controller.exec_step(break_p) == END) {
