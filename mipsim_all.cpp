@@ -25,14 +25,16 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    loader *ld = new loader(argv[1], &log_level); // load program
+    printf("now loading...\n");
+    loader ld(argv[1], &log_level); // load program
     memory memo(&log_level);
     reg regs[32];
     freg fregs[32];
 
-    controller controller(argv[1], ld, &memo, regs, fregs, &log_level);
+    controller controller(argv[1], &ld, &memo, regs, fregs, &log_level);
 
     string str;
+    printf("start simulation\n");
     clock_t start = clock();
     long long int count = 0;
     Status status = ACTIVE;
