@@ -14,7 +14,6 @@
 #include <time.h>
 using namespace std;
 
-Log log_level = WARN;
 int break_p = -1;
 
 int main(int argc, char *argv[]) {
@@ -24,12 +23,17 @@ int main(int argc, char *argv[]) {
     }
 
     printf("now loading...\n");
-    loader *ld = new loader(argv[1], &log_level); // load program
-    memory memo(&log_level);
-    controller controller(argv[1], ld, &memo, &log_level);
+    loader ld(argv[1]); // load program
+    memory memo;
+
+    controller controller(argv[1], &ld, &memo, regs, fregs);
+    ld.log_level = WARN;
+    memo.log_level = WARN;
+    controller.log_level = WARN;
 
     printf("start simulation\n");
     string str;
+    printf("start simulation\n");
     clock_t start = clock();
     long long int count = 0;
     Status status = ACTIVE;
@@ -43,6 +47,5 @@ int main(int argc, char *argv[]) {
 
     printf("time %lf [ms]\n", time);
     printf("%lld instructions\n", count);
-
     return 0;
 }

@@ -9,21 +9,19 @@
 using namespace std;
 
 // constructor
-memory::memory(Log *l_level) {
-    log_level = l_level;
-    table = sim_byte[memorySize];
+memory::memory() {
     for (sim_addr i = 0; i < memorySize; i++) {
         table[i] = 0x0;
     }
 }
 
-memory::~memory() { delete table; }
+// memory::~memory() {}
 
 sim_byte memory::read_byte(sim_addr addr) {
     if (0 <= addr && addr < memorySize) {
         return table[addr];
     } else {
-        if (*log_level >= FATAL) {
+        if (log_level >= FATAL) {
             printf("FATAL\t[Byte] invalid read address: [%d]\n", addr);
         }
         exit(1);
@@ -43,7 +41,7 @@ void memory::write_byte(sim_addr addr, sim_byte byte_data) {
     if (0 <= addr && addr < memorySize) {
         table[addr] = byte_data;
     } else {
-        if (*log_level >= FATAL) {
+        if (log_level >= FATAL) {
             printf("FATAL\t[Byte] invalid write address: [%d]\n", addr);
         }
         exit(1);
@@ -68,7 +66,7 @@ void memory::print_word_by_addr(sim_addr s_addr, sim_addr e_addr) {
             printf("\n");
         }
     } else {
-        if (*log_level >= ERROR) {
+        if (log_level >= ERROR) {
             printf("ERROR\tinvalid address: [%d] to [%d]\n", s_addr, e_addr);
             printf("ERROR\tPlease input Multiples of 4\n");
         }

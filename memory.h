@@ -6,14 +6,14 @@
 #include "global.h"
 
 class memory {
-    sim_byte *table;
-    Log *log_level;
+    sim_byte table[memorySize];
 
   public:
+    Log log_level = DEBUG;
     // constructor
-    memory(Log *l_level);
+    memory();
     // destructor
-    ~memory();
+    //~memory();
 
     sim_byte read_byte(sim_addr addr);
     sim_word read_word(sim_addr addr);

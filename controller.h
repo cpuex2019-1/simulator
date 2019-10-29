@@ -17,7 +17,6 @@ class controller {
     loader *ld;
     reg *regs;
     freg *fregs;
-    Log *log_level;
     string filename;
     FILE *outputfile; // 出力
     // FILE *inputfile;  // 入力
@@ -31,10 +30,10 @@ class controller {
   public:
     // current line number being processed
     int line_num;
+    Log log_level = DEBUG;
 
     // constructor
-    controller(const char *fname, loader *l, memory *m, reg *r, freg *fr,
-               Log *l_level);
+    controller(const char *fname, loader *l, memory *m, reg *r, freg *fr);
     // destructor
     ~controller();
 
