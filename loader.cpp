@@ -4,7 +4,6 @@
 #include "loader.h"
 #include "asm.h"
 #include "global.h"
-#include "print.h"
 #include <regex>
 #include <stdio.h>
 #include <string>
@@ -31,6 +30,16 @@ loader::~loader() {
 
 }
 */
+void loader::print_binary_with_space(unsigned int v) {
+    unsigned int mask = 1 << 31;
+    do {
+        if (0x2108420 & mask) { // 00000010000100001000010000100000
+            putchar(' ');
+        }
+        putchar(mask & v ? '1' : '0');
+    } while (mask >>= 1);
+}
+
 int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
     regex sep("^([+-]?)(0|[1-9][0-9]*)\\(\\$(3[0-1]|[1-2][0-9]|[0-9])\\)$");
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),

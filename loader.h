@@ -29,6 +29,8 @@ class loader {
     // raw program string for print
     vector<string> raw_program;
 
+    void print_binary_with_space(unsigned int v);
+
     void load_line_label(string line);
     void load_line(string line);
     int load_file();

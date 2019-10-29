@@ -1,7 +1,7 @@
 // controller.h:
 // execute instructions
-#ifndef EXECUTER_H
-#define EXECUTER_H
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
 #include "global.h"
 #include "loader.h"

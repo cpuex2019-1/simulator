@@ -2,12 +2,10 @@
 // main.cpp
 //
 
-#include "controller.h"
+#include "controller_all.h"
 #include "global.h"
 #include "loader.h"
 #include "memory.h"
-#include "print.h"
-#include "register.h"
 #include <bitset>
 #include <fstream>
 #include <iostream>
@@ -25,13 +23,12 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    printf("now loading...\n");
     loader *ld = new loader(argv[1], &log_level); // load program
     memory memo(&log_level);
-    reg regs[32];
-    freg fregs[32];
+    controller controller(argv[1], ld, &memo, &log_level);
 
-    controller controller(argv[1], ld, &memo, regs, fregs, &log_level);
-
+    printf("start simulation\n");
     string str;
     clock_t start = clock();
     long long int count = 0;
