@@ -11,7 +11,7 @@ using namespace std;
 // constructor
 memory::memory(Log *l_level) {
     log_level = l_level;
-    table = new sim_byte[memorySize];
+    table = sim_byte[memorySize];
     for (sim_addr i = 0; i < memorySize; i++) {
         table[i] = 0x0;
     }
@@ -31,19 +31,12 @@ sim_byte memory::read_byte(sim_addr addr) {
 }
 
 sim_word memory::read_word(sim_addr addr) {
-    if (0 <= addr && addr < memorySize && addr % 4 == 0) {
-        sim_word word = 0x0;
-        word = word | (unsigned int)table[addr] << 8 * 3 |
-               (unsigned int)table[addr + 1] << 8 * 2 |
-               (unsigned int)table[addr + 2] << 8 * 1 |
-               (unsigned int)table[addr + 3];
-        return word;
-    } else {
-        if (*log_level >= FATAL) {
-            printf("FATAL\t[Word] invalid read address: [%d]\n", addr);
-        }
-        exit(1);
-    }
+    sim_word word = 0x0;
+    word = word | (unsigned int)table[addr] << 8 * 3 |
+           (unsigned int)table[addr + 1] << 8 * 2 |
+           (unsigned int)table[addr + 2] << 8 * 1 |
+           (unsigned int)table[addr + 3];
+    return word;
 }
 
 void memory::write_byte(sim_addr addr, sim_byte byte_data) {
@@ -58,17 +51,10 @@ void memory::write_byte(sim_addr addr, sim_byte byte_data) {
 }
 
 void memory::write_word(sim_addr addr, sim_word word_data) {
-    if (0 <= addr && addr < memorySize && addr % 4 == 0) {
-        table[addr] = (unsigned char)(word_data >> 8 * 3);
-        table[addr + 1] = (unsigned char)(word_data >> 8 * 2);
-        table[addr + 2] = (unsigned char)(word_data >> 8 * 1);
-        table[addr + 3] = (unsigned char)(word_data);
-    } else {
-        if (*log_level >= FATAL) {
-            printf("FATAL\t[Word] invalid write address: [%d]\n", addr);
-        }
-        exit(1);
-    }
+    table[addr] = (unsigned char)(word_data >> 8 * 3);
+    table[addr + 1] = (unsigned char)(word_data >> 8 * 2);
+    table[addr + 2] = (unsigned char)(word_data >> 8 * 1);
+    table[addr + 3] = (unsigned char)(word_data);
 }
 
 // print word from s_addr to e_addr
