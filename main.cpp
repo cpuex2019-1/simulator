@@ -16,8 +16,8 @@
 #include <time.h>
 using namespace std;
 
-Log log_level = DEBUG;
 int break_p = -1;
+Log log_level = DEBUG;
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -25,12 +25,12 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    loader ld(argv[1], &log_level); // load program
-    memory memo(&log_level);
+    loader ld(argv[1]); // load program
+    memory memo;
     reg regs[32];
     freg fregs[32];
 
-    controller controller(argv[1], &ld, &memo, regs, fregs, &log_level);
+    controller controller(argv[1], &ld, &memo, regs, fregs);
 
     string str;
     bool end_flag = false;
@@ -148,12 +148,24 @@ int main(int argc, char *argv[]) {
             getline(cin, str);
             if (str == "warn") { //
                 log_level = WARN;
+                ld.log_level = WARN;
+                memo.log_level = WARN;
+                controller.log_level = WARN;
             } else if (str == "info") { //
                 log_level = INFO;
+                ld.log_level = INFO;
+                memo.log_level = INFO;
+                controller.log_level = INFO;
             } else if (str == "debug") { //
                 log_level = DEBUG;
+                ld.log_level = DEBUG;
+                memo.log_level = DEBUG;
+                controller.log_level = DEBUG;
             } else if (str == "trace") {
                 log_level = TRACE;
+                ld.log_level = TRACE;
+                memo.log_level = TRACE;
+                controller.log_level = TRACE;
             } else {
                 if (log_level >= ERROR) {
                     printf("ERROR\tinvalid argument: %s\n", str.c_str());
@@ -161,6 +173,7 @@ int main(int argc, char *argv[]) {
             }
 
         } else if (str == "exit") { // exit
+
             return 0;
 
         } else {

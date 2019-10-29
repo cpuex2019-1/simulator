@@ -7,11 +7,11 @@
 
 class memory {
     sim_byte table[memorySize];
-    Log *log_level;
 
   public:
+    Log log_level = DEBUG;
     // constructor
-    memory(Log *l_level);
+    memory();
     // destructor
     //~memory();
 
