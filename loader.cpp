@@ -2276,10 +2276,18 @@ vector<int> loader::get_program_by_label(string label) {
 */
 
 unsigned int loader::get_machine_code_by_line_num(int l_num) {
+    if (l_num > end_line_num) {
+        printf("FATAL invalid machine_code access\n");
+        exit(1);
+    }
     return machine_code[l_num];
 }
 
 string loader::get_raw_program_by_line_num(int l_num) {
+    if (l_num > end_line_num) {
+        printf("FATAL invalid raw_program access\n");
+        exit(1);
+    }
     return raw_program[l_num];
 }
 

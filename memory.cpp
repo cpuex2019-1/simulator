@@ -11,7 +11,7 @@ using namespace std;
 // constructor
 memory::memory(Log *l_level) {
     log_level = l_level;
-    table = new sim_byte[memorySize];
+    table = sim_byte[memorySize];
     for (sim_addr i = 0; i < memorySize; i++) {
         table[i] = 0x0;
     }
