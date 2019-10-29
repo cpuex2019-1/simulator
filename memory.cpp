@@ -11,13 +11,13 @@ using namespace std;
 // constructor
 memory::memory(Log *l_level) {
     log_level = l_level;
-    sim_byte table[memorySize];
+
     for (sim_addr i = 0; i < memorySize; i++) {
         table[i] = 0x0;
     }
 }
 
-memory::~memory() { delete table; }
+// memory::~memory() {}
 
 sim_byte memory::read_byte(sim_addr addr) {
     if (0 <= addr && addr < memorySize) {
