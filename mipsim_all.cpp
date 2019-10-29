@@ -4,7 +4,6 @@
 
 #include "controller_all.h"
 #include "global.h"
-#include "loader.h"
 #include "memory.h"
 #include <bitset>
 #include <fstream>
@@ -23,16 +22,12 @@ int main(int argc, char *argv[]) {
     }
 
     printf("now loading...\n");
-    loader ld(argv[1]); // load program
     memory memo;
 
-    controller controller(argv[1], &ld, &memo, regs, fregs);
-    ld.log_level = WARN;
-    memo.log_level = WARN;
-    controller.log_level = WARN;
+    controller controller(argv[1], &memo);
 
-    printf("start simulation\n");
-    string str;
+    memo.log_level = WARN;
+
     printf("start simulation\n");
     clock_t start = clock();
     long long int count = 0;

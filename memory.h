@@ -6,7 +6,7 @@
 #include "global.h"
 
 class memory {
-    sim_byte table[memorySize];
+    sim_word table[memorySize / 4];
 
   public:
     Log log_level = DEBUG;
