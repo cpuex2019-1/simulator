@@ -22,11 +22,10 @@ int main(int argc, char *argv[]) {
     }
 
     printf("now loading...\n");
-    memory memo;
 
-    controller controller(argv[1], &memo);
+    controller controller(argv[1]);
 
-    memo.log_level = WARN;
+    controller.log_level = WARN;
 
     printf("start simulation\n");
     clock_t start = clock();
