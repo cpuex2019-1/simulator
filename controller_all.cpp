@@ -35,7 +35,7 @@ controller::controller(const char *fname) {
     // start simulate
     line_num = 0;
     regs[0] = 0;
-    regs[29] = memorySize - 4; // init sp;
+    regs[29] = 0; // init sp;
 
     // for output
     if (output_exist) {

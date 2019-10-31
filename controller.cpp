@@ -23,7 +23,7 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
     line_num = 0;
 
     regs[0].data = 0;
-    regs[29].data = memorySize - 4; // init sp;
+    regs[29].data = 0; // init sp;
 
     // for output
     if (ld->output_exist) {
