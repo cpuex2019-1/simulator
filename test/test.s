@@ -1,6 +1,8 @@
 input_output:
-    inb     $1
-    outb    $1
+in      $1
+out     $1
+in      $1
+out     $1
     in      $1
     out     $1
     inf     $f1

@@ -25,16 +25,18 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    loader *ld = new loader(argv[1], &log_level); // load program
+    printf("now loading...\n");
+    loader ld(argv[1], &log_level); // load program
     memory memo(&log_level);
     reg regs[32];
     freg fregs[32];
 
-    controller controller(argv[1], ld, &memo, regs, fregs, &log_level);
+    controller controller(argv[1], &ld, &memo, regs, fregs, &log_level);
 
     string str;
+    printf("start simulation\n");
     clock_t start = clock();
-    int count = 0;
+    long long int count = 0;
     Status status = ACTIVE;
     while (status == ACTIVE) {
         status = controller.exec_step(break_p);
@@ -45,7 +47,7 @@ int main(int argc, char *argv[]) {
         static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
 
     printf("time %lf [ms]\n", time);
-    printf("%d instructions\n", count);
+    printf("%lld instructions\n", count);
 
     return 0;
 }
