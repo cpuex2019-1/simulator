@@ -8,6 +8,7 @@
 #43080592 instructions
 
 Main:   addi $4, $0, 30 # fib(immediate)
+        addi $29, $0,10000
         jal	Fibonacci.a
 		j	Exit
 Fibonacci.a:	addi	$29,	$29,	-8	#shelter of registers
