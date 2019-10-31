@@ -17,6 +17,7 @@ loader::loader(const char *fname) {
     file_name = fname;
     load_line_num = 0;
     line_num = 0; // reset line number
+    end_line_num = 1000000;
 
     output_exist = false;
     input_exist = false;
