@@ -21,13 +21,14 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
     fregs = fr;
 
     line_num = 0;
+    filename = fname;
 
     regs[0].data = 0;
     regs[29].data = 0; // init sp;
 
     // for output
     if (ld->output_exist) {
-        string outputfile_name = fname;
+        string outputfile_name = filename;
         outputfile_name.pop_back(); // 最後のsを削除
         outputfile_name = outputfile_name + "ppm";
         outputfile = fopen(outputfile_name.c_str(), "w");
@@ -38,7 +39,7 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
     }
 
     if (ld->input_exist) {
-        string inputfile_name = fname;
+        string inputfile_name = filename;
         inputfile_name.pop_back(); // 最後のsを削除
         inputfile_name = inputfile_name + "txt";
         ifs.open(inputfile_name);
@@ -53,6 +54,34 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
 controller::~controller() {
     fclose(outputfile);
     ifs.close();
+}
+
+void controller::init() {
+    line_num = 0;
+    fclose(outputfile);
+    ifs.close();
+    // for output
+    if (ld->output_exist) {
+        string outputfile_name = filename;
+        outputfile_name.pop_back(); // 最後のsを削除
+        outputfile_name = outputfile_name + "ppm";
+        outputfile = fopen(outputfile_name.c_str(), "w");
+        if (outputfile == NULL) { // オープンに失敗した場合
+            printf("cannot open output file: %s\n", outputfile_name.c_str());
+            exit(1);
+        }
+    }
+
+    if (ld->input_exist) {
+        string inputfile_name = filename;
+        inputfile_name.pop_back(); // 最後のsを削除
+        inputfile_name = inputfile_name + "txt";
+        ifs.open(inputfile_name);
+        if (!ifs) { // オープンに失敗した場合
+            printf("cannot open input file: %s\n", inputfile_name.c_str());
+            // exit(1);
+        }
+    }
 }
 
 Status controller::exec_step(int break_point) {
