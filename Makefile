@@ -1,7 +1,7 @@
 CXX = g++
 PROG = mipsim
 PROG2 = mipsim-all
-CXXFLAGS = -Wall -O3 -mtune=native -std=c++11
+CXXFLAGS = -Wall -O2 -std=c++11
 
 SRCS := register.cpp  print.cpp loader.cpp memory.cpp controller.cpp main.cpp
 OBJS := $(SRCS:%.cpp=%.o)
