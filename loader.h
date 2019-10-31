@@ -14,8 +14,6 @@ class loader {
     // program file name
     const char *file_name;
 
-    Log *log_level;
-
     // current line number
     int line_num;
     int load_line_num;
@@ -28,6 +26,8 @@ class loader {
     vector<unsigned int> machine_code;
     // raw program string for print
     vector<string> raw_program;
+
+    void print_binary_with_space(unsigned int v);
 
     void load_line_label(string line);
     void load_line(string line);
@@ -45,9 +45,10 @@ class loader {
     int end_line_num;
     bool output_exist;
     bool input_exist;
+    Log log_level = DEBUG;
 
     // constructor
-    loader(const char *fname, Log *l_level);
+    loader(const char *fname);
     // destructor
     //~loader();
 

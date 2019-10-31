@@ -2,12 +2,9 @@
 // main.cpp
 //
 
-#include "controller.h"
+#include "controller_all.h"
 #include "global.h"
-#include "loader.h"
 #include "memory.h"
-#include "print.h"
-#include "register.h"
 #include <bitset>
 #include <fstream>
 #include <iostream>
@@ -16,7 +13,6 @@
 #include <time.h>
 using namespace std;
 
-Log log_level = WARN;
 int break_p = -1;
 
 int main(int argc, char *argv[]) {
@@ -26,14 +22,11 @@ int main(int argc, char *argv[]) {
     }
 
     printf("now loading...\n");
-    loader ld(argv[1], &log_level); // load program
-    memory memo(&log_level);
-    reg regs[32];
-    freg fregs[32];
 
-    controller controller(argv[1], &ld, &memo, regs, fregs, &log_level);
+    controller controller(argv[1]);
 
-    string str;
+    controller.log_level = WARN;
+
     printf("start simulation\n");
     clock_t start = clock();
     long long int count = 0;
@@ -48,6 +41,5 @@ int main(int argc, char *argv[]) {
 
     printf("time %lf [ms]\n", time);
     printf("%lld instructions\n", count);
-
     return 0;
 }

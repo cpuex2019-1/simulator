@@ -14,17 +14,16 @@
 using namespace std;
 
 controller::controller(const char *fname, loader *l, memory *m, reg r[],
-                       freg fr[], Log *l_level) {
+                       freg fr[]) {
     ld = l;
     memo = m;
     regs = r;
     fregs = fr;
-    log_level = l_level;
 
     line_num = 0;
 
     regs[0].data = 0;
-    regs[29].data = memorySize - 4; // init sp;
+    regs[29].data = 0; // init sp;
 
     // for output
     if (ld->output_exist) {
@@ -60,16 +59,15 @@ Status controller::exec_step(int break_point) {
 
     unsigned int one_code = ld->get_machine_code_by_line_num(line_num);
 
-    if (*log_level >= INFO) {
+    if (log_level >= INFO) {
         // raw_programを出力
         string one_raw_program = ld->get_raw_program_by_line_num(line_num);
         printf("INFO\t%d:\t%s", line_num * 4, one_raw_program.c_str());
-        if (*log_level >= TRACE) {
+        if (log_level >= TRACE) {
             printf("\t(TRACE\t");
             print_binary_with_space(one_code);
             printf(")");
         }
-
         printf("\n");
     }
 
@@ -120,7 +118,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             sb = (one_code & shamt_mask) >> 6;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d << sb:%d (logical)\n", rd, rs,
@@ -130,7 +128,7 @@ void controller::exec_code(unsigned int one_code) {
             regs[rd].data =
                 (int)((unsigned int)regs[rs].data << (unsigned int)sb);
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -144,7 +142,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             sb = (one_code & shamt_mask) >> 6;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d >> sb:%d (logical)\n", rd, rs,
@@ -154,7 +152,7 @@ void controller::exec_code(unsigned int one_code) {
             regs[rd].data =
                 (int)((unsigned int)regs[rs].data >> (unsigned int)sb);
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -168,14 +166,14 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             sb = (one_code & shamt_mask) >> 6;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d >> sb:%d (arithmetic)\n", rd,
                        rs, regs[rs].data, sb);
             }
             regs[rd].data = regs[rs].data >> sb;
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -189,7 +187,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf(
@@ -200,7 +198,7 @@ void controller::exec_code(unsigned int one_code) {
             regs[rd].data = (int)((unsigned int)regs[rs].data
                                   << (mask & (unsigned int)regs[rt].data));
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -214,7 +212,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf(
@@ -225,7 +223,7 @@ void controller::exec_code(unsigned int one_code) {
             regs[rd].data = (int)((unsigned int)regs[rs].data >>
                                   (mask & (unsigned int)regs[rt].data));
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -239,7 +237,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d >> rt($%d):%d [4:0] "
@@ -248,7 +246,7 @@ void controller::exec_code(unsigned int one_code) {
             }
             mask = 0x1F; // 下位5ビットの取り出し
             regs[rd].data = regs[rs].data >> (mask & regs[rt].data);
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -261,7 +259,7 @@ void controller::exec_code(unsigned int one_code) {
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\tprogram counter:%d\n", rd, regs[rd].data,
                        line_num * 4);
@@ -272,7 +270,7 @@ void controller::exec_code(unsigned int one_code) {
                 regs[rd].data = line_num * 4 + 4;
             }
             line_num = regs[rs].data / 4;
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\tprogram counter:%d\trd($%d):%d\n", line_num * 4, rd,
                        regs[rd].data);
@@ -286,14 +284,14 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d * rt($%d):%d\n", rd, rs,
                        regs[rs].data, rt, regs[rt].data);
             }
             regs[rd].data = regs[rs].data * regs[rt].data;
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -309,14 +307,14 @@ void controller::exec_code(unsigned int one_code) {
                 rs = (one_code & rs_mask) >> 16;
                 rt = (one_code & rt_mask) >> 11;
 
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("DEBUG\n");
                     printf("\trd($%d):%d\n", rd, regs[rd].data);
                     printf("\trd($%d) <- rs($%d):%d / rt($%d):%d\n", rd, rs,
                            regs[rs].data, rt, regs[rt].data);
                 }
                 regs[rd].data = regs[rs].data / regs[rt].data;
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("\trd($%d):%d\n", rd, regs[rd].data);
                 }
                 line_num++;
@@ -328,14 +326,14 @@ void controller::exec_code(unsigned int one_code) {
                 rs = (one_code & rs_mask) >> 16;
                 rt = (one_code & rt_mask) >> 11;
 
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("DEBUG\n");
                     printf("\trd($%d):%d\n", rd, regs[rd].data);
                     printf("\trd($%d) <- rs($%d):%d MOD rt($%d):%d\n", rd, rs,
                            regs[rs].data, rt, regs[rt].data);
                 }
                 regs[rd].data = regs[rs].data % regs[rt].data;
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("\trd($%d):%d\n", rd, regs[rd].data);
                 }
                 line_num++;
@@ -349,7 +347,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d + rt($%d):%d\n", rd, rs,
@@ -358,7 +356,7 @@ void controller::exec_code(unsigned int one_code) {
 
             regs[rd].data = regs[rs].data + regs[rt].data;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -372,14 +370,14 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d - rt($%d):%d\n", rd, rs,
                        regs[rs].data, rt, regs[rt].data);
             }
             regs[rd].data = regs[rs].data - regs[rt].data;
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -393,14 +391,14 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d & rt($%d):%d\n", rd, rs,
                        regs[rs].data, rt, regs[rt].data);
             }
             regs[rd].data = regs[rs].data & regs[rt].data;
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
             line_num++;
@@ -413,14 +411,14 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d | rt($%d):%d\n", rd, rs,
                        regs[rs].data, rt, regs[rt].data);
             }
             regs[rd].data = regs[rs].data | regs[rt].data;
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -433,14 +431,14 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- rs($%d):%d ^ rt($%d):%d\n", rd, rs,
                        regs[rs].data, rt, regs[rt].data);
             }
             regs[rd].data = regs[rs].data ^ regs[rt].data;
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -453,14 +451,14 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($%d) <- ~(rs($%d):%d | rt($%d):%d)\n", rd, rs,
                        regs[rs].data, rt, regs[rt].data);
             }
             regs[rd].data = ~(regs[rs].data | regs[rt].data);
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -472,7 +470,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf(
@@ -484,7 +482,7 @@ void controller::exec_code(unsigned int one_code) {
             } else {
                 regs[rd].data = 0;
             }
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -505,7 +503,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
                 printf("\trd($f%d) <- rs($f%d):%f +. rt($f%d):%f\n", rd, rs,
@@ -514,7 +512,7 @@ void controller::exec_code(unsigned int one_code) {
 
             fregs[rd].data.f = fregs[rs].data.f + fregs[rt].data.f;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             }
 
@@ -527,7 +525,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
                 printf("\trd($f%d) <- rs($f%d):%f -. rt($f%d):%f\n", rd, rs,
@@ -536,7 +534,7 @@ void controller::exec_code(unsigned int one_code) {
 
             fregs[rd].data.f = fregs[rs].data.f - fregs[rt].data.f;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             }
 
@@ -549,7 +547,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
                 printf("\trd($f%d) <- rs($f%d):%f *. rt($f%d):%f\n", rd, rs,
@@ -558,7 +556,7 @@ void controller::exec_code(unsigned int one_code) {
 
             fregs[rd].data.f = fregs[rs].data.f * fregs[rt].data.f;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             }
 
@@ -570,7 +568,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
                 printf("\trd($f%d) <- rs($f%d):%f /. rt($f%d):%f\n", rd, rs,
@@ -579,7 +577,7 @@ void controller::exec_code(unsigned int one_code) {
 
             fregs[rd].data.f = fregs[rs].data.f / fregs[rt].data.f;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             }
 
@@ -590,7 +588,7 @@ void controller::exec_code(unsigned int one_code) {
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
                 printf("\trd($f%d) <- neg(rs($f%d):%f)\n", rd, rs,
@@ -598,7 +596,7 @@ void controller::exec_code(unsigned int one_code) {
             }
             fregs[rd].data.f = -fregs[rs].data.f;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             }
 
@@ -610,7 +608,7 @@ void controller::exec_code(unsigned int one_code) {
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
                 printf("\trd($f%d) <- sqrt(rs($f%d):%f)\n", rd, rs,
@@ -618,7 +616,7 @@ void controller::exec_code(unsigned int one_code) {
             }
             fregs[rd].data.f = sqrt(fregs[rs].data.f);
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             }
 
@@ -632,7 +630,7 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\trd($f%d)[0] <- if (rs($f%d):%f < rt($f%d):%f) then 1 "
@@ -644,7 +642,7 @@ void controller::exec_code(unsigned int one_code) {
             } else {
                 regs[rd].data = 0;
             }
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
             }
 
@@ -656,13 +654,13 @@ void controller::exec_code(unsigned int one_code) {
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
 
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
                 printf("\trd($f%d) <- rs($f%d):%f\n", rd, rs, fregs[rs].data.f);
             }
             fregs[rd].data.f = fregs[rs].data.f;
-            if (*log_level >= DEBUG) {
+            if (log_level >= DEBUG) {
                 printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             }
 
@@ -675,13 +673,13 @@ void controller::exec_code(unsigned int one_code) {
 
     case 0x2: { // J label
         label_line = (one_code & address_mask);
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tprogram counter:%d \n", line_num * 4);
             printf("\tprogram counter <- address:%d <<2 \n", label_line);
         }
         line_num = label_line;
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\tprogram counter:%d \n", line_num * 4);
         }
         break;
@@ -689,7 +687,7 @@ void controller::exec_code(unsigned int one_code) {
 
     case 0x3: { // JAL label (next addr is line_num*4)
         label_line = (one_code & address_mask);
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\t$31:%d\tprogram counter:%d\n", regs[31].data,
                    line_num * 4);
@@ -698,7 +696,7 @@ void controller::exec_code(unsigned int one_code) {
         }
         regs[31].data = line_num * 4 + 4;
         line_num = label_line;
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\t$31:%d\n", regs[31].data);
             printf("\tprogram counter:%d \n", line_num * 4);
         }
@@ -712,7 +710,7 @@ void controller::exec_code(unsigned int one_code) {
         if ((label_line & 0x8000) == 0x8000) { //符号拡張
             label_line = 0xffff0000 | label_line;
         }
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tprogram counter <- if (rs($%d):%d == rt($%d):%d) then "
                    "pc+(offset:%d <<2) "
@@ -727,7 +725,7 @@ void controller::exec_code(unsigned int one_code) {
             line_num++;
         }
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\tprogram counter:%d\n", line_num * 4);
         }
         break;
@@ -740,7 +738,7 @@ void controller::exec_code(unsigned int one_code) {
         if ((label_line & 0x8000) == 0x8000) { //符号拡張
             label_line = 0xffff0000 | label_line;
         }
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tprogram counter <- if (rs($%d):%d != rt($%d):%d) then "
                    "pc+(offset:%d <<2) "
@@ -754,7 +752,7 @@ void controller::exec_code(unsigned int one_code) {
         } else {
             line_num++;
         }
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\tprogram counter:%d\n", line_num * 4);
         }
         break;
@@ -769,7 +767,7 @@ void controller::exec_code(unsigned int one_code) {
             immediate = 0xffff0000 | immediate;
         }
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d + immediate:%d\n", rd, rs,
@@ -778,7 +776,7 @@ void controller::exec_code(unsigned int one_code) {
 
         regs[rd].data = regs[rs].data + immediate;
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
@@ -790,7 +788,7 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d & zero_extend(immediate):%d\n", rd,
@@ -799,7 +797,7 @@ void controller::exec_code(unsigned int one_code) {
 
         regs[rd].data = regs[rs].data & (immediate & 0xffff);
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
@@ -811,14 +809,14 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d | zero_extend(immediate):%d\n", rd,
                    rs, regs[rs].data, immediate);
         }
         regs[rd].data = regs[rs].data | (immediate & 0xffff);
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
@@ -831,14 +829,14 @@ void controller::exec_code(unsigned int one_code) {
         immediate = (one_code & addr_or_imm_mask);
         regs[rd].data = regs[rs].data ^ immediate;
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- rs($%d):%d ^ zero_extend(immediate):%d\n", rd,
                    rs, regs[rs].data, immediate);
         }
         regs[rd].data = regs[rs].data ^ (immediate & 0xffff);
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
@@ -861,13 +859,13 @@ void controller::exec_code(unsigned int one_code) {
         }
         unsigned char data = memo->read_byte(addr);
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- memory[%d]:%hhu\n", rd, addr, data);
         }
         regs[rd].data = (regs[rd].data & 0xffffff00) | (unsigned int)data;
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
         line_num++;
@@ -887,7 +885,7 @@ void controller::exec_code(unsigned int one_code) {
                    one_raw_program.c_str(), line_num * 4, addr);
             exit(1);
         }
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($%d):%d\n", rd, regs[rd].data);
             printf("\trd($%d) <- memory[%d]:%d\n", rd, addr,
@@ -895,7 +893,7 @@ void controller::exec_code(unsigned int one_code) {
         }
         regs[rd].data = memo->read_word(addr);
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\trd($%d):%d\n", rd, regs[rd].data);
         }
 
@@ -916,14 +914,14 @@ void controller::exec_code(unsigned int one_code) {
                    one_raw_program.c_str(), line_num * 4, addr);
             exit(1);
         }
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:%d\n", addr, memo->read_byte(addr));
             printf("\tmemory[%d] <- rd($%d):%d\n", addr, rd, regs[rd].data);
         }
         memo->write_byte(addr,
                          (unsigned char)((regs[rd].data << 8 * 3) >> 8 * 3));
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\tmemory[%d]:%d\n", addr, memo->read_byte(addr));
         }
 
@@ -945,13 +943,13 @@ void controller::exec_code(unsigned int one_code) {
             exit(1);
         }
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:%d\n", addr, memo->read_word(addr));
             printf("\tmemory[%d] <- rd($%d):%d\n", addr, rd, regs[rd].data);
         }
         memo->write_word(addr, regs[rd].data);
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\tmemory[%d]:%d\n", addr, memo->read_word(addr));
         }
 
@@ -974,7 +972,7 @@ void controller::exec_code(unsigned int one_code) {
             exit(1);
         }
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
             printf("\trd($f%d) <- memory[%d]:(hex)%8x\n", rd, addr,
@@ -982,7 +980,7 @@ void controller::exec_code(unsigned int one_code) {
         }
         fregs[rd].data.i = memo->read_word(addr);
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
         }
 
@@ -995,14 +993,14 @@ void controller::exec_code(unsigned int one_code) {
         if ((offset & 0x2000000) == 0x2000000) { //符号拡張
             offset = 0xfc000000 | immediate;
         }
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tprogram counter:%d \n", line_num * 4);
             printf("\tprogram counter <- pc:%d + (offset:%d <<2) \n",
                    line_num * 4, offset);
         }
         line_num = line_num + offset;
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\tprogram counter:%d \n", line_num * 4);
         }
         break;
@@ -1022,13 +1020,13 @@ void controller::exec_code(unsigned int one_code) {
             exit(1);
         }
 
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:(hex)%8x\n", addr, memo->read_word(addr));
             printf("\tmemory[%d] <- rd($f%d):%f\n", addr, rd, fregs[rd].data.f);
         }
         memo->write_word(addr, fregs[rd].data.i);
-        if (*log_level >= DEBUG) {
+        if (log_level >= DEBUG) {
             printf("\tmemory[%d]:(hex)%8x\n", addr, memo->read_word(addr));
         }
 
@@ -1056,14 +1054,14 @@ void controller::exec_code(unsigned int one_code) {
                         exit(1);
                     }
 
-                    if (*log_level >= DEBUG) {
+                    if (log_level >= DEBUG) {
                         printf("DEBUG\n");
                         printf("\trd($%d):(hex)%08x <- get(char):%c\n", rd,
                                regs[rd].data, str);
                     }
 
                     regs[rd].data = (int)((unsigned char)str);
-                    if (*log_level >= DEBUG) {
+                    if (log_level >= DEBUG) {
                         printf("\trd($%d):(hex)%08x\n", rd, regs[rd].data);
                     }
                 }
@@ -1074,14 +1072,14 @@ void controller::exec_code(unsigned int one_code) {
 
             case 1: { // outb rs
                 rs = (one_code & rs_mask) >> 16;
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("DEBUG\n");
                     printf("\tOUTB rs($%d):(hex)%08x\n", rs, regs[rs].data);
                 }
                 char lower8 = (char)(((unsigned int)regs[rs].data) & 0xff);
                 fprintf(outputfile, "%c", lower8);
 
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("\tout(char):%c\n", lower8);
                 }
                 line_num++;
@@ -1109,14 +1107,14 @@ void controller::exec_code(unsigned int one_code) {
                         exit(1);
                     }
 
-                    if (*log_level >= DEBUG) {
+                    if (log_level >= DEBUG) {
                         printf("DEBUG\n");
                         printf("\tIN rd($%d):%d <- get(int):%d\n", rd,
                                regs[rd].data, tmp);
                     }
 
                     regs[rd].data = tmp;
-                    if (*log_level >= DEBUG) {
+                    if (log_level >= DEBUG) {
                         printf("\trd($%d):%d\n", rd, regs[rd].data);
                     }
                 }
@@ -1126,12 +1124,12 @@ void controller::exec_code(unsigned int one_code) {
 
             case 1: { // out rs
                 rs = (one_code & rs_mask) >> 16;
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("DEBUG\n");
                     printf("\tOUT rs($%d):%d\n", rs, regs[rs].data);
                 }
                 fprintf(outputfile, "%d", regs[rs].data);
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("\tout(int):%d\n", regs[rs].data);
                 }
                 line_num++;
@@ -1153,14 +1151,14 @@ void controller::exec_code(unsigned int one_code) {
                         exit(1);
                     }
 
-                    if (*log_level >= DEBUG) {
+                    if (log_level >= DEBUG) {
                         printf("DEBUG\n");
                         printf("\tINF rd($f%d):%f <- get(float):%f\n", rd,
                                fregs[rd].data.f, tmp.f);
                     }
 
                     fregs[rd].data.f = tmp.f;
-                    if (*log_level >= DEBUG) {
+                    if (log_level >= DEBUG) {
                         printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
                     }
                 }
@@ -1170,12 +1168,12 @@ void controller::exec_code(unsigned int one_code) {
 
             case 3: { // OUTF rs
                 rs = (one_code & rs_mask) >> 16;
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("DEBUG\n");
                     printf("\tOUTF rs($%d):%f\n", rs, fregs[rs].data.f);
                 }
                 fprintf(outputfile, "%f", fregs[rs].data.f);
-                if (*log_level >= DEBUG) {
+                if (log_level >= DEBUG) {
                     printf("\tout(float):%f\n", fregs[rs].data.f);
                 }
                 line_num++;
@@ -1190,7 +1188,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     default: {
-        if (*log_level >= FATAL) {
+        if (log_level >= FATAL) {
             printf("FATAL invalid instructions:");
             print_binary_with_space(one_code);
             printf("\n");

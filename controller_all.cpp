@@ -1,9 +1,14 @@
-// loader.cpp:
-//
+// controller_all.cpp:
+// execute instructions
 
-#include "loader.h"
+#include "controller_all.h"
 #include "asm.h"
 #include "global.h"
+#include <bitset>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
 #include <regex>
 #include <stdio.h>
 #include <string>
@@ -12,8 +17,8 @@ using namespace std;
 
 string label_str_tmp;
 
-// constructor
-loader::loader(const char *fname) {
+controller::controller(const char *fname) {
+    // for load
     file_name = fname;
     load_line_num = 0;
     line_num = 0; // reset line number
@@ -21,15 +26,56 @@ loader::loader(const char *fname) {
     output_exist = false;
     input_exist = false;
     end_line_num = load_file();
+
+    // for memory
+    for (sim_addr i = 0; i < memorySize / 4; i++) {
+        table[i] = 0x0;
+    }
+
+    // start simulate
+    line_num = 0;
+    regs[0] = 0;
+    regs[29] = 0; // init sp;
+
+    // for output
+    if (output_exist) {
+        string outputfile_name = fname;
+        outputfile_name.pop_back(); // 最後のsを削除
+        outputfile_name = outputfile_name + "ppm";
+        outputfile = fopen(outputfile_name.c_str(), "w");
+        if (outputfile == NULL) { // オープンに失敗した場合
+            printf("cannot open output file: %s\n", outputfile_name.c_str());
+            exit(1);
+        }
+    }
+
+    if (input_exist) {
+        string inputfile_name = fname;
+        inputfile_name.pop_back(); // 最後のsを削除
+        inputfile_name = inputfile_name + "txt";
+        ifs.open(inputfile_name);
+        if (!ifs) { // オープンに失敗した場合
+            printf("cannot open input file: %s\n", inputfile_name.c_str());
+            // exit(1);
+        }
+    }
 }
 
 // destructor
-/*
-loader::~loader() {
-
+controller::~controller() {
+    fclose(outputfile);
+    ifs.close();
 }
-*/
-void loader::print_binary_with_space(unsigned int v) {
+
+// for print
+void controller::print_binary(int data) {
+    unsigned int v = (unsigned int)data;
+    unsigned int mask = 1 << 31;
+    do
+        putchar(mask & v ? '1' : '0');
+    while (mask >>= 1);
+}
+void controller::print_binary_with_space(unsigned int v) {
     unsigned int mask = 1 << 31;
     do {
         if (0x2108420 & mask) { // 00000010000100001000010000100000
@@ -39,7 +85,651 @@ void loader::print_binary_with_space(unsigned int v) {
     } while (mask >>= 1);
 }
 
-int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
+// for memory
+sim_byte controller::read_byte(sim_addr addr) {
+    int offset = addr % 4;
+    return (sim_byte)((table[addr / 4] >> offset * 8) & 0xff);
+}
+sim_word controller::read_word(sim_addr addr) { return table[addr / 4]; }
+void controller::write_byte(sim_addr addr, sim_byte byte_data) {
+    int offset = addr % 4;
+    table[addr / 4] = (sim_word)((sim_word)byte_data << offset * 8);
+}
+void controller::write_word(sim_addr addr, sim_word word_data) {
+    table[addr / 4] = word_data;
+}
+// print word from s_addr to e_addr
+void controller::print_word_by_addr(sim_addr s_addr, sim_addr e_addr) {
+    if (s_addr < memorySize && s_addr % 4 == 0 && e_addr + 4 <= memorySize &&
+        e_addr % 4 == 0 && s_addr <= e_addr) {
+        for (sim_addr addr = s_addr; addr <= e_addr; addr += 4) {
+            sim_word word = read_word(addr);
+            printf("%9d:\t%9d\t%8x\t", addr, table[addr / 4], table[addr / 4]);
+            print_binary(word);
+            printf("\n");
+        }
+    } else {
+        if (log_level >= ERROR) {
+            printf("ERROR\tinvalid address: [%d] to [%d]\n", s_addr, e_addr);
+            printf("ERROR\tPlease input Multiples of 4\n");
+        }
+    }
+}
+
+// for simulate
+Status controller::exec_step(int break_point) {
+    unsigned int one_code = get_machine_code_by_line_num(line_num);
+    exec_code(one_code);
+    if (line_num >= end_line_num) {
+        return END;
+    }
+    return ACTIVE;
+}
+
+void controller::exec_code(unsigned int one_code) {
+
+    // unsigned int op_mask = 0xFE000000;          //上位6bit(<< 26)
+    unsigned int rd_mask = 0x03E00000;          // 5bit(<< 21)
+    unsigned int rs_mask = 0x001F0000;          // 5bit(<< 16)
+    unsigned int rt_mask = 0x0000F800;          // 5bit(<< 11)
+    unsigned int shamt_mask = 0x000007C0;       // 5bit(<< 6)
+    unsigned int funct_mask = 0x0000003F;       // 6bit(<< 0)
+    unsigned int addr_or_imm_mask = 0x0000FFFF; // 16bit
+    unsigned int address_mask = 0x03FFFFFF;     // 26bit
+
+    unsigned int opecode = one_code >> 26;
+    unsigned int rd;
+    unsigned int rs;
+    unsigned int rt;
+    unsigned int shamt = (one_code & shamt_mask) >> 6;
+    unsigned int funct = one_code & funct_mask;
+    int immediate = 0;
+    int sb;
+    int reg;
+    int offset;
+    int addr;
+    unsigned int mask;
+    int base;
+    int label_line;
+
+    switch (opecode) {
+    case 0: {
+        switch (funct) {
+        // nop or SLLI
+        case 0: { // SLLI rd <- rs << sb (logical)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            sb = (one_code & shamt_mask) >> 6;
+            regs[rd] = (int)((unsigned int)regs[rs] << (unsigned int)sb);
+            line_num++;
+            break;
+        }
+
+        // SRLI
+        case 2: { // SRLI rd <- rs >> sb (logical)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            sb = (one_code & shamt_mask) >> 6;
+            regs[rd] = (int)((unsigned int)regs[rs] >> (unsigned int)sb);
+            line_num++;
+            break;
+        }
+
+        // SRAI
+        case 3: { // SRAI rd <- rs >> sb (arithmetic)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            sb = (one_code & shamt_mask) >> 6;
+            regs[rd] = regs[rs] >> sb;
+            line_num++;
+            break;
+        }
+
+        // SLL
+        case 4: { // SLL rd <- rs << rt (logical)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            // 下位5ビットの取り出し
+            mask = 0x1F;
+            regs[rd] = (int)((unsigned int)regs[rs]
+                             << (mask & (unsigned int)regs[rt]));
+            line_num++;
+            break;
+        }
+
+        // SRL
+        case 6: { // SRL rd <- rs >> rt (logical)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            // 下位5ビットの取り出し
+            mask = 0x1F;
+            regs[rd] = (int)((unsigned int)regs[rs] >>
+                             (mask & (unsigned int)regs[rt]));
+            line_num++;
+            break;
+        }
+
+        // SRA
+        case 7: { // SRA rd <- rs >> rt (arithmetic)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            // 下位5ビットの取り出し
+            mask = 0x1F;
+            regs[rd] = regs[rs] >> (mask & regs[rt]);
+            line_num++;
+            break;
+        }
+
+        // JR or JALR
+        case 9: { // JALR rd, rs
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            if (rd != 0) { // 0レジスタには書き込みしない
+                regs[rd] = line_num * 4 + 4;
+            }
+            line_num = regs[rs] / 4;
+            break;
+        }
+
+        // MUL
+        case 24: { // MUL rd <- rs * rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            regs[rd] = regs[rs] * regs[rt];
+            line_num++;
+            break;
+        }
+
+        // DIV or MOD
+        case 26: {
+            if (shamt == 0x2) { // DIV rd <- rs / rt
+                rd = (one_code & rd_mask) >> 21;
+                rs = (one_code & rs_mask) >> 16;
+                rt = (one_code & rt_mask) >> 11;
+                regs[rd] = regs[rs] / regs[rt];
+                line_num++;
+                break;
+
+            } else if (shamt == 0x3) { // MOD rd <- rs % rt
+                rd = (one_code & rd_mask) >> 21;
+                rs = (one_code & rs_mask) >> 16;
+                rt = (one_code & rt_mask) >> 11;
+                regs[rd] = regs[rs] % regs[rt];
+                line_num++;
+                break;
+            }
+        }
+
+        // ADD or MOV
+        case 32: {
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            regs[rd] = regs[rs] + regs[rt];
+            line_num++;
+            break;
+        }
+
+        // SUB
+        case 34: { // SUB rd <- rs - rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            regs[rd] = regs[rs] - regs[rt];
+            line_num++;
+            break;
+        }
+
+        // AND
+        case 36: { // AND rd <- rs & rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            regs[rd] = regs[rs] & regs[rt];
+            line_num++;
+            break;
+        }
+
+        // OR
+        case 37: { // OR rd <- rs | rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            regs[rd] = regs[rs] | regs[rt];
+            line_num++;
+            break;
+        }
+
+        case 38: { // XOR rd <- rs ^ rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            regs[rd] = regs[rs] ^ regs[rt];
+            line_num++;
+            break;
+        }
+
+        case 39: { // NOR rd <- ~(rs | rt)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            regs[rd] = ~(regs[rs] | regs[rt]);
+            line_num++;
+            break;
+        }
+        case 42: { // SLT Rd = if Rs < Rt then 1 else 0
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            if (regs[rs] < regs[rt]) {
+                regs[rd] = 1;
+            } else {
+                regs[rd] = 0;
+            }
+            line_num++;
+            break;
+        }
+        }
+        break;
+    }
+
+    case 0x11: { // opecode == 010001
+        switch (funct) {
+
+        // FADD and FMOV
+        case 0: { // FADD rd <- rs +. rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            fregs[rd].f = fregs[rs].f + fregs[rt].f;
+            line_num++;
+            break;
+        }
+
+        case 1: { // FSUB rd <- rs -. rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            fregs[rd].f = fregs[rs].f - fregs[rt].f;
+            line_num++;
+            break;
+        }
+
+        case 2: { // FMUL rd <- rs *. rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            fregs[rd].f = fregs[rs].f * fregs[rt].f;
+            line_num++;
+            break;
+        }
+        case 3: { // FDIV rd <- rs /. rt
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            fregs[rd].f = fregs[rs].f / fregs[rt].f;
+            line_num++;
+            break;
+        }
+        case 9: { // FNEG rd <- -rs
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            fregs[rd].f = -fregs[rs].f;
+            line_num++;
+            break;
+        }
+
+        case 4: { // SQRT rd <- sqrt(rs)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            fregs[rd].f = sqrt(fregs[rs].f);
+            line_num++;
+            break;
+        }
+
+        case 8: { // SLTF Rd[0] = if Rs < Rt then 1 else 0
+            // * rd is a general register
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            rt = (one_code & rt_mask) >> 11;
+            if (fregs[rs].f < fregs[rt].f) {
+                regs[rd] = 1;
+            } else {
+                regs[rd] = 0;
+            }
+            line_num++;
+            break;
+        }
+
+        case 63: { // MOVF rd <- rs
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            fregs[rd].f = fregs[rs].f;
+            line_num++;
+            break;
+        }
+        }
+
+        break;
+    }
+
+    case 0x2: { // J label
+        label_line = (one_code & address_mask);
+        line_num = label_line;
+        break;
+    }
+
+    case 0x3: { // JAL label (next addr is line_num*4)
+        label_line = (one_code & address_mask);
+        regs[31] = line_num * 4 + 4;
+        line_num = label_line;
+        break;
+    }
+
+    case 4: { // BEQ rs rt label(pc+offset<<2)
+        rs = (one_code & rd_mask) >> 21;
+        rt = (one_code & rs_mask) >> 16;
+        label_line = (one_code & addr_or_imm_mask);
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
+
+        if (regs[rs] == regs[rt]) {
+            line_num = line_num + label_line;
+        } else {
+            line_num++;
+        }
+
+        break;
+    }
+
+    case 5: { // BNE rs rt label(pc+offset<<2)
+        rs = (one_code & rd_mask) >> 21;
+        rt = (one_code & rs_mask) >> 16;
+        label_line = (one_code & addr_or_imm_mask);
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
+        if (regs[rs] != regs[rt]) {
+            line_num = line_num + label_line;
+        } else {
+            line_num++;
+        }
+        break;
+    }
+
+    case 8: { // ADDI rd <- rs + immediate
+        rd = (one_code & rd_mask) >> 21;
+        rs = (one_code & rs_mask) >> 16;
+        immediate = (one_code & addr_or_imm_mask);
+        if ((immediate & 0x8000) == 0x8000) { //符号拡張
+            immediate = 0xffff0000 | immediate;
+        }
+        regs[rd] = regs[rs] + immediate;
+        line_num++;
+        break;
+    }
+
+    case 12: { // ANDI rd <- rs & immediate
+        rd = (one_code & rd_mask) >> 21;
+        rs = (one_code & rs_mask) >> 16;
+        immediate = (one_code & addr_or_imm_mask);
+        regs[rd] = regs[rs] & (immediate & 0xffff);
+        line_num++;
+        break;
+    }
+
+    case 13: { // ORI rd <- rs & immediate
+        rd = (one_code & rd_mask) >> 21;
+        rs = (one_code & rs_mask) >> 16;
+        immediate = (one_code & addr_or_imm_mask);
+        regs[rd] = regs[rs] | (immediate & 0xffff);
+        line_num++;
+        break;
+    }
+
+    case 14: { // XORI rd <- rs & immediate
+        rd = (one_code & rd_mask) >> 21;
+        rs = (one_code & rs_mask) >> 16;
+        immediate = (one_code & addr_or_imm_mask);
+        regs[rd] = regs[rs] ^ immediate;
+        regs[rd] = regs[rs] ^ (immediate & 0xffff);
+        line_num++;
+        break;
+    }
+
+    case 32: { // LB rd, offset(base)
+        rd = (one_code & rd_mask) >> 21;
+        reg = (one_code & rs_mask) >> 16;
+        offset = (one_code & addr_or_imm_mask);
+        addr = regs[reg] + offset;
+        if (!(0 <= addr && addr < memorySize)) {
+            string one_raw_program = get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
+        unsigned char data = read_byte(addr);
+        regs[rd] = (regs[rd] & 0xffffff00) | (unsigned int)data;
+        line_num++;
+        break;
+    }
+
+    case 35: { // LW rd, offset(base)
+        rd = (one_code & rd_mask) >> 21;
+        reg = (one_code & rs_mask) >> 16;
+        offset = (one_code & addr_or_imm_mask);
+        addr = regs[reg] + offset;
+        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+            string one_raw_program = get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
+        regs[rd] = read_word(addr);
+        line_num++;
+        break;
+    }
+
+    case 40: { // SB rd, offset(base)
+        rd = (one_code & rd_mask) >> 21;
+        reg = (one_code & rs_mask) >> 16;
+        offset = (one_code & addr_or_imm_mask);
+        addr = regs[reg] + offset;
+        if (!(0 <= addr && addr < memorySize)) {
+            string one_raw_program = get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
+        write_byte(addr, (unsigned char)((regs[rd] << 8 * 3) >> 8 * 3));
+        line_num++;
+        break;
+    }
+
+    case 43: { // SW
+        rd = (one_code & rd_mask) >> 21;
+        reg = (one_code & rs_mask) >> 16;
+        offset = (one_code & addr_or_imm_mask);
+        addr = regs[reg] + offset;
+        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+            string one_raw_program = get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
+        write_word(addr, regs[rd]);
+        line_num++;
+        break;
+    }
+
+    case 49: { // LF rd, offset(base)
+        rd = (one_code & rd_mask) >> 21;
+        base = (one_code & rs_mask) >> 16;
+        offset = (one_code & addr_or_imm_mask);
+        addr = regs[base] + offset;
+        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+            string one_raw_program = get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
+        fregs[rd].i = read_word(addr);
+        line_num++;
+        break;
+    }
+
+    case 50: { // BC label(pc+offset<<2)
+        offset = (one_code & address_mask);
+        if ((offset & 0x2000000) == 0x2000000) { //符号拡張
+            offset = 0xfc000000 | immediate;
+        }
+        line_num = line_num + offset;
+        break;
+    }
+
+    case 57: { // SF
+        rd = (one_code & rd_mask) >> 21;
+        base = (one_code & rs_mask) >> 16;
+        offset = (one_code & addr_or_imm_mask);
+        addr = regs[base] + offset;
+        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+            string one_raw_program = get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n",
+                   one_raw_program.c_str(), line_num * 4, addr);
+            exit(1);
+        }
+        write_word(addr, fregs[rd].i);
+        line_num++;
+        break;
+    }
+
+    // INB, IN, OUT, OUTB
+    case 63: {
+        switch (shamt) {
+
+        case 0: {
+            switch (funct) {
+
+            case 0: { // INB rd
+                rd = (one_code & rd_mask) >> 21;
+                char str;
+                if (!ifs.get(str)) { // オープンに失敗した場合
+                    printf("input file was not opened\n");
+                    // exit(1);
+                } else {
+                    if (ifs.eof()) {
+                        string one_raw_program =
+                            get_raw_program_by_line_num(line_num);
+                        printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                               line_num * 4, one_raw_program.c_str());
+                        exit(1);
+                    }
+                    regs[rd] = (int)((unsigned char)str);
+                }
+                line_num++;
+                break;
+            }
+
+            case 1: { // outb rs
+                rs = (one_code & rs_mask) >> 16;
+                char lower8 = (char)(((unsigned int)regs[rs]) & 0xff);
+                fprintf(outputfile, "%c", lower8);
+                line_num++;
+                break;
+            }
+            }
+
+            break;
+        }
+
+        case 3: {
+            switch (funct) {
+
+            case 0: {
+                // IN rd
+                rd = (one_code & rd_mask) >> 21;
+                int tmp;
+                if (!ifs) { // オープンに失敗した場合
+                    printf("input file was not opened\n");
+                    // exit(1);
+                } else {
+                    if (!(ifs >> tmp)) {
+                        string one_raw_program =
+                            get_raw_program_by_line_num(line_num);
+                        printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                               line_num * 4, one_raw_program.c_str());
+                        exit(1);
+                    }
+                    regs[rd] = tmp;
+                }
+                line_num++;
+                break;
+            }
+
+            case 1: { // out rs
+                rs = (one_code & rs_mask) >> 16;
+                fprintf(outputfile, "%d", regs[rs]);
+                line_num++;
+                break;
+            }
+
+            case 2: { // INF rd
+                rd = (one_code & rd_mask) >> 21;
+                IntAndFloat tmp;
+                if (!ifs) { // オープンに失敗した場合
+                    printf("input file was not opened\n");
+                    // exit(1);
+                } else {
+                    if (!(ifs >> tmp.f)) {
+                        string one_raw_program =
+                            get_raw_program_by_line_num(line_num);
+                        printf("FATAL\n\tread EOF! program address:%d\n\t%s\n",
+                               line_num * 4, one_raw_program.c_str());
+                        exit(1);
+                    }
+
+                    fregs[rd].f = tmp.f;
+                }
+                line_num++;
+                break;
+            }
+
+            case 3: { // OUTF rs
+                rs = (one_code & rs_mask) >> 16;
+                fprintf(outputfile, "%f", fregs[rs].f);
+                line_num++;
+                break;
+            }
+            }
+
+            break;
+        }
+        }
+
+        break;
+    }
+
+    default: {
+        printf("FATAL invalid instructions:");
+        print_binary_with_space(one_code);
+        printf("\n");
+    }
+    }
+}
+
+// for load
+int controller::get_reg_by_base_plus_offset(string base_plus_offset) {
     regex sep("^([+-]?)(0|[1-9][0-9]*)\\(\\$(3[0-1]|[1-2][0-9]|[0-9])\\)$");
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),
                                sep, 3);
@@ -72,7 +762,7 @@ int loader::get_reg_by_base_plus_offset(string base_plus_offset) {
         }
     }
 }
-int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
+int controller::get_offset_by_base_plus_offset(string base_plus_offset) {
     regex sep("^([+-]?)(0|[1-9][0-9]*)\\(\\$(3[0-1]|[1-2][0-9]|[0-9])\\)$");
     sregex_token_iterator iter(base_plus_offset.begin(), base_plus_offset.end(),
                                sep, {1, 2});
@@ -112,7 +802,7 @@ int loader::get_offset_by_base_plus_offset(string base_plus_offset) {
     }
 }
 
-int loader::get_reg_num(string reg_str) {
+int controller::get_reg_num(string reg_str) {
     regex sep("^\\$(3[0-1]|[1-2][0-9]|[0-9])$");
     sregex_token_iterator iter(reg_str.begin(), reg_str.end(), sep, 1);
     sregex_token_iterator end;
@@ -143,7 +833,7 @@ int loader::get_reg_num(string reg_str) {
     }
 }
 
-int loader::get_freg_num(string reg_str) {
+int controller::get_freg_num(string reg_str) {
     regex sep("^\\$f(3[0-1]|[1-2][0-9]|[0-9])$");
     sregex_token_iterator iter(reg_str.begin(), reg_str.end(), sep, 1);
     sregex_token_iterator end;
@@ -174,7 +864,7 @@ int loader::get_freg_num(string reg_str) {
     }
 }
 
-int loader::get_arith_immediate(string init_immediate_str) {
+int controller::get_arith_immediate(string init_immediate_str) {
     // check immediate
     string immediate_str = init_immediate_str;
     regex sep("^([+-]?)(0|[1-9][0-9]*)$"); //([+-]?)([0-9]+)
@@ -276,7 +966,7 @@ int loader::get_arith_immediate(string init_immediate_str) {
     }
 }
 
-int loader::get_logic_immediate(string init_immediate_str) {
+int controller::get_logic_immediate(string init_immediate_str) {
     // check immediate
     string immediate_str = init_immediate_str;
     regex sep("^([+-]?)(0|[1-9][0-9]*)$"); //([+-]?)([0-9]+)
@@ -376,7 +1066,7 @@ int loader::get_logic_immediate(string init_immediate_str) {
     }
 }
 
-int loader::load_file() {
+int controller::load_file() {
     // load label
     ifstream input;
     input.open(file_name);
@@ -419,7 +1109,7 @@ int loader::load_file() {
     return end_line;
 }
 
-void loader::load_line_label(string line) {
+void controller::load_line_label(string line) {
     // delete comment
     regex comment_pattern("#.*$"); // #から末尾まで
     sregex_token_iterator iter1(line.begin(), line.end(), comment_pattern, -1);
@@ -460,7 +1150,7 @@ void loader::load_line_label(string line) {
 }
 
 // load line
-void loader::load_line(string line) {
+void controller::load_line(string line) {
 
     // delete comment
     regex comment_pattern("#.*$"); // #から末尾まで
@@ -521,7 +1211,7 @@ void loader::load_line(string line) {
     }
 }
 
-unsigned int loader::format_code(vector<string> code) {
+unsigned int controller::format_code(vector<string> code) {
     auto iter = code.begin();
     string opecode = *iter;
     iter++;
@@ -2264,7 +2954,7 @@ unsigned int loader::format_code(vector<string> code) {
 
 // public
 
-int loader::get_line_num_by_label(string label) {
+int controller::get_line_num_by_label(string label) {
     auto it = label_map.find(label);
     if (it == label_map.end()) {
         if (log_level >= FATAL) {
@@ -2277,36 +2967,28 @@ int loader::get_line_num_by_label(string label) {
     }
 }
 /*
-vector<int> loader::get_program_by_label(string label) {
+vector<int> controller::get_program_by_label(string label) {
     int line_num_of_label = get_line_num_by_label(label);
     return program_map[line_num_of_label];
 }
 */
 
-unsigned int loader::get_machine_code_by_line_num(int l_num) {
-    if (l_num > end_line_num) {
-        printf("FATAL invalid machine_code access\n");
-        exit(1);
-    }
+unsigned int controller::get_machine_code_by_line_num(int l_num) {
     return machine_code[l_num];
 }
 
-string loader::get_raw_program_by_line_num(int l_num) {
-    if (l_num > end_line_num) {
-        printf("FATAL invalid raw_program access\n");
-        exit(1);
-    }
+string controller::get_raw_program_by_line_num(int l_num) {
     return raw_program[l_num];
 }
 
-void loader::print_label_map() {
+void controller::print_label_map() {
     printf("label map\n");
     for (auto itr = label_map.begin(); itr != label_map.end(); ++itr) {
         printf("\t%s :\t%d\n", itr->first.c_str(), (itr->second) * 4);
     }
 }
 
-void loader::print_program_map() {
+void controller::print_program_map() {
     printf("program map\n");
     int line = 0;
     for (auto itr = machine_code.begin(); itr != machine_code.end(); ++itr) {
@@ -2316,7 +2998,7 @@ void loader::print_program_map() {
     }
 }
 
-void loader::print_raw_program() {
+void controller::print_raw_program() {
     printf("instruction memory\n");
     int line = 0;
     for (auto itr = raw_program.begin(); itr != raw_program.end(); ++itr) {
