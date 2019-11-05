@@ -29,7 +29,6 @@ int main(int argc, char *argv[]) {
     memory memo;
     reg regs[32];
     freg fregs[32];
-
     controller controller(argv[1], &ld, &memo, regs, fregs);
 
     string str;
@@ -230,6 +229,7 @@ int main(int argc, char *argv[]) {
 
         if (end_flag) {
             printf("\nprogram end!\n");
+            controller.print_jump_times();
         }
         print_prompt();
     }

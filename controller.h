@@ -8,6 +8,7 @@
 #include "memory.h"
 #include "register.h"
 #include <fstream>
+#include <map>
 #include <string>
 
 enum Status { ACTIVE, BREAK, END };
@@ -21,6 +22,9 @@ class controller {
     FILE *outputfile; // 出力
     // FILE *inputfile;  // 入力
     ifstream ifs; // 入力
+    map<int, long long int> jump_times;
+    map<int, long long int> inst_times;
+    void record_jump(int jump_line_num);
     void exec_code(unsigned int one_code);
     sim_addr get_addr_by_base_plus_offset(string base_plus_offset);
     int get_reg_num(string reg_str);
@@ -38,6 +42,8 @@ class controller {
 
     void init();
     Status exec_step(int break_point);
+
+    void print_jump_times();
 };
 
 #endif

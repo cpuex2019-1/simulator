@@ -48,6 +48,11 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
             // exit(1);
         }
     }
+
+    // init jump_times
+    for (auto itr = ld->label_map.begin(); itr != ld->label_map.end(); ++itr) {
+        jump_times[itr->second] = 0;
+    }
 }
 
 // destructor
@@ -143,6 +148,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // nop or SLLI
         case 0: { // SLLI rd <- rs << sb (logical)
+
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             sb = (one_code & shamt_mask) >> 6;
@@ -299,6 +305,8 @@ void controller::exec_code(unsigned int one_code) {
                 regs[rd].data = line_num * 4 + 4;
             }
             line_num = regs[rs].data / 4;
+            record_jump(line_num);
+
             if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\tprogram counter:%d\trd($%d):%d\n", line_num * 4, rd,
@@ -708,6 +716,7 @@ void controller::exec_code(unsigned int one_code) {
             printf("\tprogram counter <- address:%d <<2 \n", label_line);
         }
         line_num = label_line;
+        record_jump(line_num);
         if (log_level >= DEBUG) {
             printf("\tprogram counter:%d \n", line_num * 4);
         }
@@ -725,6 +734,7 @@ void controller::exec_code(unsigned int one_code) {
         }
         regs[31].data = line_num * 4 + 4;
         line_num = label_line;
+        record_jump(line_num);
         if (log_level >= DEBUG) {
             printf("\t$31:%d\n", regs[31].data);
             printf("\tprogram counter:%d \n", line_num * 4);
@@ -750,6 +760,7 @@ void controller::exec_code(unsigned int one_code) {
 
         if (regs[rs].data == regs[rt].data) {
             line_num = line_num + label_line;
+            record_jump(line_num);
         } else {
             line_num++;
         }
@@ -778,6 +789,7 @@ void controller::exec_code(unsigned int one_code) {
 
         if (regs[rs].data != regs[rt].data) {
             line_num = line_num + label_line;
+            record_jump(line_num);
         } else {
             line_num++;
         }
@@ -1029,6 +1041,7 @@ void controller::exec_code(unsigned int one_code) {
                    line_num * 4, offset);
         }
         line_num = line_num + offset;
+        record_jump(line_num);
         if (log_level >= DEBUG) {
             printf("\tprogram counter:%d \n", line_num * 4);
         }
@@ -1223,5 +1236,34 @@ void controller::exec_code(unsigned int one_code) {
             printf("\n");
         }
     }
+    }
+}
+
+void controller::record_jump(int jump_line_num) {
+    jump_times[jump_line_num] = jump_times[jump_line_num] + 1;
+}
+
+bool compare_by_b(pair<int, int> a, pair<int, int> b) {
+    if (a.second != b.second) {
+        return a.second > b.second;
+    } else {
+        return a.first > b.first;
+    }
+}
+void controller::print_jump_times() {
+    vector<pair<int, long long int>> jump_times_pairs;
+    map<int, string> label_map_by_num;
+    for (auto itr = ld->label_map.begin(); itr != ld->label_map.end(); ++itr) {
+        label_map_by_num.insert(make_pair(itr->second, itr->first));
+        jump_times_pairs.push_back(
+            make_pair(itr->second, jump_times[itr->second]));
+    }
+    sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b);
+
+    printf("jump times\n");
+    for (auto itr = jump_times_pairs.begin(); itr != jump_times_pairs.end();
+         ++itr) {
+        printf("\t%s :\t%lld\n", label_map_by_num[itr->first].c_str(),
+               itr->second);
     }
 }
