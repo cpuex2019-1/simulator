@@ -4,12 +4,11 @@
 #define ASM_h
 
 enum Asm {
-    ADD,
+    ADD_OR_MOV,
     ADDI,
     SUB,
     MUL,
     DIV,
-    MOD,
     SLT,
     AND,
     ANDI,
@@ -20,7 +19,6 @@ enum Asm {
     XORI,
     SRAI,
     SRLI,
-    SLLI,
     SRA,
     SRL,
     SLL,
@@ -35,7 +33,7 @@ enum Asm {
     LB,
     SW,
     SB,
-    MOV,
+    MOD,
     LF,
     SF,
     MOVF,
@@ -43,16 +41,15 @@ enum Asm {
     BEQ,
     BNE,
     J,
-    JR,
+    JR_OR_JALR,
     JAL,
-    JALR,
     INB,
     IN,
     OUTB,
     OUT,
     INF,
     OUTF,
-    NOP,
+    SLLI_OR_NOP,
 };
 
 #endif

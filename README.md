@@ -1,5 +1,5 @@
 # simulator (mipsim)
-## version 9.4
+## version 9.5
 ### how to use
 Make sure you can use `g++` and `c++11`, then, compile the programs:
 ```
@@ -24,3 +24,5 @@ How to use mipsim:
 	   restart	: restart from first program address
 	   exit	: exit program
 ```
+
+The output file is `test.ppm`. The statistic infomation file is `test.statistic.out`.

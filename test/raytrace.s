@@ -402,6 +402,8 @@ Init: # initialize float value and heap pointer
 	ori	$30, $30, 0
 	sw	$30, 0($4)
 	addi	$4, $4, 8
+	addi $2, $0, 170
+	outb $2
 	j Main
 sqrt_sub.2644:
 	ori	$30, $0, 0
@@ -67247,7 +67249,7 @@ floor_tiny_neg:
 
 floor_exp_zero:
   bne $8, $0, floor_exp_zero_neg
-  ori $13, $0, 16256  
+  ori $13, $0, 16256
   slli $13, $13, 16 # return 1.0
   sw $13, 0($4)
   lf $f0, 0($4)
@@ -67255,14 +67257,14 @@ floor_exp_zero:
 
 floor_exp_zero_neg:
   beq $12, $0, floor_exp_zero_neg_just
-  ori $13, $0, 49152   
+  ori $13, $0, 49152
   slli $13, $13, 16 # return -2.0
   sw $13, 0($4)
   lf $f0, 0($4)
   j floor_end
 
 floor_exp_zero_neg_just:
-  ori $13, $0, 49024  
+  ori $13, $0, 49024
   slli $13, $13, 16 # return -1.0
   sw $13, 0($4)
   lf $f0, 0($4)
@@ -67296,7 +67298,7 @@ floor_ceil:
   or $10, $10, $8
   sw $10, 0($4)
   lf $f0, 0($4)
-  j floor_end 
+  j floor_end
 
 
 # float_of_int (less than 8388608)
@@ -67324,7 +67326,7 @@ min_caml_int_of_float_kernel:
   jr $31
 
 #	create_array
-min_caml_create_array:	
+min_caml_create_array:
 	mov	$6, $2
 	mov	$2, $4
 create_array_loop:
@@ -67354,7 +67356,7 @@ create_float_array_cont:
 #read_int
 min_caml_read_int:
   in $2
-  jr $31 
+  jr $31
 
 #read_float
 min_caml_read_float:
