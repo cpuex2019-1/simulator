@@ -5,6 +5,7 @@
 #include "asm.h"
 #include "global.h"
 #include "print.h"
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -25,6 +26,9 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
 
     regs[0].data = 0;
     regs[29].data = 0; // init sp;
+
+    sp_max = 0;
+    hp_max = 0;
 
     // for output
     if (ld->output_exist) {
@@ -88,6 +92,9 @@ void controller::init() {
 }
 
 Status controller::exec_step(int break_point) {
+
+    sp_max = max(sp_max, regs[3].data);
+    hp_max = max(hp_max, regs[4].data);
 
     unsigned int one_code = ld->get_machine_code_by_line_num(line_num);
 
@@ -1281,7 +1288,7 @@ void controller::record_jump(int jump_line_num) {
     jump_times[jump_line_num] = jump_times[jump_line_num] + 1;
 }
 
-bool compare_by_b(pair<int, int> a, pair<int, int> b) {
+bool compare_by_b_lld(pair<int, long long int> a, pair<int, long long int> b) {
     if (a.second != b.second) {
         return a.second > b.second;
     } else {
@@ -1302,6 +1309,9 @@ void controller::print_statistic_to_file() {
         exit(1);
     }
 
+    fprintf(out_statistic, "max hp:%d\n", hp_max);
+    fprintf(out_statistic, "max sp:%d\n", sp_max);
+
     vector<pair<int, long long int>> jump_times_pairs;
     map<int, string> label_map_by_num;
     for (auto itr = ld->label_map.begin(); itr != ld->label_map.end(); ++itr) {
@@ -1309,7 +1319,7 @@ void controller::print_statistic_to_file() {
         jump_times_pairs.push_back(
             make_pair(itr->second, jump_times[itr->second]));
     }
-    sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b);
+    sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b_lld);
 
     fprintf(out_statistic, "jump times\n");
     for (auto itr = jump_times_pairs.begin(); itr != jump_times_pairs.end();
@@ -1322,7 +1332,7 @@ void controller::print_statistic_to_file() {
     for (int i = ADD_OR_MOV; i <= SLLI_OR_NOP; i++) {
         inst_times_pairs.push_back(make_pair(i, inst_times[i]));
     }
-    sort(inst_times_pairs.begin(), inst_times_pairs.end(), compare_by_b);
+    sort(inst_times_pairs.begin(), inst_times_pairs.end(), compare_by_b_lld);
 
     // printf("size:%lu\n", inst_times_pairs.size());
 
@@ -1490,7 +1500,7 @@ void controller::print_jump_times() {
         jump_times_pairs.push_back(
             make_pair(itr->second, jump_times[itr->second]));
     }
-    sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b);
+    sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b_lld);
 
     printf("jump times\n");
     for (auto itr = jump_times_pairs.begin(); itr != jump_times_pairs.end();
@@ -1505,7 +1515,7 @@ void controller::print_inst_times() {
     for (int i = ADD_OR_MOV; i <= SLLI_OR_NOP; i++) {
         inst_times_pairs.push_back(make_pair(i, inst_times[i]));
     }
-    sort(inst_times_pairs.begin(), inst_times_pairs.end(), compare_by_b);
+    sort(inst_times_pairs.begin(), inst_times_pairs.end(), compare_by_b_lld);
 
     // printf("size:%lu\n", inst_times_pairs.size());
 

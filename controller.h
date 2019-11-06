@@ -7,10 +7,10 @@
 #include "loader.h"
 #include "memory.h"
 #include "register.h"
+#include <algorithm>
 #include <fstream>
 #include <map>
 #include <string>
-
 enum Status { ACTIVE, BREAK, END };
 
 class controller {
@@ -22,6 +22,8 @@ class controller {
     FILE *outputfile; // 出力
     // FILE *inputfile;  // 入力
     ifstream ifs; // 入力
+    int sp_max;
+    int hp_max;
     map<int, long long int> jump_times;
     map<int, long long int> inst_times;
     void record_jump(int jump_line_num);
