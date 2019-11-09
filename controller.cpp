@@ -349,24 +349,26 @@ void controller::exec_code(unsigned int one_code) {
 
         // DIV or MOD
         case 26: {
-            if (shamt == 0x2) { // DIV rd <- rs / rt
-                inst_times[DIV] += 1;
-                rd = (one_code & rd_mask) >> 21;
-                rs = (one_code & rs_mask) >> 16;
+            if (shamt == 0x2) {
                 rt = (one_code & rt_mask) >> 11;
+                if (rt == 10) { // DIV10 rd <- rs / 10
+                    inst_times[DIV10] += 1;
+                    rd = (one_code & rd_mask) >> 21;
+                    rs = (one_code & rs_mask) >> 16;
 
-                if (log_level >= DEBUG) {
-                    printf("DEBUG\n");
-                    printf("\trd($%d):%d\n", rd, regs[rd].data);
-                    printf("\trd($%d) <- rs($%d):%d / rt($%d):%d\n", rd, rs,
-                           regs[rs].data, rt, regs[rt].data);
+                    if (log_level >= DEBUG) {
+                        printf("DEBUG\n");
+                        printf("\trd($%d):%d\n", rd, regs[rd].data);
+                        printf("\trd($%d) <- rs($%d):%d / 10\n", rd, rs,
+                               regs[rs].data);
+                    }
+                    regs[rd].data = regs[rs].data / 10;
+                    if (log_level >= DEBUG) {
+                        printf("\trd($%d):%d\n", rd, regs[rd].data);
+                    }
+                    line_num++;
+                    break;
                 }
-                regs[rd].data = regs[rs].data / regs[rt].data;
-                if (log_level >= DEBUG) {
-                    printf("\trd($%d):%d\n", rd, regs[rd].data);
-                }
-                line_num++;
-                break;
 
             } else if (shamt == 0x3) { // MOD rd <- rs % rt
                 inst_times[MOD] += 1;
@@ -1354,8 +1356,8 @@ void controller::print_statistic_to_file() {
         case MUL:
             tmp = "MUL";
             break;
-        case DIV:
-            tmp = "DIV";
+        case DIV10:
+            tmp = "DIV10";
             break;
         case SLT:
             tmp = "SLT";
@@ -1536,8 +1538,8 @@ void controller::print_inst_times() {
         case MUL:
             tmp = "MUL";
             break;
-        case DIV:
-            tmp = "DIV";
+        case DIV10:
+            tmp = "DIV10";
             break;
         case SLT:
             tmp = "SLT";

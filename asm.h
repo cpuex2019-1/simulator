@@ -8,7 +8,7 @@ enum Asm {
     ADDI,
     SUB,
     MUL,
-    DIV,
+    DIV10,
     SLT,
     AND,
     ANDI,
