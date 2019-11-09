@@ -1,4 +1,4 @@
-# simulator (mipsim)
+# simulator for 1st (mipsim)
 ## version 9.5
 ### how to use
 Make sure you can use `g++` and `c++11`, then, compile the programs:
