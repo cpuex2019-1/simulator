@@ -17,8 +17,7 @@ class loader {
     // current line number
     int line_num;
     int load_line_num;
-    // label
-    map<string, int> label_map;
+
     // program
     // vector<vector<int>> program_map;
 
@@ -46,7 +45,7 @@ class loader {
     bool output_exist;
     bool input_exist;
     Log log_level = DEBUG;
-
+    map<string, int> label_map;
     // constructor
     loader(const char *fname);
     // destructor

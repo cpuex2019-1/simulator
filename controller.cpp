@@ -5,6 +5,7 @@
 #include "asm.h"
 #include "global.h"
 #include "print.h"
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -21,13 +22,17 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
     fregs = fr;
 
     line_num = 0;
+    filename = fname;
 
     regs[0].data = 0;
     regs[29].data = 0; // init sp;
 
+    sp_max = 0;
+    hp_max = 0;
+
     // for output
     if (ld->output_exist) {
-        string outputfile_name = fname;
+        string outputfile_name = filename;
         outputfile_name.pop_back(); // 最後のsを削除
         outputfile_name = outputfile_name + "ppm";
         outputfile = fopen(outputfile_name.c_str(), "w");
@@ -38,7 +43,44 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
     }
 
     if (ld->input_exist) {
-        string inputfile_name = fname;
+        string inputfile_name = filename;
+        inputfile_name.pop_back(); // 最後のsを削除
+        inputfile_name = inputfile_name + "txt";
+        ifs.open(inputfile_name);
+        if (!ifs) { // オープンに失敗した場合
+            printf("cannot open input file: %s\n", inputfile_name.c_str());
+            // exit(1);
+        }
+    }
+    for (int i = ADD_OR_MOV; i <= SLLI_OR_NOP; i++) {
+        inst_times.insert(make_pair(i, 0));
+    }
+}
+
+// destructor
+controller::~controller() {
+    fclose(outputfile);
+    ifs.close();
+}
+
+void controller::init() {
+    line_num = 0;
+    fclose(outputfile);
+    ifs.close();
+    // for output
+    if (ld->output_exist) {
+        string outputfile_name = filename;
+        outputfile_name.pop_back(); // 最後のsを削除
+        outputfile_name = outputfile_name + "ppm";
+        outputfile = fopen(outputfile_name.c_str(), "w");
+        if (outputfile == NULL) { // オープンに失敗した場合
+            printf("cannot open output file: %s\n", outputfile_name.c_str());
+            exit(1);
+        }
+    }
+
+    if (ld->input_exist) {
+        string inputfile_name = filename;
         inputfile_name.pop_back(); // 最後のsを削除
         inputfile_name = inputfile_name + "txt";
         ifs.open(inputfile_name);
@@ -49,13 +91,10 @@ controller::controller(const char *fname, loader *l, memory *m, reg r[],
     }
 }
 
-// destructor
-controller::~controller() {
-    fclose(outputfile);
-    ifs.close();
-}
-
 Status controller::exec_step(int break_point) {
+
+    sp_max = max(sp_max, regs[3].data);
+    hp_max = max(hp_max, regs[4].data);
 
     unsigned int one_code = ld->get_machine_code_by_line_num(line_num);
 
@@ -114,6 +153,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // nop or SLLI
         case 0: { // SLLI rd <- rs << sb (logical)
+            inst_times[SLLI_OR_NOP] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             sb = (one_code & shamt_mask) >> 6;
@@ -138,6 +178,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // SRLI
         case 2: { // SRLI rd <- rs >> sb (logical)
+            inst_times[SRLI] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             sb = (one_code & shamt_mask) >> 6;
@@ -162,6 +203,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // SRAI
         case 3: { // SRAI rd <- rs >> sb (arithmetic)
+            inst_times[SRAI] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             sb = (one_code & shamt_mask) >> 6;
@@ -183,6 +225,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // SLL
         case 4: { // SLL rd <- rs << rt (logical)
+            inst_times[SLL] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -208,6 +251,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // SRL
         case 6: { // SRL rd <- rs >> rt (logical)
+            inst_times[SRL] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -233,6 +277,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // SRA
         case 7: { // SRA rd <- rs >> rt (arithmetic)
+            inst_times[SRA] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -256,6 +301,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // JR or JALR
         case 9: { // JALR rd, rs
+            inst_times[JR_OR_JALR] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
 
@@ -270,6 +316,7 @@ void controller::exec_code(unsigned int one_code) {
                 regs[rd].data = line_num * 4 + 4;
             }
             line_num = regs[rs].data / 4;
+            record_jump(line_num);
             if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
                 printf("\tprogram counter:%d\trd($%d):%d\n", line_num * 4, rd,
@@ -280,6 +327,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // MUL
         case 24: { // MUL rd <- rs * rt
+            inst_times[MUL] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -301,27 +349,29 @@ void controller::exec_code(unsigned int one_code) {
 
         // DIV or MOD
         case 26: {
-            if (shamt == 0x2) { // DIV rd <- rs / rt
-
-                rd = (one_code & rd_mask) >> 21;
-                rs = (one_code & rs_mask) >> 16;
+            if (shamt == 0x2) {
                 rt = (one_code & rt_mask) >> 11;
+                if (rt == 10) { // DIV10 rd <- rs / 10
+                    inst_times[DIV10] += 1;
+                    rd = (one_code & rd_mask) >> 21;
+                    rs = (one_code & rs_mask) >> 16;
 
-                if (log_level >= DEBUG) {
-                    printf("DEBUG\n");
-                    printf("\trd($%d):%d\n", rd, regs[rd].data);
-                    printf("\trd($%d) <- rs($%d):%d / rt($%d):%d\n", rd, rs,
-                           regs[rs].data, rt, regs[rt].data);
+                    if (log_level >= DEBUG) {
+                        printf("DEBUG\n");
+                        printf("\trd($%d):%d\n", rd, regs[rd].data);
+                        printf("\trd($%d) <- rs($%d):%d / 10\n", rd, rs,
+                               regs[rs].data);
+                    }
+                    regs[rd].data = regs[rs].data / 10;
+                    if (log_level >= DEBUG) {
+                        printf("\trd($%d):%d\n", rd, regs[rd].data);
+                    }
+                    line_num++;
+                    break;
                 }
-                regs[rd].data = regs[rs].data / regs[rt].data;
-                if (log_level >= DEBUG) {
-                    printf("\trd($%d):%d\n", rd, regs[rd].data);
-                }
-                line_num++;
-                break;
 
             } else if (shamt == 0x3) { // MOD rd <- rs % rt
-
+                inst_times[MOD] += 1;
                 rd = (one_code & rd_mask) >> 21;
                 rs = (one_code & rs_mask) >> 16;
                 rt = (one_code & rt_mask) >> 11;
@@ -343,6 +393,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // ADD or MOV
         case 32: {
+            inst_times[ADD_OR_MOV] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -366,6 +417,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // SUB
         case 34: { // SUB rd <- rs - rt
+            inst_times[SUB] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -387,6 +439,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // AND
         case 36: { // AND rd <- rs & rt
+            inst_times[AND] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -407,6 +460,7 @@ void controller::exec_code(unsigned int one_code) {
 
         // OR
         case 37: { // OR rd <- rs | rt
+            inst_times[OR] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -427,6 +481,7 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         case 38: { // XOR rd <- rs ^ rt
+            inst_times[XOR] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -447,6 +502,7 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         case 39: { // NOR rd <- ~(rs | rt)
+            inst_times[NOR] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -466,6 +522,7 @@ void controller::exec_code(unsigned int one_code) {
             break;
         }
         case 42: { // SLT Rd = if Rs < Rt then 1 else 0
+            inst_times[SLT] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -497,8 +554,9 @@ void controller::exec_code(unsigned int one_code) {
     case 0x11: { // opecode == 010001
         switch (funct) {
 
-        // FADD and FMOV
+        // FADD
         case 0: { // FADD rd <- rs +. rt
+            inst_times[FADD] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -521,6 +579,7 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         case 1: { // FSUB rd <- rs -. rt
+            inst_times[FSUB] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -543,6 +602,7 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         case 2: { // FMUL rd <- rs *. rt
+            inst_times[FMUL] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -564,6 +624,7 @@ void controller::exec_code(unsigned int one_code) {
             break;
         }
         case 3: { // FDIV rd <- rs /. rt
+            inst_times[FDIV] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
             rt = (one_code & rt_mask) >> 11;
@@ -585,6 +646,7 @@ void controller::exec_code(unsigned int one_code) {
             break;
         }
         case 9: { // FNEG rd <- -rs
+            inst_times[FNEG] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
 
@@ -605,6 +667,7 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         case 4: { // SQRT rd <- sqrt(rs)
+            inst_times[SQRT] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
 
@@ -625,6 +688,7 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         case 8: { // SLTF Rd[0] = if Rs < Rt then 1 else 0
+            inst_times[SLTF] += 1;
             // * rd is a general register
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
@@ -651,6 +715,7 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         case 63: { // MOVF rd <- rs
+            inst_times[MOVF] += 1;
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
 
@@ -672,6 +737,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 0x2: { // J label
+        inst_times[J] += 1;
         label_line = (one_code & address_mask);
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
@@ -679,6 +745,7 @@ void controller::exec_code(unsigned int one_code) {
             printf("\tprogram counter <- address:%d <<2 \n", label_line);
         }
         line_num = label_line;
+        record_jump(line_num);
         if (log_level >= DEBUG) {
             printf("\tprogram counter:%d \n", line_num * 4);
         }
@@ -686,6 +753,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 0x3: { // JAL label (next addr is line_num*4)
+        inst_times[JAL] += 1;
         label_line = (one_code & address_mask);
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
@@ -696,6 +764,7 @@ void controller::exec_code(unsigned int one_code) {
         }
         regs[31].data = line_num * 4 + 4;
         line_num = label_line;
+        record_jump(line_num);
         if (log_level >= DEBUG) {
             printf("\t$31:%d\n", regs[31].data);
             printf("\tprogram counter:%d \n", line_num * 4);
@@ -704,6 +773,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 4: { // BEQ rs rt label(pc+offset<<2)
+        inst_times[BEQ] += 1;
         rs = (one_code & rd_mask) >> 21;
         rt = (one_code & rs_mask) >> 16;
         label_line = (one_code & addr_or_imm_mask);
@@ -721,6 +791,7 @@ void controller::exec_code(unsigned int one_code) {
 
         if (regs[rs].data == regs[rt].data) {
             line_num = line_num + label_line;
+            record_jump(line_num);
         } else {
             line_num++;
         }
@@ -732,6 +803,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 5: { // BNE rs rt label(pc+offset<<2)
+        inst_times[BNE] += 1;
         rs = (one_code & rd_mask) >> 21;
         rt = (one_code & rs_mask) >> 16;
         label_line = (one_code & addr_or_imm_mask);
@@ -749,6 +821,7 @@ void controller::exec_code(unsigned int one_code) {
 
         if (regs[rs].data != regs[rt].data) {
             line_num = line_num + label_line;
+            record_jump(line_num);
         } else {
             line_num++;
         }
@@ -758,8 +831,8 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
-    case 8: // ADDI rd <- rs + immediate
-    {
+    case 8: { // ADDI rd <- rs + immediate
+        inst_times[ADDI] += 1;
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
@@ -785,6 +858,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 12: { // ANDI rd <- rs & immediate
+        inst_times[ANDI] += 1;
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
@@ -806,6 +880,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 13: { // ORI rd <- rs & immediate
+        inst_times[ORI] += 1;
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
@@ -824,6 +899,7 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
     case 14: { // XORI rd <- rs & immediate
+        inst_times[XORI] += 1;
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
         immediate = (one_code & addr_or_imm_mask);
@@ -845,6 +921,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 32: { // LB rd, offset(base)
+        inst_times[LB] += 1;
         rd = (one_code & rd_mask) >> 21;
         reg = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
@@ -873,6 +950,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 35: { // LW rd, offset(base)
+        inst_times[LW] += 1;
         rd = (one_code & rd_mask) >> 21;
         reg = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
@@ -902,6 +980,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 40: { // SB rd, offset(base)
+        inst_times[SB] += 1;
         rd = (one_code & rd_mask) >> 21;
         reg = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
@@ -930,6 +1009,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 43: { // SW
+        inst_times[SW] += 1;
         rd = (one_code & rd_mask) >> 21;
         reg = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
@@ -958,6 +1038,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 49: { // LF rd, offset(base)
+        inst_times[LF] += 1;
         rd = (one_code & rd_mask) >> 21;
         base = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
@@ -989,6 +1070,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 50: { // BC label(pc+offset<<2)
+        inst_times[BC] += 1;
         offset = (one_code & address_mask);
         if ((offset & 0x2000000) == 0x2000000) { //符号拡張
             offset = 0xfc000000 | immediate;
@@ -1000,6 +1082,7 @@ void controller::exec_code(unsigned int one_code) {
                    line_num * 4, offset);
         }
         line_num = line_num + offset;
+        record_jump(line_num);
         if (log_level >= DEBUG) {
             printf("\tprogram counter:%d \n", line_num * 4);
         }
@@ -1007,6 +1090,7 @@ void controller::exec_code(unsigned int one_code) {
     }
 
     case 57: { // SF
+        inst_times[SF] += 1;
         rd = (one_code & rd_mask) >> 21;
         base = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
@@ -1040,6 +1124,7 @@ void controller::exec_code(unsigned int one_code) {
         case 0: {
             switch (funct) {
             case 0: { // INB rd
+                inst_times[INB] += 1;
                 rd = (one_code & rd_mask) >> 21;
                 char str;
                 if (!ifs.get(str)) { // オープンに失敗した場合
@@ -1071,6 +1156,7 @@ void controller::exec_code(unsigned int one_code) {
             }
 
             case 1: { // outb rs
+                inst_times[OUTB] += 1;
                 rs = (one_code & rs_mask) >> 16;
                 if (log_level >= DEBUG) {
                     printf("DEBUG\n");
@@ -1091,8 +1177,8 @@ void controller::exec_code(unsigned int one_code) {
 
         case 3: {
             switch (funct) {
-            case 0: {
-                // IN rd
+            case 0: { // IN rd
+                inst_times[IN] += 1;
                 rd = (one_code & rd_mask) >> 21;
                 int tmp;
                 if (!ifs) { // オープンに失敗した場合
@@ -1123,6 +1209,7 @@ void controller::exec_code(unsigned int one_code) {
             }
 
             case 1: { // out rs
+                inst_times[OUT] += 1;
                 rs = (one_code & rs_mask) >> 16;
                 if (log_level >= DEBUG) {
                     printf("DEBUG\n");
@@ -1137,6 +1224,7 @@ void controller::exec_code(unsigned int one_code) {
             }
 
             case 2: { // INF rd
+                inst_times[INF] += 1;
                 rd = (one_code & rd_mask) >> 21;
                 IntAndFloat tmp;
                 if (!ifs) { // オープンに失敗した場合
@@ -1167,6 +1255,7 @@ void controller::exec_code(unsigned int one_code) {
             }
 
             case 3: { // OUTF rs
+                inst_times[OUTF] += 1;
                 rs = (one_code & rs_mask) >> 16;
                 if (log_level >= DEBUG) {
                     printf("DEBUG\n");
@@ -1194,5 +1283,393 @@ void controller::exec_code(unsigned int one_code) {
             printf("\n");
         }
     }
+    }
+}
+
+void controller::record_jump(int jump_line_num) {
+    jump_times[jump_line_num] = jump_times[jump_line_num] + 1;
+}
+
+bool compare_by_b_lld(pair<int, long long int> a, pair<int, long long int> b) {
+    if (a.second != b.second) {
+        return a.second > b.second;
+    } else {
+        return a.first > b.first;
+    }
+}
+
+void controller::print_statistic_to_file() {
+    // for output
+    FILE *out_statistic;
+
+    string outputfile_name = filename;
+    outputfile_name.pop_back(); // 最後のsを削除
+    outputfile_name = outputfile_name + "statistic.out";
+    out_statistic = fopen(outputfile_name.c_str(), "w");
+    if (out_statistic == NULL) { // オープンに失敗した場合
+        printf("cannot open output file: %s\n", outputfile_name.c_str());
+        exit(1);
+    }
+
+    fprintf(out_statistic, "max hp:%d\n", hp_max);
+    fprintf(out_statistic, "max sp:%d\n", sp_max);
+
+    vector<pair<int, long long int>> jump_times_pairs;
+    map<int, string> label_map_by_num;
+    for (auto itr = ld->label_map.begin(); itr != ld->label_map.end(); ++itr) {
+        label_map_by_num.insert(make_pair(itr->second, itr->first));
+        jump_times_pairs.push_back(
+            make_pair(itr->second, jump_times[itr->second]));
+    }
+    sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b_lld);
+
+    fprintf(out_statistic, "jump times\n");
+    for (auto itr = jump_times_pairs.begin(); itr != jump_times_pairs.end();
+         ++itr) {
+        fprintf(out_statistic, "\t%s :\t%lld\n",
+                label_map_by_num[itr->first].c_str(), itr->second);
+    }
+
+    vector<pair<int, long long int>> inst_times_pairs;
+    for (int i = ADD_OR_MOV; i <= SLLI_OR_NOP; i++) {
+        inst_times_pairs.push_back(make_pair(i, inst_times[i]));
+    }
+    sort(inst_times_pairs.begin(), inst_times_pairs.end(), compare_by_b_lld);
+
+    // printf("size:%lu\n", inst_times_pairs.size());
+
+    fprintf(out_statistic, "inst times\n");
+
+    for (int i = ADD_OR_MOV; i <= SLLI_OR_NOP; i++) {
+        auto pair = inst_times_pairs[i];
+        string tmp;
+        switch (pair.first) {
+        case ADD_OR_MOV:
+            tmp = "ADD_OR_MOV";
+            break;
+        case ADDI:
+            tmp = "ADDI";
+            break;
+        case SUB:
+            tmp = "SUB";
+            break;
+        case MUL:
+            tmp = "MUL";
+            break;
+        case DIV10:
+            tmp = "DIV10";
+            break;
+        case SLT:
+            tmp = "SLT";
+            break;
+        case AND:
+            tmp = "AND";
+            break;
+        case ANDI:
+            tmp = "ANDI";
+            break;
+        case OR:
+            tmp = "OR";
+            break;
+        case ORI:
+            tmp = "ORI";
+            break;
+        case NOR:
+            tmp = "NOR";
+            break;
+        case XOR:
+            tmp = "XOR";
+            break;
+        case XORI:
+            tmp = "XORI";
+            break;
+        case SRAI:
+            tmp = "SRAI";
+            break;
+
+        case SRLI:
+            tmp = "SRLI";
+            break;
+        case SRA:
+            tmp = "SRA";
+            break;
+        case SRL:
+            tmp = "SRL";
+            break;
+        case SLL:
+            tmp = "SLL";
+            break;
+        case FADD:
+            tmp = "FADD";
+            break;
+        case FSUB:
+            tmp = "FSUB";
+            break;
+        case FMUL:
+            tmp = "FMUL";
+            break;
+        case FDIV:
+            tmp = "FDIV";
+            break;
+        case FNEG:
+            tmp = "FNEG";
+            break;
+        case SQRT:
+            tmp = "SQRT";
+            break;
+        case SLTF:
+            tmp = "SLTF";
+            break;
+        case LW:
+            tmp = "LW";
+            break;
+        case LB:
+            tmp = "LB";
+            break;
+        case SW:
+            tmp = "SW";
+            break;
+
+        case SB:
+            tmp = "SB";
+            break;
+        case MOD:
+            tmp = "MOD";
+            break;
+        case LF:
+            tmp = "LF";
+            break;
+        case SF:
+            tmp = "SF";
+            break;
+        case MOVF:
+            tmp = "MOVF";
+            break;
+        case BC:
+            tmp = "BC";
+            break;
+        case BEQ:
+            tmp = "BEQ";
+            break;
+        case BNE:
+            tmp = "BNE";
+            break;
+        case J:
+            tmp = "J";
+            break;
+        case JR_OR_JALR:
+            tmp = "JR_OR_JALR";
+            break;
+        case JAL:
+            tmp = "JAL";
+            break;
+        case INB:
+            tmp = "INB";
+            break;
+        case IN:
+            tmp = "IN";
+            break;
+        case OUTB:
+            tmp = "OUTB";
+            break;
+        case OUT:
+            tmp = "OUT";
+            break;
+        case INF:
+            tmp = "INF";
+            break;
+        case OUTF:
+            tmp = "OUTF";
+            break;
+        case SLLI_OR_NOP:
+            tmp = "SLLI_OR_NOP";
+            break;
+        default:
+            tmp = "no";
+            break;
+        }
+        fprintf(out_statistic, "\t%s :\t%lld\n", tmp.c_str(), pair.second);
+    }
+
+    fclose(out_statistic);
+}
+
+void controller::print_jump_times() {
+    vector<pair<int, long long int>> jump_times_pairs;
+    map<int, string> label_map_by_num;
+    for (auto itr = ld->label_map.begin(); itr != ld->label_map.end(); ++itr) {
+        label_map_by_num.insert(make_pair(itr->second, itr->first));
+        jump_times_pairs.push_back(
+            make_pair(itr->second, jump_times[itr->second]));
+    }
+    sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b_lld);
+
+    printf("jump times\n");
+    for (auto itr = jump_times_pairs.begin(); itr != jump_times_pairs.end();
+         ++itr) {
+        printf("\t%s :\t%lld\n", label_map_by_num[itr->first].c_str(),
+               itr->second);
+    }
+}
+
+void controller::print_inst_times() {
+    vector<pair<int, long long int>> inst_times_pairs;
+    for (int i = ADD_OR_MOV; i <= SLLI_OR_NOP; i++) {
+        inst_times_pairs.push_back(make_pair(i, inst_times[i]));
+    }
+    sort(inst_times_pairs.begin(), inst_times_pairs.end(), compare_by_b_lld);
+
+    // printf("size:%lu\n", inst_times_pairs.size());
+
+    printf("inst times\n");
+    for (int i = ADD_OR_MOV; i <= SLLI_OR_NOP; i++) {
+        auto pair = inst_times_pairs[i];
+        string tmp;
+        switch (pair.first) {
+        case ADD_OR_MOV:
+            tmp = "ADD_OR_MOV";
+            break;
+        case ADDI:
+            tmp = "ADDI";
+            break;
+        case SUB:
+            tmp = "SUB";
+            break;
+        case MUL:
+            tmp = "MUL";
+            break;
+        case DIV10:
+            tmp = "DIV10";
+            break;
+        case SLT:
+            tmp = "SLT";
+            break;
+        case AND:
+            tmp = "AND";
+            break;
+        case ANDI:
+            tmp = "ANDI";
+            break;
+        case OR:
+            tmp = "OR";
+            break;
+        case ORI:
+            tmp = "ORI";
+            break;
+        case NOR:
+            tmp = "NOR";
+            break;
+        case XOR:
+            tmp = "XOR";
+            break;
+        case XORI:
+            tmp = "XORI";
+            break;
+        case SRAI:
+            tmp = "SRAI";
+            break;
+
+        case SRLI:
+            tmp = "SRLI";
+            break;
+        case SRA:
+            tmp = "SRA";
+            break;
+        case SRL:
+            tmp = "SRL";
+            break;
+        case SLL:
+            tmp = "SLL";
+            break;
+        case FADD:
+            tmp = "FADD";
+            break;
+        case FSUB:
+            tmp = "FSUB";
+            break;
+        case FMUL:
+            tmp = "FMUL";
+            break;
+        case FDIV:
+            tmp = "FDIV";
+            break;
+        case FNEG:
+            tmp = "FNEG";
+            break;
+        case SQRT:
+            tmp = "SQRT";
+            break;
+        case SLTF:
+            tmp = "SLTF";
+            break;
+        case LW:
+            tmp = "LW";
+            break;
+        case LB:
+            tmp = "LB";
+            break;
+        case SW:
+            tmp = "SW";
+            break;
+
+        case SB:
+            tmp = "SB";
+            break;
+        case MOD:
+            tmp = "MOD";
+            break;
+        case LF:
+            tmp = "LF";
+            break;
+        case SF:
+            tmp = "SF";
+            break;
+        case MOVF:
+            tmp = "MOVF";
+            break;
+        case BC:
+            tmp = "BC";
+            break;
+        case BEQ:
+            tmp = "BEQ";
+            break;
+        case BNE:
+            tmp = "BNE";
+            break;
+        case J:
+            tmp = "J";
+            break;
+        case JR_OR_JALR:
+            tmp = "JR_OR_JALR";
+            break;
+        case JAL:
+            tmp = "JAL";
+            break;
+        case INB:
+            tmp = "INB";
+            break;
+        case IN:
+            tmp = "IN";
+            break;
+        case OUTB:
+            tmp = "OUTB";
+            break;
+        case OUT:
+            tmp = "OUT";
+            break;
+        case INF:
+            tmp = "INF";
+            break;
+        case OUTF:
+            tmp = "OUTF";
+            break;
+        case SLLI_OR_NOP:
+            tmp = "SLLI_OR_NOP";
+            break;
+        default:
+            tmp = "no";
+            break;
+        }
+        printf("\t%s :\t%lld\n", tmp.c_str(), pair.second);
     }
 }

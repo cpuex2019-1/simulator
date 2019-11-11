@@ -29,7 +29,6 @@ int main(int argc, char *argv[]) {
     memory memo;
     reg regs[32];
     freg fregs[32];
-
     controller controller(argv[1], &ld, &memo, regs, fregs);
 
     string str;
@@ -47,6 +46,45 @@ int main(int argc, char *argv[]) {
                 if (controller.exec_step(break_p) == END) {
                     end_flag = true;
                 };
+            }
+
+        } else if (str == "e" ||
+                   str ==
+                       "execute") { // execute instructions for designated times
+
+            if (!end_flag) {
+                printf("How many instructions?: ");
+                getline(cin, str);
+                long long int times;
+                long long int count = 0;
+                try {
+                    times = stoll(str);
+                    clock_t start = clock();
+                    Status status = ACTIVE;
+                    while (status == ACTIVE && count < times) {
+                        status = controller.exec_step(break_p);
+                        count++;
+                    };
+                    clock_t end = clock();
+                    const double time = static_cast<double>(end - start) /
+                                        CLOCKS_PER_SEC * 1000.0;
+                    if (status == BREAK) {
+                        printf("\nbreakpoint!\n");
+                        string one_raw_program =
+                            ld.get_raw_program_by_line_num(controller.line_num);
+                        printf("[next instruction]\t%d:\t%s\n\n",
+                               controller.line_num, one_raw_program.c_str());
+
+                    } else if (status == END) {
+                        end_flag = true;
+                    };
+                    printf("time %lf [ms]\n", time);
+                    printf("%lld instructions\n", count);
+                } catch (...) {
+                    if (log_level >= ERROR) {
+                        printf("ERROR\tinvalid argument: %s\n", str.c_str());
+                    }
+                }
             }
 
         } else if (str == "a" || str == "all") { // run all
@@ -172,6 +210,12 @@ int main(int argc, char *argv[]) {
                 }
             }
 
+        } else if (str == "restart") { // restart
+            controller.init();
+            end_flag = false;
+            printf("\n restart!\n\n");
+            print_usage();
+
         } else if (str == "exit") { // exit
 
             return 0;
@@ -185,6 +229,9 @@ int main(int argc, char *argv[]) {
 
         if (end_flag) {
             printf("\nprogram end!\n");
+            controller.print_statistic_to_file();
+            // controller.print_jump_times();
+            // controller.print_inst_times();
         }
         print_prompt();
     }

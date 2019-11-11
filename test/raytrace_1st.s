@@ -233,31 +233,31 @@ Init: # initialize float value and heap pointer
 	sw	$30, 0($4)
 	addi	$4, $4, 8
 	j Main
-fispos.2621:
+fispos.2624:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f1, 0($30) # 0.000000
 	sltf	$30, $f1, $f0
-	bne	$30, $0, eq_else.9232
+	bne	$30, $0, eq_else.9241
 	addi	$2, $0, 0
 	jr $31
-eq_else.9232:
+eq_else.9241:
 	addi	$2, $0, 1
 	jr $31
-fisneg.2623:
+fisneg.2626:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f1, 0($30) # 0.000000
 	sltf	$30, $f0, $f1
-	bne	$30, $0, eq_else.9233
+	bne	$30, $0, eq_else.9242
 	addi	$2, $0, 0
 	jr $31
-eq_else.9233:
+eq_else.9242:
 	addi	$2, $0, 1
 	jr $31
-fiszero.2625:
+fiszero.2628:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
@@ -266,72 +266,72 @@ fiszero.2625:
 	lw	$30, 0($4)
 	sf	$f1, 0($4)
 	lw	$29, 0($4)
-	bne	$30, $29, eq_else.9234
+	bne	$30, $29, eq_else.9243
 	addi	$2, $0, 1
 	jr $31
-eq_else.9234:
+eq_else.9243:
 	addi	$2, $0, 0
 	jr $31
-fless.2627:
+fless.2630:
 	fsub	$f0, $f1, $f0
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9235
+	bne	$2, $30, eq_else.9244
 	addi	$2, $0, 0
 	jr $31
-eq_else.9235:
+eq_else.9244:
 	addi	$2, $0, 1
 	jr $31
-xor.2630:
+xor.2633:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9236
+	bne	$2, $30, eq_else.9245
 	mov	$2, $5
 	jr $31
-eq_else.9236:
+eq_else.9245:
 	ori	$30, $0, 0
-	bne	$5, $30, eq_else.9237
+	bne	$5, $30, eq_else.9246
 	addi	$2, $0, 1
 	jr $31
-eq_else.9237:
+eq_else.9246:
 	addi	$2, $0, 0
 	jr $31
-fhalf.2633:
+fhalf.2636:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34840
 	lf	$f1, 0($30) # 0.500000
 	fmul	$f0, $f0, $f1
 	jr $31
-fsqr.2635:
+fsqr.2638:
 	fmul	$f0, $f0, $f0
 	jr $31
-fabs.2637:
+fabs.2640:
 	sf	$f0, 0($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9238
+	bne	$2, $30, eq_else.9247
 	lf	$f0, 0($3)
 	fneg	$f0, $f0
 	jr $31
-eq_else.9238:
+eq_else.9247:
 	lf	$f0, 0($3)
 	jr $31
-fneg.2639:
+fneg.2642:
 	fneg	$f0, $f0
 	jr $31
-sqrt_sub.2641:
+sqrt_sub.2644:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9239
+	bne	$2, $30, eq_else.9248
 	jr $31
-eq_else.9239:
+eq_else.9248:
 	addi	$2, $2, -1
 	fmul	$f2, $f0, $f0
 	fsub	$f2, $f2, $f1
@@ -342,22 +342,22 @@ eq_else.9239:
 	fmul	$f3, $f3, $f0
 	fdiv	$f2, $f2, $f3
 	fsub	$f0, $f0, $f2
-	j	sqrt_sub.2641
-sqrt.2645:
+	j	sqrt_sub.2644
+sqrt.2648:
 	addi	$2, $0, 6
 	movf	$f1, $f0
-	j	sqrt_sub.2641
-float_of_int_sub.2647:
+	j	sqrt_sub.2644
+float_of_int_sub.2652:
 	ori	$5, $0, 128
 	slli	$5, $5, 16
 	slt	$30, $2, $5
-	bne	$30, $0, eq_else.9240
+	bne	$30, $0, eq_else.9249
 	ori	$5, $0, 128
 	slli	$5, $5, 16
 	sub	$2, $2, $5
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	float_of_int_sub.2647
+	jal	float_of_int_sub.2652
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	ori	$30, $0, 1
@@ -366,32 +366,32 @@ float_of_int_sub.2647:
 	lf	$f1, 0($30) # 8388608.000000
 	fadd	$f0, $f0, $f1
 	jr $31
-eq_else.9240:
+eq_else.9249:
 	j	min_caml_float_of_int_kernel
-float_of_int.2649:
+float_of_int.2654:
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9241
-	j	float_of_int_sub.2647
-eq_else.9241:
+	bne	$30, $0, eq_else.9250
+	j	float_of_int_sub.2652
+eq_else.9250:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
 	mul	$2, $2, $30
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	float_of_int_sub.2647
+	jal	float_of_int_sub.2652
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	fneg	$f0, $f0
 	jr $31
-int_of_float_sub.2651:
+int_of_float_sub.2656:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34824
 	lf	$f1, 0($30) # 8388608.000000
 	sltf	$30, $f0, $f1
-	bne	$30, $0, eq_else.9242
+	bne	$30, $0, eq_else.9251
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34824
@@ -399,28 +399,28 @@ int_of_float_sub.2651:
 	fsub	$f0, $f0, $f1
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	int_of_float_sub.2651
+	jal	int_of_float_sub.2656
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	ori	$5, $0, 128
 	slli	$5, $5, 16
 	add	$2, $2, $5
 	jr $31
-eq_else.9242:
+eq_else.9251:
 	j	min_caml_int_of_float_kernel
-int_of_float.2653:
+int_of_float.2658:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f1, 0($30) # 0.000000
 	sltf	$30, $f0, $f1
-	bne	$30, $0, eq_else.9243
-	j	int_of_float_sub.2651
-eq_else.9243:
+	bne	$30, $0, eq_else.9252
+	j	int_of_float_sub.2656
+eq_else.9252:
 	fneg	$f0, $f0
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	int_of_float_sub.2651
+	jal	int_of_float_sub.2656
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	ori	$30, $0, 65535
@@ -428,116 +428,116 @@ eq_else.9243:
 	ori	$30, $30, 65535
 	mul	$2, $2, $30
 	jr $31
-floor_sub.2655:
+floor_sub.2660:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34824
 	lf	$f1, 0($30) # 8388608.000000
 	sltf	$30, $f0, $f1
-	bne	$30, $0, eq_else.9244
+	bne	$30, $0, eq_else.9253
 	jr $31
-eq_else.9244:
+eq_else.9253:
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	int_of_float.2653
+	jal	int_of_float.2658
 	addi	$3, $3, -8
 	lw	$31, 4($3)
-	j	float_of_int.2649
-floor.2657:
+	j	float_of_int.2654
+floor.2662:
 	sf	$f0, 0($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	floor_sub.2655
+	jal	floor_sub.2660
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lf	$f1, 0($3)
 	sltf	$30, $f1, $f0
-	bne	$30, $0, eq_else.9245
+	bne	$30, $0, eq_else.9254
 	jr $31
-eq_else.9245:
+eq_else.9254:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f1, 0($30) # 1.000000
 	fsub	$f0, $f0, $f1
 	jr $31
-pow.2659:
+pow.2664:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9246
+	bne	$2, $30, eq_else.9255
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f0, 0($30) # 1.000000
 	jr $31
-eq_else.9246:
+eq_else.9255:
 	addi	$2, $2, -1
 	sf	$f0, 0($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lf	$f1, 0($3)
 	fmul	$f0, $f1, $f0
 	jr $31
-pow_upper.2668:
+pow_upper.2673:
 	sltf	$30, $f1, $f0
-	bne	$30, $0, eq_else.9247
+	bne	$30, $0, eq_else.9256
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34832
 	lf	$f2, 0($30) # 2.000000
 	fmul	$f0, $f0, $f2
-	j	pow_upper.2668
-eq_else.9247:
+	j	pow_upper.2673
+eq_else.9256:
 	jr $31
-reduction_2pi_sub.2671:
+reduction_2pi_sub.2676:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34808
 	lf	$f2, 0($30) # 6.283185
 	sltf	$30, $f0, $f2
-	bne	$30, $0, eq_else.9248
+	bne	$30, $0, eq_else.9257
 	sltf	$30, $f0, $f1
-	bne	$30, $0, eq_else.9249
+	bne	$30, $0, eq_else.9258
 	fsub	$f0, $f0, $f1
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34832
 	lf	$f2, 0($30) # 2.000000
 	fdiv	$f1, $f1, $f2
-	j	reduction_2pi_sub.2671
-eq_else.9249:
+	j	reduction_2pi_sub.2676
+eq_else.9258:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34832
 	lf	$f2, 0($30) # 2.000000
 	fdiv	$f1, $f1, $f2
-	j	reduction_2pi_sub.2671
-eq_else.9248:
+	j	reduction_2pi_sub.2676
+eq_else.9257:
 	jr $31
-fsgn.2674:
+fsgn.2679:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f1, 0($30) # 0.000000
 	sltf	$30, $f1, $f0
-	bne	$30, $0, eq_else.9250
+	bne	$30, $0, eq_else.9259
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34800
 	lf	$f0, 0($30) # -1.000000
 	jr $31
-eq_else.9250:
+eq_else.9259:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f0, 0($30) # 1.000000
 	jr $31
-rev_sgn.2676:
+rev_sgn.2681:
 	fneg	$f0, $f0
 	jr $31
-reduction_2pi.2678:
+reduction_2pi.2683:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34808
@@ -548,13 +548,13 @@ reduction_2pi.2678:
 	movf	$f0, $f30
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	pow_upper.2668
+	jal	pow_upper.2673
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	movf	$f1, $f0
 	lf	$f0, 0($3)
-	j	reduction_2pi_sub.2671
-kernel_sin.2686:
+	j	reduction_2pi_sub.2676
+kernel_sin.2691:
 	lf	$f1, 24($28)
 	lf	$f2, 16($28)
 	lf	$f3, 8($28)
@@ -565,7 +565,7 @@ kernel_sin.2686:
 	sf	$f3, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -577,7 +577,7 @@ kernel_sin.2686:
 	movf	$f0, $f1
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 8($3)
@@ -590,7 +590,7 @@ kernel_sin.2686:
 	movf	$f0, $f1
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lf	$f1, 0($3)
@@ -598,7 +598,7 @@ kernel_sin.2686:
 	lf	$f1, 40($3)
 	fsub	$f0, $f1, $f0
 	jr $31
-kernel_cos.2688:
+kernel_cos.2693:
 	lf	$f1, 24($28)
 	lf	$f2, 16($28)
 	lf	$f3, 8($28)
@@ -614,7 +614,7 @@ kernel_cos.2688:
 	sf	$f3, 32($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 32($3)
@@ -627,7 +627,7 @@ kernel_cos.2688:
 	movf	$f0, $f1
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lf	$f1, 8($3)
@@ -640,7 +640,7 @@ kernel_cos.2688:
 	movf	$f0, $f1
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f1, 0($3)
@@ -648,7 +648,7 @@ kernel_cos.2688:
 	lf	$f1, 48($3)
 	fsub	$f0, $f1, $f0
 	jr $31
-sin_sub3.2690:
+sin_sub3.2695:
 	lw	$2, 8($28)
 	lw	$28, 4($28)
 	ori	$30, $0, 1
@@ -656,7 +656,7 @@ sin_sub3.2690:
 	ori	$30, $30, 34792
 	lf	$f2, 0($30) # 0.785398
 	sltf	$30, $f2, $f1
-	bne	$30, $0, eq_else.9251
+	bne	$30, $0, eq_else.9260
 	sf	$f0, 0($3)
 	mov	$28, $2
 	movf	$f0, $f1
@@ -669,7 +669,7 @@ sin_sub3.2690:
 	lf	$f1, 0($3)
 	fmul	$f0, $f1, $f0
 	jr $31
-eq_else.9251:
+eq_else.9260:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34784
@@ -686,7 +686,7 @@ eq_else.9251:
 	lf	$f1, 0($3)
 	fmul	$f0, $f1, $f0
 	jr $31
-sin_sub2.2693:
+sin_sub2.2698:
 	lw	$2, 16($28)
 	lf	$f2, 8($28)
 	ori	$30, $0, 1
@@ -694,43 +694,43 @@ sin_sub2.2693:
 	ori	$30, $30, 34784
 	lf	$f3, 0($30) # 1.570796
 	sltf	$30, $f1, $f3
-	bne	$30, $0, eq_else.9252
+	bne	$30, $0, eq_else.9261
 	fsub	$f1, $f2, $f1
 	mov	$28, $2
 	lw $30, 0($28)
 	jr	$30
-eq_else.9252:
+eq_else.9261:
 	mov	$28, $2
 	lw $30, 0($28)
 	jr	$30
-sin_sub1.2696:
+sin_sub1.2701:
 	lw	$2, 16($28)
 	lf	$f2, 8($28)
 	sltf	$30, $f1, $f2
-	bne	$30, $0, eq_else.9253
+	bne	$30, $0, eq_else.9262
 	fsub	$f1, $f1, $f2
 	sf	$f1, 0($3)
 	sw	$2, 8($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	rev_sgn.2676
+	jal	rev_sgn.2681
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lf	$f1, 0($3)
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9253:
+eq_else.9262:
 	mov	$28, $2
 	lw $30, 0($28)
 	jr	$30
-sin.2699:
+sin.2704:
 	lw	$2, 4($28)
 	sw	$2, 0($3)
 	sf	$f0, 8($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fsgn.2674
+	jal	fsgn.2679
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lf	$f1, 8($3)
@@ -739,7 +739,7 @@ sin.2699:
 	movf	$f0, $f1
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	reduction_2pi.2678
+	jal	reduction_2pi.2683
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	movf	$f1, $f0
@@ -747,7 +747,7 @@ sin.2699:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-cos_sub3.2701:
+cos_sub3.2706:
 	lw	$2, 8($28)
 	lw	$28, 4($28)
 	ori	$30, $0, 1
@@ -755,7 +755,7 @@ cos_sub3.2701:
 	ori	$30, $30, 34792
 	lf	$f2, 0($30) # 0.785398
 	sltf	$30, $f2, $f1
-	bne	$30, $0, eq_else.9255
+	bne	$30, $0, eq_else.9264
 	sf	$f0, 0($3)
 	movf	$f0, $f1
 	sw	$31, 12($3)
@@ -767,7 +767,7 @@ cos_sub3.2701:
 	lf	$f1, 0($3)
 	fmul	$f0, $f1, $f0
 	jr $31
-eq_else.9255:
+eq_else.9264:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34784
@@ -785,7 +785,7 @@ eq_else.9255:
 	lf	$f1, 0($3)
 	fmul	$f0, $f1, $f0
 	jr $31
-cos_sub2.2704:
+cos_sub2.2709:
 	lf	$f2, 8($28)
 	lw	$28, 4($28)
 	ori	$30, $0, 1
@@ -793,43 +793,43 @@ cos_sub2.2704:
 	ori	$30, $30, 34784
 	lf	$f3, 0($30) # 1.570796
 	sltf	$30, $f1, $f3
-	bne	$30, $0, eq_else.9256
+	bne	$30, $0, eq_else.9265
 	fsub	$f1, $f2, $f1
 	sf	$f1, 0($3)
 	sw	$28, 8($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	rev_sgn.2676
+	jal	rev_sgn.2681
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lf	$f1, 0($3)
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9256:
+eq_else.9265:
 	lw $30, 0($28)
 	jr	$30
-cos_sub1.2707:
+cos_sub1.2712:
 	lf	$f2, 8($28)
 	lw	$28, 4($28)
 	sltf	$30, $f1, $f2
-	bne	$30, $0, eq_else.9257
+	bne	$30, $0, eq_else.9266
 	fsub	$f1, $f1, $f2
 	sf	$f1, 0($3)
 	sw	$28, 8($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	rev_sgn.2676
+	jal	rev_sgn.2681
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lf	$f1, 0($3)
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9257:
+eq_else.9266:
 	lw $30, 0($28)
 	jr	$30
-cos.2710:
+cos.2715:
 	lw	$2, 4($28)
 	ori	$30, $0, 1
 	slli	$30, $30, 16
@@ -840,14 +840,14 @@ cos.2710:
 	sf	$f0, 16($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fsgn.2674
+	jal	fsgn.2679
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f1, 16($3)
 	fmul	$f0, $f0, $f1
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	reduction_2pi.2678
+	jal	reduction_2pi.2683
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	movf	$f1, $f0
@@ -855,12 +855,12 @@ cos.2710:
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-kernel_atan.2712:
+kernel_atan.2717:
 	addi	$2, $0, 3
 	sf	$f0, 0($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	ori	$30, $0, 1
@@ -875,7 +875,7 @@ kernel_atan.2712:
 	movf	$f0, $f1
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 1
@@ -891,7 +891,7 @@ kernel_atan.2712:
 	movf	$f0, $f1
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 1
@@ -907,7 +907,7 @@ kernel_atan.2712:
 	movf	$f0, $f1
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 1
@@ -923,7 +923,7 @@ kernel_atan.2712:
 	movf	$f0, $f1
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	ori	$30, $0, 1
@@ -939,7 +939,7 @@ kernel_atan.2712:
 	movf	$f0, $f1
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	pow.2659
+	jal	pow.2664
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 1
@@ -950,11 +950,11 @@ kernel_atan.2712:
 	lf	$f1, 40($3)
 	fadd	$f0, $f1, $f0
 	jr $31
-atan.2714:
+atan.2719:
 	sf	$f0, 0($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fsgn.2674
+	jal	fsgn.2679
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lf	$f1, 0($3)
@@ -964,13 +964,13 @@ atan.2714:
 	ori	$30, $30, 34728
 	lf	$f2, 0($30) # 0.437500
 	sltf	$30, $f1, $f2
-	bne	$30, $0, eq_else.9259
+	bne	$30, $0, eq_else.9268
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34720
 	lf	$f2, 0($30) # 2.437500
 	sltf	$30, $f1, $f2
-	bne	$30, $0, eq_else.9260
+	bne	$30, $0, eq_else.9269
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34784
@@ -985,7 +985,7 @@ atan.2714:
 	movf	$f0, $f1
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	kernel_atan.2712
+	jal	kernel_atan.2717
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f1, 16($3)
@@ -993,7 +993,7 @@ atan.2714:
 	lf	$f1, 8($3)
 	fmul	$f0, $f1, $f0
 	jr $31
-eq_else.9260:
+eq_else.9269:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34792
@@ -1014,7 +1014,7 @@ eq_else.9260:
 	movf	$f0, $f1
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	kernel_atan.2712
+	jal	kernel_atan.2717
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -1022,23 +1022,25 @@ eq_else.9260:
 	lf	$f1, 8($3)
 	fmul	$f0, $f1, $f0
 	jr $31
-eq_else.9259:
+eq_else.9268:
 	sf	$f0, 8($3)
 	movf	$f0, $f1
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	kernel_atan.2712
+	jal	kernel_atan.2717
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 8($3)
 	fmul	$f0, $f1, $f0
 	jr $31
-print_int_sub.2716:
+print_int_sub.2721:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9261
+	bne	$2, $30, eq_else.9270
 	jr $31
-eq_else.9261:
-	div10	$5, $2
+eq_else.9270:
+	addi	$5, $0, 10
+	# div	$5, $2, $5
+  div10 $5, $2
 	addi	$6, $0, 10
 	mul	$6, $5, $6
 	sub	$2, $2, $6
@@ -1046,21 +1048,21 @@ eq_else.9261:
 	mov	$2, $5
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	print_int_sub.2716
+	jal	print_int_sub.2721
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	lw	$2, 0($3)
 	addi	$2, $2, 48
 	j	min_caml_print_char
-print_int.2718:
+print_int.2723:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9263
+	bne	$2, $30, eq_else.9272
 	addi	$2, $0, 48
 	j	min_caml_print_char
-eq_else.9263:
+eq_else.9272:
 	ori	$30, $0, 0
 	slt	$30, $30, $2
-	bne	$30, $0, eq_else.9264
+	bne	$30, $0, eq_else.9273
 	addi	$5, $0, 45
 	sw	$2, 0($3)
 	mov	$2, $5
@@ -1074,77 +1076,77 @@ eq_else.9263:
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
 	mul	$2, $2, $30
-	j	print_int_sub.2716
-eq_else.9264:
-	j	print_int_sub.2716
-sgn.2720:
+	j	print_int_sub.2721
+eq_else.9273:
+	j	print_int_sub.2721
+sgn.2725:
 	sf	$f0, 0($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9265
+	bne	$2, $30, eq_else.9274
 	lf	$f0, 0($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9266
+	bne	$2, $30, eq_else.9275
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34800
 	lf	$f0, 0($30) # -1.000000
 	jr $31
-eq_else.9266:
+eq_else.9275:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f0, 0($30) # 1.000000
 	jr $31
-eq_else.9265:
+eq_else.9274:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
 	jr $31
-fneg_cond.2722:
+fneg_cond.2727:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9267
-	j	fneg.2639
-eq_else.9267:
+	bne	$2, $30, eq_else.9276
+	j	fneg.2642
+eq_else.9276:
 	jr $31
-add_mod5.2725:
+add_mod5.2730:
 	add	$2, $2, $5
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 5
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9268
+	bne	$30, $0, eq_else.9277
 	addi	$2, $2, -5
 	jr $31
-eq_else.9268:
+eq_else.9277:
 	jr $31
-vecset.2728:
+vecset.2733:
 	sf	$f0, 0($2)
 	sf	$f1, 8($2)
 	sf	$f2, 16($2)
 	jr $31
-vecfill.2733:
+vecfill.2738:
 	sf	$f0, 0($2)
 	sf	$f0, 8($2)
 	sf	$f0, 16($2)
 	jr $31
-vecbzero.2736:
+vecbzero.2741:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
-	j	vecfill.2733
-veccpy.2738:
+	j	vecfill.2738
+veccpy.2743:
 	lf	$f0, 0($5)
 	sf	$f0, 0($2)
 	lf	$f0, 8($5)
@@ -1152,13 +1154,13 @@ veccpy.2738:
 	lf	$f0, 16($5)
 	sf	$f0, 16($2)
 	jr $31
-vecunit_sgn.2746:
+vecunit_sgn.2751:
 	lf	$f0, 0($2)
 	sw	$5, 0($3)
 	sw	$2, 4($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$2, 4($3)
@@ -1167,7 +1169,7 @@ vecunit_sgn.2746:
 	movf	$f0, $f1
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lf	$f1, 8($3)
@@ -1178,49 +1180,49 @@ vecunit_sgn.2746:
 	movf	$f0, $f1
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f1, 16($3)
 	fadd	$f0, $f1, $f0
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	sf	$f0, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9272
+	bne	$2, $30, eq_else.9281
 	lw	$2, 0($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9274
+	bne	$2, $30, eq_else.9283
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f0, 0($30) # 1.000000
 	lf	$f1, 24($3)
 	fdiv	$f0, $f0, $f1
-	j	eq_cont.9275
-eq_else.9274:
+	j	eq_cont.9284
+eq_else.9283:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34800
 	lf	$f0, 0($30) # -1.000000
 	lf	$f1, 24($3)
 	fdiv	$f0, $f0, $f1
-eq_cont.9275:
-	j	eq_cont.9273
-eq_else.9272:
+eq_cont.9284:
+	j	eq_cont.9282
+eq_else.9281:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f0, 0($30) # 1.000000
-eq_cont.9273:
+eq_cont.9282:
 	lw	$2, 4($3)
 	lf	$f1, 0($2)
 	fmul	$f1, $f1, $f0
@@ -1232,7 +1234,7 @@ eq_cont.9273:
 	fmul	$f0, $f1, $f0
 	sf	$f0, 16($2)
 	jr $31
-veciprod.2749:
+veciprod.2754:
 	lf	$f0, 0($2)
 	lf	$f1, 0($5)
 	fmul	$f0, $f0, $f1
@@ -1245,7 +1247,7 @@ veciprod.2749:
 	fmul	$f1, $f1, $f2
 	fadd	$f0, $f0, $f1
 	jr $31
-veciprod2.2752:
+veciprod2.2757:
 	lf	$f3, 0($2)
 	fmul	$f0, $f3, $f0
 	lf	$f3, 8($2)
@@ -1255,7 +1257,7 @@ veciprod2.2752:
 	fmul	$f1, $f1, $f2
 	fadd	$f0, $f0, $f1
 	jr $31
-vecaccum.2757:
+vecaccum.2762:
 	lf	$f1, 0($2)
 	lf	$f2, 0($5)
 	fmul	$f2, $f0, $f2
@@ -1272,7 +1274,7 @@ vecaccum.2757:
 	fadd	$f0, $f1, $f0
 	sf	$f0, 16($2)
 	jr $31
-vecadd.2761:
+vecadd.2766:
 	lf	$f0, 0($2)
 	lf	$f1, 0($5)
 	fadd	$f0, $f0, $f1
@@ -1286,7 +1288,7 @@ vecadd.2761:
 	fadd	$f0, $f0, $f1
 	sf	$f0, 16($2)
 	jr $31
-vecscale.2767:
+vecscale.2772:
 	lf	$f1, 0($2)
 	fmul	$f1, $f1, $f0
 	sf	$f1, 0($2)
@@ -1297,7 +1299,7 @@ vecscale.2767:
 	fmul	$f0, $f1, $f0
 	sf	$f0, 16($2)
 	jr $31
-vecaccumv.2770:
+vecaccumv.2775:
 	lf	$f0, 0($2)
 	lf	$f1, 0($5)
 	lf	$f2, 0($6)
@@ -1317,135 +1319,135 @@ vecaccumv.2770:
 	fadd	$f0, $f0, $f1
 	sf	$f0, 16($2)
 	jr $31
-o_texturetype.2774:
+o_texturetype.2779:
 	lw	$2, 0($2)
 	jr $31
-o_form.2776:
+o_form.2781:
 	lw	$2, 4($2)
 	jr $31
-o_reflectiontype.2778:
+o_reflectiontype.2783:
 	lw	$2, 8($2)
 	jr $31
-o_isinvert.2780:
+o_isinvert.2785:
 	lw	$2, 24($2)
 	jr $31
-o_isrot.2782:
+o_isrot.2787:
 	lw	$2, 12($2)
 	jr $31
-o_param_a.2784:
+o_param_a.2789:
 	lw	$2, 16($2)
 	lf	$f0, 0($2)
 	jr $31
-o_param_b.2786:
+o_param_b.2791:
 	lw	$2, 16($2)
 	lf	$f0, 8($2)
 	jr $31
-o_param_c.2788:
+o_param_c.2793:
 	lw	$2, 16($2)
 	lf	$f0, 16($2)
 	jr $31
-o_param_abc.2790:
+o_param_abc.2795:
 	lw	$2, 16($2)
 	jr $31
-o_param_x.2792:
+o_param_x.2797:
 	lw	$2, 20($2)
 	lf	$f0, 0($2)
 	jr $31
-o_param_y.2794:
+o_param_y.2799:
 	lw	$2, 20($2)
 	lf	$f0, 8($2)
 	jr $31
-o_param_z.2796:
+o_param_z.2801:
 	lw	$2, 20($2)
 	lf	$f0, 16($2)
 	jr $31
-o_diffuse.2798:
+o_diffuse.2803:
 	lw	$2, 28($2)
 	lf	$f0, 0($2)
 	jr $31
-o_hilight.2800:
+o_hilight.2805:
 	lw	$2, 28($2)
 	lf	$f0, 8($2)
 	jr $31
-o_color_red.2802:
+o_color_red.2807:
 	lw	$2, 32($2)
 	lf	$f0, 0($2)
 	jr $31
-o_color_green.2804:
+o_color_green.2809:
 	lw	$2, 32($2)
 	lf	$f0, 8($2)
 	jr $31
-o_color_blue.2806:
+o_color_blue.2811:
 	lw	$2, 32($2)
 	lf	$f0, 16($2)
 	jr $31
-o_param_r1.2808:
+o_param_r1.2813:
 	lw	$2, 36($2)
 	lf	$f0, 0($2)
 	jr $31
-o_param_r2.2810:
+o_param_r2.2815:
 	lw	$2, 36($2)
 	lf	$f0, 8($2)
 	jr $31
-o_param_r3.2812:
+o_param_r3.2817:
 	lw	$2, 36($2)
 	lf	$f0, 16($2)
 	jr $31
-o_param_ctbl.2814:
+o_param_ctbl.2819:
 	lw	$2, 40($2)
 	jr $31
-p_rgb.2816:
+p_rgb.2821:
 	lw	$2, 0($2)
 	jr $31
-p_intersection_points.2818:
+p_intersection_points.2823:
 	lw	$2, 4($2)
 	jr $31
-p_surface_ids.2820:
+p_surface_ids.2825:
 	lw	$2, 8($2)
 	jr $31
-p_calc_diffuse.2822:
+p_calc_diffuse.2827:
 	lw	$2, 12($2)
 	jr $31
-p_energy.2824:
+p_energy.2829:
 	lw	$2, 16($2)
 	jr $31
-p_received_ray_20percent.2826:
+p_received_ray_20percent.2831:
 	lw	$2, 20($2)
 	jr $31
-p_group_id.2828:
+p_group_id.2833:
 	lw	$2, 24($2)
 	lw	$2, 0($2)
 	jr $31
-p_set_group_id.2830:
+p_set_group_id.2835:
 	lw	$2, 24($2)
 	sw	$5, 0($2)
 	jr $31
-p_nvectors.2833:
+p_nvectors.2838:
 	lw	$2, 28($2)
 	jr $31
-d_vec.2835:
+d_vec.2840:
 	lw	$2, 0($2)
 	jr $31
-d_const.2837:
+d_const.2842:
 	lw	$2, 4($2)
 	jr $31
-r_surface_id.2839:
+r_surface_id.2844:
 	lw	$2, 0($2)
 	jr $31
-r_dvec.2841:
+r_dvec.2846:
 	lw	$2, 4($2)
 	jr $31
-r_bright.2843:
+r_bright.2848:
 	lf	$f0, 8($2)
 	jr $31
-rad.2845:
+rad.2850:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34712
 	lf	$f1, 0($30) # 0.017453
 	fmul	$f0, $f0, $f1
 	jr $31
-read_screen_settings.2847:
+read_screen_settings.2852:
 	lw	$2, 28($28)
 	lw	$5, 24($28)
 	lw	$6, 20($28)
@@ -1488,7 +1490,7 @@ read_screen_settings.2847:
 	lw	$31, 28($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	rad.2845
+	jal	rad.2850
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$28, 20($3)
@@ -1517,7 +1519,7 @@ read_screen_settings.2847:
 	lw	$31, 60($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	rad.2845
+	jal	rad.2850
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lw	$28, 20($3)
@@ -1572,7 +1574,7 @@ read_screen_settings.2847:
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lw	$2, 8($3)
@@ -1580,7 +1582,7 @@ read_screen_settings.2847:
 	lf	$f0, 48($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 72($3)
@@ -1590,7 +1592,7 @@ read_screen_settings.2847:
 	lf	$f0, 40($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lw	$2, 4($3)
@@ -1598,7 +1600,7 @@ read_screen_settings.2847:
 	lf	$f0, 48($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 64($3)
@@ -1621,7 +1623,7 @@ read_screen_settings.2847:
 	fsub	$f0, $f0, $f1
 	sf	$f0, 16($6)
 	jr $31
-read_light.2849:
+read_light.2854:
 	lw	$2, 16($28)
 	lw	$5, 12($28)
 	lw	$6, 8($28)
@@ -1642,7 +1644,7 @@ read_light.2849:
 	lw	$31, 20($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	rad.2845
+	jal	rad.2850
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$28, 12($3)
@@ -1655,7 +1657,7 @@ read_light.2849:
 	lw	$31, 28($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$2, 8($3)
@@ -1667,7 +1669,7 @@ read_light.2849:
 	lw	$31, 28($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	rad.2845
+	jal	rad.2850
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f1, 16($3)
@@ -1714,7 +1716,7 @@ read_light.2849:
 	lw	$2, 0($3)
 	sf	$f0, 0($2)
 	jr $31
-rotate_quadratic_matrix.2851:
+rotate_quadratic_matrix.2856:
 	lw	$6, 8($28)
 	lw	$28, 4($28)
 	lf	$f0, 0($5)
@@ -1815,7 +1817,7 @@ rotate_quadratic_matrix.2851:
 	movf	$f0, $f4
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 32($3)
@@ -1837,7 +1839,7 @@ rotate_quadratic_matrix.2851:
 	movf	$f0, $f6
 	sw	$31, 156($3)
 	addi	$3, $3, 160
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -160
 	lw	$31, 156($3)
 	lf	$f1, 144($3)
@@ -1847,7 +1849,7 @@ rotate_quadratic_matrix.2851:
 	movf	$f0, $f2
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	lf	$f1, 136($3)
@@ -1859,7 +1861,7 @@ rotate_quadratic_matrix.2851:
 	movf	$f0, $f2
 	sw	$31, 172($3)
 	addi	$3, $3, 176
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -176
 	lw	$31, 172($3)
 	lf	$f1, 120($3)
@@ -1871,7 +1873,7 @@ rotate_quadratic_matrix.2851:
 	lf	$f0, 80($3)
 	sw	$31, 172($3)
 	addi	$3, $3, 176
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -176
 	lw	$31, 172($3)
 	lf	$f1, 144($3)
@@ -1881,7 +1883,7 @@ rotate_quadratic_matrix.2851:
 	movf	$f0, $f2
 	sw	$31, 180($3)
 	addi	$3, $3, 184
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -184
 	lw	$31, 180($3)
 	lf	$f1, 136($3)
@@ -1893,7 +1895,7 @@ rotate_quadratic_matrix.2851:
 	movf	$f0, $f2
 	sw	$31, 188($3)
 	addi	$3, $3, 192
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -192
 	lw	$31, 188($3)
 	lf	$f1, 120($3)
@@ -1905,7 +1907,7 @@ rotate_quadratic_matrix.2851:
 	lf	$f0, 64($3)
 	sw	$31, 188($3)
 	addi	$3, $3, 192
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -192
 	lw	$31, 188($3)
 	lf	$f1, 144($3)
@@ -1915,7 +1917,7 @@ rotate_quadratic_matrix.2851:
 	movf	$f0, $f2
 	sw	$31, 196($3)
 	addi	$3, $3, 200
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -200
 	lw	$31, 196($3)
 	lf	$f1, 136($3)
@@ -1927,7 +1929,7 @@ rotate_quadratic_matrix.2851:
 	movf	$f0, $f2
 	sw	$31, 204($3)
 	addi	$3, $3, 208
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -208
 	lw	$31, 204($3)
 	lf	$f1, 120($3)
@@ -1991,7 +1993,7 @@ rotate_quadratic_matrix.2851:
 	fmul	$f0, $f0, $f1
 	sf	$f0, 16($2)
 	jr $31
-read_nth_object.2854:
+read_nth_object.2859:
 	lw	$5, 8($28)
 	lw	$6, 4($28)
 	sw	$5, 0($3)
@@ -2005,10 +2007,10 @@ read_nth_object.2854:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$2, $30, eq_else.9286
+	bne	$2, $30, eq_else.9295
 	addi	$2, $0, 0
 	jr $31
-eq_else.9286:
+eq_else.9295:
 	sw	$2, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
@@ -2101,7 +2103,7 @@ eq_else.9286:
 	lw	$31, 36($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	addi	$5, $0, 2
@@ -2177,9 +2179,9 @@ eq_else.9286:
 	lw	$31, 52($3)
 	lw	$5, 24($3)
 	ori	$30, $0, 0
-	bne	$5, $30, eq_else.9287
-	j	eq_cont.9288
-eq_else.9287:
+	bne	$5, $30, eq_else.9296
+	j	eq_cont.9297
+eq_else.9296:
 	sw	$2, 48($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
@@ -2188,7 +2190,7 @@ eq_else.9287:
 	lw	$31, 52($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	rad.2845
+	jal	rad.2850
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$2, 48($3)
@@ -2200,7 +2202,7 @@ eq_else.9287:
 	lw	$31, 52($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	rad.2845
+	jal	rad.2850
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$2, 48($3)
@@ -2212,22 +2214,22 @@ eq_else.9287:
 	lw	$31, 52($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	rad.2845
+	jal	rad.2850
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$2, 48($3)
 	sf	$f0, 16($2)
-eq_cont.9288:
+eq_cont.9297:
 	lw	$5, 16($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$5, $30, eq_else.9289
+	bne	$5, $30, eq_else.9298
 	addi	$6, $0, 1
-	j	eq_cont.9290
-eq_else.9289:
+	j	eq_cont.9299
+eq_else.9298:
 	lw	$6, 36($3)
-eq_cont.9290:
+eq_cont.9299:
 	addi	$7, $0, 4
 	ori	$30, $0, 1
 	slli	$30, $30, 16
@@ -2272,20 +2274,20 @@ eq_cont.9290:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 3
-	bne	$8, $30, eq_else.9291
+	bne	$8, $30, eq_else.9300
 	lf	$f0, 0($6)
 	sf	$f0, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9293
+	bne	$2, $30, eq_else.9302
 	lf	$f0, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	sgn.2720
+	jal	sgn.2725
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 56($3)
@@ -2293,33 +2295,33 @@ eq_cont.9290:
 	movf	$f0, $f1
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f1, 64($3)
 	fdiv	$f0, $f1, $f0
-	j	eq_cont.9294
-eq_else.9293:
+	j	eq_cont.9303
+eq_else.9302:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
-eq_cont.9294:
+eq_cont.9303:
 	lw	$2, 28($3)
 	sf	$f0, 0($2)
 	lf	$f0, 8($2)
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9295
+	bne	$2, $30, eq_else.9304
 	lf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	sgn.2720
+	jal	sgn.2725
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 72($3)
@@ -2327,33 +2329,33 @@ eq_cont.9294:
 	movf	$f0, $f1
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 80($3)
 	fdiv	$f0, $f1, $f0
-	j	eq_cont.9296
-eq_else.9295:
+	j	eq_cont.9305
+eq_else.9304:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
-eq_cont.9296:
+eq_cont.9305:
 	lw	$2, 28($3)
 	sf	$f0, 8($2)
 	lf	$f0, 16($2)
 	sf	$f0, 88($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9297
+	bne	$2, $30, eq_else.9306
 	lf	$f0, 88($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	sgn.2720
+	jal	sgn.2725
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 88($3)
@@ -2361,49 +2363,49 @@ eq_cont.9296:
 	movf	$f0, $f1
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 96($3)
 	fdiv	$f0, $f1, $f0
-	j	eq_cont.9298
-eq_else.9297:
+	j	eq_cont.9307
+eq_else.9306:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
-eq_cont.9298:
+eq_cont.9307:
 	lw	$2, 28($3)
 	sf	$f0, 16($2)
-	j	eq_cont.9292
-eq_else.9291:
+	j	eq_cont.9301
+eq_else.9300:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$8, $30, eq_else.9299
+	bne	$8, $30, eq_else.9308
 	lw	$5, 36($3)
 	ori	$30, $0, 0
-	bne	$5, $30, eq_else.9301
+	bne	$5, $30, eq_else.9310
 	addi	$5, $0, 1
-	j	eq_cont.9302
-eq_else.9301:
+	j	eq_cont.9311
+eq_else.9310:
 	addi	$5, $0, 0
-eq_cont.9302:
+eq_cont.9311:
 	mov	$2, $6
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	vecunit_sgn.2746
+	jal	vecunit_sgn.2751
 	addi	$3, $3, -112
 	lw	$31, 108($3)
-	j	eq_cont.9300
-eq_else.9299:
-eq_cont.9300:
-eq_cont.9292:
+	j	eq_cont.9309
+eq_else.9308:
+eq_cont.9309:
+eq_cont.9301:
 	lw	$2, 24($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9303
-	j	eq_cont.9304
-eq_else.9303:
+	bne	$2, $30, eq_else.9312
+	j	eq_cont.9313
+eq_else.9312:
 	lw	$2, 28($3)
 	lw	$5, 48($3)
 	lw	$28, 0($3)
@@ -2413,19 +2415,19 @@ eq_else.9303:
 	jalr	$31, $30
 	addi	$3, $3, -112
 	lw	$31, 108($3)
-eq_cont.9304:
+eq_cont.9313:
 	addi	$2, $0, 1
 	jr $31
-read_object.2856:
+read_object.2861:
 	lw	$5, 8($28)
 	lw	$6, 4($28)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 60
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9305
+	bne	$30, $0, eq_else.9314
 	jr $31
-eq_else.9305:
+eq_else.9314:
 	sw	$28, 0($3)
 	sw	$6, 4($3)
 	sw	$2, 8($3)
@@ -2437,23 +2439,23 @@ eq_else.9305:
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9307
+	bne	$2, $30, eq_else.9316
 	lw	$2, 4($3)
 	lw	$5, 8($3)
 	sw	$5, 0($2)
 	jr $31
-eq_else.9307:
+eq_else.9316:
 	lw	$2, 8($3)
 	addi	$2, $2, 1
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-read_all_object.2858:
+read_all_object.2863:
 	lw	$28, 4($28)
 	addi	$2, $0, 0
 	lw $30, 0($28)
 	jr	$30
-read_net_item.2860:
+read_net_item.2865:
 	sw	$2, 0($3)
 	sw	$31, 4($3)
 	addi	$3, $3, 8
@@ -2463,19 +2465,19 @@ read_net_item.2860:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$2, $30, eq_else.9309
+	bne	$2, $30, eq_else.9318
 	lw	$2, 0($3)
 	addi	$2, $2, 1
 	addi	$5, $0, -1
 	j	min_caml_create_array
-eq_else.9309:
+eq_else.9318:
 	lw	$5, 0($3)
 	addi	$6, $5, 1
 	sw	$2, 4($3)
 	mov	$2, $6
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	read_net_item.2860
+	jal	read_net_item.2865
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$5, 0($3)
@@ -2484,13 +2486,13 @@ eq_else.9309:
 	add $30, $2, $5
 	sw	$6, 0($30)
 	jr $31
-read_or_network.2862:
+read_or_network.2867:
 	addi	$5, $0, 0
 	sw	$2, 0($3)
 	mov	$2, $5
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	read_net_item.2860
+	jal	read_net_item.2865
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	mov	$5, $2
@@ -2498,18 +2500,18 @@ read_or_network.2862:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$2, $30, eq_else.9310
+	bne	$2, $30, eq_else.9319
 	lw	$2, 0($3)
 	addi	$2, $2, 1
 	j	min_caml_create_array
-eq_else.9310:
+eq_else.9319:
 	lw	$2, 0($3)
 	addi	$6, $2, 1
 	sw	$5, 4($3)
 	mov	$2, $6
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	read_or_network.2862
+	jal	read_or_network.2867
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$5, 0($3)
@@ -2518,7 +2520,7 @@ eq_else.9310:
 	add $30, $2, $5
 	sw	$6, 0($30)
 	jr $31
-read_and_network.2864:
+read_and_network.2869:
 	lw	$5, 4($28)
 	addi	$6, $0, 0
 	sw	$28, 0($3)
@@ -2527,16 +2529,16 @@ read_and_network.2864:
 	mov	$2, $6
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	read_net_item.2860
+	jal	read_net_item.2865
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$5, 0($2)
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$5, $30, eq_else.9311
+	bne	$5, $30, eq_else.9320
 	jr $31
-eq_else.9311:
+eq_else.9320:
 	lw	$5, 8($3)
 	slli	$6, $5, 2
 	lw	$7, 4($3)
@@ -2546,7 +2548,7 @@ eq_else.9311:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-read_parameter.2866:
+read_parameter.2871:
 	lw	$2, 20($28)
 	lw	$5, 16($28)
 	lw	$6, 12($28)
@@ -2588,13 +2590,13 @@ read_parameter.2866:
 	addi	$2, $0, 0
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	read_or_network.2862
+	jal	read_or_network.2867
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 0($3)
 	sw	$2, 0($5)
 	jr $31
-solver_rect_surface.2868:
+solver_rect_surface.2873:
 	lw	$9, 4($28)
 	slli	$10, $6, 3
 	add	$30, $5, $10
@@ -2611,15 +2613,15 @@ lf	$f3, 0($30)
 	movf	$f0, $f3
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9317
+	bne	$2, $30, eq_else.9326
 	lw	$2, 56($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_param_abc.2790
+	jal	o_param_abc.2795
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lw	$5, 56($3)
@@ -2627,7 +2629,7 @@ lf	$f3, 0($30)
 	mov	$2, $5
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$5, 52($3)
@@ -2638,14 +2640,14 @@ lf	$f0, 0($30)
 	sw	$2, 64($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	mov	$5, $2
 	lw	$2, 64($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	xor.2630
+	jal	xor.2633
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$5, 52($3)
@@ -2655,7 +2657,7 @@ lf	$f0, 0($30)
 lf	$f0, 0($30)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fneg_cond.2722
+	jal	fneg_cond.2727
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 40($3)
@@ -2677,7 +2679,7 @@ lf	$f1, 0($30)
 	movf	$f0, $f1
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lw	$2, 32($3)
@@ -2687,14 +2689,14 @@ lf	$f1, 0($30)
 lf	$f1, 0($30)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9319
+	bne	$2, $30, eq_else.9328
 	addi	$2, $0, 0
 	jr $31
-eq_else.9319:
+eq_else.9328:
 	lw	$2, 16($3)
 	slli	$5, $2, 3
 	lw	$6, 48($3)
@@ -2706,7 +2708,7 @@ lf	$f0, 0($30)
 	fadd	$f0, $f0, $f2
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lw	$2, 16($3)
@@ -2716,23 +2718,23 @@ lf	$f0, 0($30)
 lf	$f1, 0($30)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9320
+	bne	$2, $30, eq_else.9329
 	addi	$2, $0, 0
 	jr $31
-eq_else.9320:
+eq_else.9329:
 	lw	$2, 0($3)
 	lf	$f0, 72($3)
 	sf	$f0, 0($2)
 	addi	$2, $0, 1
 	jr $31
-eq_else.9317:
+eq_else.9326:
 	addi	$2, $0, 0
 	jr $31
-solver_rect.2877:
+solver_rect.2882:
 	lw	$28, 4($28)
 	addi	$6, $0, 0
 	addi	$7, $0, 1
@@ -2750,7 +2752,7 @@ solver_rect.2877:
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9321
+	bne	$2, $30, eq_else.9330
 	addi	$6, $0, 1
 	addi	$7, $0, 2
 	addi	$8, $0, 0
@@ -2767,7 +2769,7 @@ solver_rect.2877:
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9322
+	bne	$2, $30, eq_else.9331
 	addi	$6, $0, 2
 	addi	$7, $0, 0
 	addi	$8, $0, 1
@@ -2784,19 +2786,19 @@ solver_rect.2877:
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9323
+	bne	$2, $30, eq_else.9332
 	addi	$2, $0, 0
 	jr $31
-eq_else.9323:
+eq_else.9332:
 	addi	$2, $0, 3
 	jr $31
-eq_else.9322:
+eq_else.9331:
 	addi	$2, $0, 2
 	jr $31
-eq_else.9321:
+eq_else.9330:
 	addi	$2, $0, 1
 	jr $31
-solver_surface.2883:
+solver_surface.2888:
 	lw	$6, 4($28)
 	sw	$6, 0($3)
 	sf	$f2, 8($3)
@@ -2805,7 +2807,7 @@ solver_surface.2883:
 	sw	$5, 32($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_abc.2790
+	jal	o_param_abc.2795
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	mov	$5, $2
@@ -2813,32 +2815,32 @@ solver_surface.2883:
 	sw	$5, 36($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	sf	$f0, 40($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9325
+	bne	$2, $30, eq_else.9334
 	addi	$2, $0, 0
 	jr $31
-eq_else.9325:
+eq_else.9334:
 	lf	$f0, 24($3)
 	lf	$f1, 16($3)
 	lf	$f2, 8($3)
 	lw	$2, 36($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	veciprod2.2752
+	jal	veciprod2.2757
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lf	$f1, 40($3)
@@ -2847,21 +2849,21 @@ eq_else.9325:
 	sf	$f0, 0($2)
 	addi	$2, $0, 1
 	jr $31
-quadratic.2889:
+quadratic.2894:
 	sf	$f0, 0($3)
 	sf	$f2, 8($3)
 	sf	$f1, 16($3)
 	sw	$2, 24($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$2, 24($3)
 	sf	$f0, 32($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 32($3)
@@ -2871,14 +2873,14 @@ quadratic.2889:
 	movf	$f0, $f1
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$2, 24($3)
 	sf	$f0, 48($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f1, 48($3)
@@ -2890,14 +2892,14 @@ quadratic.2889:
 	movf	$f0, $f1
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 24($3)
 	sf	$f0, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f1, 64($3)
@@ -2908,14 +2910,14 @@ quadratic.2889:
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	o_isrot.2782
+	jal	o_isrot.2787
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9327
+	bne	$2, $30, eq_else.9336
 	lf	$f0, 72($3)
 	jr $31
-eq_else.9327:
+eq_else.9336:
 	lf	$f0, 8($3)
 	lf	$f1, 16($3)
 	fmul	$f2, $f1, $f0
@@ -2923,7 +2925,7 @@ eq_else.9327:
 	sf	$f2, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	o_param_r1.2808
+	jal	o_param_r1.2813
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 80($3)
@@ -2938,7 +2940,7 @@ eq_else.9327:
 	sf	$f2, 96($3)
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	o_param_r2.2810
+	jal	o_param_r2.2815
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 96($3)
@@ -2953,7 +2955,7 @@ eq_else.9327:
 	sf	$f1, 112($3)
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	o_param_r3.2812
+	jal	o_param_r3.2817
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	lf	$f1, 112($3)
@@ -2961,7 +2963,7 @@ eq_else.9327:
 	lf	$f1, 104($3)
 	fadd	$f0, $f1, $f0
 	jr $31
-bilinear.2894:
+bilinear.2899:
 	fmul	$f6, $f0, $f3
 	sf	$f3, 0($3)
 	sf	$f0, 8($3)
@@ -2973,7 +2975,7 @@ bilinear.2894:
 	sf	$f6, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 56($3)
@@ -2986,7 +2988,7 @@ bilinear.2894:
 	sf	$f3, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 72($3)
@@ -3001,7 +3003,7 @@ bilinear.2894:
 	sf	$f3, 88($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 88($3)
@@ -3012,14 +3014,14 @@ bilinear.2894:
 	sf	$f0, 96($3)
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	o_isrot.2782
+	jal	o_isrot.2787
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9329
+	bne	$2, $30, eq_else.9338
 	lf	$f0, 96($3)
 	jr $31
-eq_else.9329:
+eq_else.9338:
 	lf	$f0, 40($3)
 	lf	$f1, 24($3)
 	fmul	$f2, $f1, $f0
@@ -3031,7 +3033,7 @@ eq_else.9329:
 	sf	$f2, 104($3)
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	o_param_r1.2808
+	jal	o_param_r1.2813
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	lf	$f1, 104($3)
@@ -3048,7 +3050,7 @@ eq_else.9329:
 	sf	$f1, 120($3)
 	sw	$31, 132($3)
 	addi	$3, $3, 136
-	jal	o_param_r2.2810
+	jal	o_param_r2.2815
 	addi	$3, $3, -136
 	lw	$31, 132($3)
 	lf	$f1, 120($3)
@@ -3067,7 +3069,7 @@ eq_else.9329:
 	sf	$f1, 136($3)
 	sw	$31, 148($3)
 	addi	$3, $3, 152
-	jal	o_param_r3.2812
+	jal	o_param_r3.2817
 	addi	$3, $3, -152
 	lw	$31, 148($3)
 	lf	$f1, 136($3)
@@ -3076,13 +3078,13 @@ eq_else.9329:
 	fadd	$f0, $f1, $f0
 	sw	$31, 148($3)
 	addi	$3, $3, 152
-	jal	fhalf.2633
+	jal	fhalf.2636
 	addi	$3, $3, -152
 	lw	$31, 148($3)
 	lf	$f1, 96($3)
 	fadd	$f0, $f1, $f0
 	jr $31
-solver_second.2902:
+solver_second.2907:
 	lw	$6, 4($28)
 	lf	$f3, 0($5)
 	lf	$f4, 8($5)
@@ -3098,17 +3100,17 @@ solver_second.2902:
 	movf	$f0, $f3
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	quadratic.2889
+	jal	quadratic.2894
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	sf	$f0, 40($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9331
+	bne	$2, $30, eq_else.9340
 	lw	$2, 36($3)
 	lf	$f0, 0($2)
 	lf	$f1, 8($2)
@@ -3119,7 +3121,7 @@ solver_second.2902:
 	lw	$2, 32($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	bilinear.2894
+	jal	bilinear.2899
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lf	$f1, 24($3)
@@ -3132,36 +3134,36 @@ solver_second.2902:
 	movf	$f2, $f3
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	quadratic.2889
+	jal	quadratic.2894
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lw	$2, 32($3)
 	sf	$f0, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 3
-	bne	$2, $30, eq_else.9332
+	bne	$2, $30, eq_else.9341
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f0, 0($30) # 1.000000
 	lf	$f1, 56($3)
 	fsub	$f0, $f1, $f0
-	j	eq_cont.9333
-eq_else.9332:
+	j	eq_cont.9342
+eq_else.9341:
 	lf	$f0, 56($3)
-eq_cont.9333:
+eq_cont.9342:
 	lf	$f1, 48($3)
 	sf	$f0, 64($3)
 	movf	$f0, $f1
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f1, 64($3)
@@ -3171,39 +3173,39 @@ eq_cont.9333:
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9334
+	bne	$2, $30, eq_else.9343
 	addi	$2, $0, 0
 	jr $31
-eq_else.9334:
+eq_else.9343:
 	lf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lw	$2, 32($3)
 	sf	$f0, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9335
+	bne	$2, $30, eq_else.9344
 	lf	$f0, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -96
 	lw	$31, 92($3)
-	j	eq_cont.9336
-eq_else.9335:
+	j	eq_cont.9345
+eq_else.9344:
 	lf	$f0, 80($3)
-eq_cont.9336:
+eq_cont.9345:
 	lf	$f1, 48($3)
 	fsub	$f0, $f0, $f1
 	lf	$f1, 40($3)
@@ -3212,10 +3214,10 @@ eq_cont.9336:
 	sf	$f0, 0($2)
 	addi	$2, $0, 1
 	jr $31
-eq_else.9331:
+eq_else.9340:
 	addi	$2, $0, 0
 	jr $31
-solver.2908:
+solver.2913:
 	lw	$7, 16($28)
 	lw	$8, 12($28)
 	lw	$9, 8($28)
@@ -3233,7 +3235,7 @@ solver.2908:
 	sf	$f0, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_x.2792
+	jal	o_param_x.2797
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -3246,7 +3248,7 @@ solver.2908:
 	mov	$2, $5
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_param_y.2794
+	jal	o_param_y.2799
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lf	$f1, 40($3)
@@ -3258,7 +3260,7 @@ solver.2908:
 	sf	$f1, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_param_z.2796
+	jal	o_param_z.2801
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 56($3)
@@ -3267,13 +3269,13 @@ solver.2908:
 	sf	$f0, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$2, $30, eq_else.9337
+	bne	$2, $30, eq_else.9346
 	lf	$f0, 32($3)
 	lf	$f1, 48($3)
 	lf	$f2, 64($3)
@@ -3282,11 +3284,11 @@ solver.2908:
 	lw	$28, 12($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9337:
+eq_else.9346:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9338
+	bne	$2, $30, eq_else.9347
 	lf	$f0, 32($3)
 	lf	$f1, 48($3)
 	lf	$f2, 64($3)
@@ -3295,7 +3297,7 @@ eq_else.9337:
 	lw	$28, 4($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9338:
+eq_else.9347:
 	lf	$f0, 32($3)
 	lf	$f1, 48($3)
 	lf	$f2, 64($3)
@@ -3304,7 +3306,7 @@ eq_else.9338:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-solver_rect_fast.2912:
+solver_rect_fast.2917:
 	lw	$7, 4($28)
 	lf	$f3, 0($6)
 	fsub	$f3, $f3, $f0
@@ -3324,28 +3326,28 @@ solver_rect_fast.2912:
 	movf	$f0, $f4
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lw	$2, 52($3)
 	sf	$f0, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	movf	$f1, $f0
 	lf	$f0, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9341
+	bne	$2, $30, eq_else.9350
 	addi	$2, $0, 0
-	j	eq_cont.9342
-eq_else.9341:
+	j	eq_cont.9351
+eq_else.9350:
 	lw	$2, 48($3)
 	lf	$f0, 16($2)
 	lf	$f1, 40($3)
@@ -3354,46 +3356,46 @@ eq_else.9341:
 	fadd	$f0, $f0, $f2
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 52($3)
 	sf	$f0, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	movf	$f1, $f0
 	lf	$f0, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9343
+	bne	$2, $30, eq_else.9352
 	addi	$2, $0, 0
-	j	eq_cont.9344
-eq_else.9343:
+	j	eq_cont.9353
+eq_else.9352:
 	lw	$2, 24($3)
 	lf	$f0, 8($2)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9345
+	bne	$2, $30, eq_else.9354
 	addi	$2, $0, 1
-	j	eq_cont.9346
-eq_else.9345:
+	j	eq_cont.9355
+eq_else.9354:
 	addi	$2, $0, 0
-eq_cont.9346:
-eq_cont.9344:
-eq_cont.9342:
+eq_cont.9355:
+eq_cont.9353:
+eq_cont.9351:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9347
+	bne	$2, $30, eq_else.9356
 	lw	$2, 24($3)
 	lf	$f0, 16($2)
 	lf	$f1, 16($3)
@@ -3409,28 +3411,28 @@ eq_cont.9342:
 	movf	$f0, $f2
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lw	$2, 52($3)
 	sf	$f0, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	movf	$f1, $f0
 	lf	$f0, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9348
+	bne	$2, $30, eq_else.9357
 	addi	$2, $0, 0
-	j	eq_cont.9349
-eq_else.9348:
+	j	eq_cont.9358
+eq_else.9357:
 	lw	$2, 48($3)
 	lf	$f0, 16($2)
 	lf	$f1, 72($3)
@@ -3439,46 +3441,46 @@ eq_else.9348:
 	fadd	$f0, $f0, $f2
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lw	$2, 52($3)
 	sf	$f0, 88($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	movf	$f1, $f0
 	lf	$f0, 88($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9350
+	bne	$2, $30, eq_else.9359
 	addi	$2, $0, 0
-	j	eq_cont.9351
-eq_else.9350:
+	j	eq_cont.9360
+eq_else.9359:
 	lw	$2, 24($3)
 	lf	$f0, 24($2)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9352
+	bne	$2, $30, eq_else.9361
 	addi	$2, $0, 1
-	j	eq_cont.9353
-eq_else.9352:
+	j	eq_cont.9362
+eq_else.9361:
 	addi	$2, $0, 0
-eq_cont.9353:
-eq_cont.9351:
-eq_cont.9349:
+eq_cont.9362:
+eq_cont.9360:
+eq_cont.9358:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9354
+	bne	$2, $30, eq_else.9363
 	lw	$2, 24($3)
 	lf	$f0, 32($2)
 	lf	$f1, 32($3)
@@ -3494,28 +3496,28 @@ eq_cont.9349:
 	movf	$f0, $f1
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lw	$2, 52($3)
 	sf	$f0, 104($3)
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	movf	$f1, $f0
 	lf	$f0, 104($3)
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9355
+	bne	$2, $30, eq_else.9364
 	addi	$2, $0, 0
-	j	eq_cont.9356
-eq_else.9355:
+	j	eq_cont.9365
+eq_else.9364:
 	lw	$2, 48($3)
 	lf	$f0, 8($2)
 	lf	$f1, 96($3)
@@ -3524,67 +3526,67 @@ eq_else.9355:
 	fadd	$f0, $f0, $f2
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	lw	$2, 52($3)
 	sf	$f0, 112($3)
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	movf	$f1, $f0
 	lf	$f0, 112($3)
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9357
+	bne	$2, $30, eq_else.9366
 	addi	$2, $0, 0
-	j	eq_cont.9358
-eq_else.9357:
+	j	eq_cont.9367
+eq_else.9366:
 	lw	$2, 24($3)
 	lf	$f0, 40($2)
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9359
+	bne	$2, $30, eq_else.9368
 	addi	$2, $0, 1
-	j	eq_cont.9360
-eq_else.9359:
+	j	eq_cont.9369
+eq_else.9368:
 	addi	$2, $0, 0
-eq_cont.9360:
-eq_cont.9358:
-eq_cont.9356:
+eq_cont.9369:
+eq_cont.9367:
+eq_cont.9365:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9361
+	bne	$2, $30, eq_else.9370
 	addi	$2, $0, 0
 	jr $31
-eq_else.9361:
+eq_else.9370:
 	lw	$2, 0($3)
 	lf	$f0, 96($3)
 	sf	$f0, 0($2)
 	addi	$2, $0, 3
 	jr $31
-eq_else.9354:
+eq_else.9363:
 	lw	$2, 0($3)
 	lf	$f0, 72($3)
 	sf	$f0, 0($2)
 	addi	$2, $0, 2
 	jr $31
-eq_else.9347:
+eq_else.9356:
 	lw	$2, 0($3)
 	lf	$f0, 40($3)
 	sf	$f0, 0($2)
 	addi	$2, $0, 1
 	jr $31
-solver_surface_fast.2919:
+solver_surface_fast.2924:
 	lw	$2, 4($28)
 	lf	$f3, 0($5)
 	sw	$2, 0($3)
@@ -3595,14 +3597,14 @@ solver_surface_fast.2919:
 	movf	$f0, $f3
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9363
+	bne	$2, $30, eq_else.9372
 	addi	$2, $0, 0
 	jr $31
-eq_else.9363:
+eq_else.9372:
 	lw	$2, 32($3)
 	lf	$f0, 8($2)
 	lf	$f1, 24($3)
@@ -3619,7 +3621,7 @@ eq_else.9363:
 	sf	$f0, 0($2)
 	addi	$2, $0, 1
 	jr $31
-solver_second_fast.2925:
+solver_second_fast.2930:
 	lw	$6, 4($28)
 	lf	$f3, 0($5)
 	sw	$6, 0($3)
@@ -3632,11 +3634,11 @@ solver_second_fast.2925:
 	movf	$f0, $f3
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9366
+	bne	$2, $30, eq_else.9375
 	lw	$2, 48($3)
 	lf	$f0, 8($2)
 	lf	$f1, 40($3)
@@ -3657,36 +3659,36 @@ solver_second_fast.2925:
 	movf	$f1, $f3
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	quadratic.2889
+	jal	quadratic.2894
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 16($3)
 	sf	$f0, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 3
-	bne	$2, $30, eq_else.9368
+	bne	$2, $30, eq_else.9377
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f0, 0($30) # 1.000000
 	lf	$f1, 64($3)
 	fsub	$f0, $f1, $f0
-	j	eq_cont.9369
-eq_else.9368:
+	j	eq_cont.9378
+eq_else.9377:
 	lf	$f0, 64($3)
-eq_cont.9369:
+eq_cont.9378:
 	lf	$f1, 56($3)
 	sf	$f0, 72($3)
 	movf	$f0, $f1
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 72($3)
@@ -3696,26 +3698,26 @@ eq_cont.9369:
 	sf	$f0, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9370
+	bne	$2, $30, eq_else.9379
 	addi	$2, $0, 0
 	jr $31
-eq_else.9370:
+eq_else.9379:
 	lw	$2, 16($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9371
+	bne	$2, $30, eq_else.9380
 	lf	$f0, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 56($3)
@@ -3725,12 +3727,12 @@ eq_else.9370:
 	fmul	$f0, $f0, $f1
 	lw	$2, 0($3)
 	sf	$f0, 0($2)
-	j	eq_cont.9372
-eq_else.9371:
+	j	eq_cont.9381
+eq_else.9380:
 	lf	$f0, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 56($3)
@@ -3740,13 +3742,13 @@ eq_else.9371:
 	fmul	$f0, $f0, $f1
 	lw	$2, 0($3)
 	sf	$f0, 0($2)
-eq_cont.9372:
+eq_cont.9381:
 	addi	$2, $0, 1
 	jr $31
-eq_else.9366:
+eq_else.9375:
 	addi	$2, $0, 0
 	jr $31
-solver_fast.2931:
+solver_fast.2936:
 	lw	$7, 16($28)
 	lw	$8, 12($28)
 	lw	$9, 8($28)
@@ -3766,7 +3768,7 @@ solver_fast.2931:
 	mov	$2, $10
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_param_x.2792
+	jal	o_param_x.2797
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 32($3)
@@ -3779,7 +3781,7 @@ solver_fast.2931:
 	mov	$2, $5
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_param_y.2794
+	jal	o_param_y.2799
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f1, 48($3)
@@ -3791,7 +3793,7 @@ solver_fast.2931:
 	sf	$f1, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_param_z.2796
+	jal	o_param_z.2801
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f1, 64($3)
@@ -3800,7 +3802,7 @@ solver_fast.2931:
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	d_const.2837
+	jal	d_const.2842
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lw	$5, 12($3)
@@ -3812,17 +3814,17 @@ solver_fast.2931:
 	mov	$2, $5
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$2, $30, eq_else.9374
+	bne	$2, $30, eq_else.9383
 	lw	$2, 16($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	mov	$5, $2
@@ -3834,11 +3836,11 @@ solver_fast.2931:
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9374:
+eq_else.9383:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9375
+	bne	$2, $30, eq_else.9384
 	lf	$f0, 40($3)
 	lf	$f1, 56($3)
 	lf	$f2, 72($3)
@@ -3847,7 +3849,7 @@ eq_else.9374:
 	lw	$28, 4($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9375:
+eq_else.9384:
 	lf	$f0, 40($3)
 	lf	$f1, 56($3)
 	lf	$f2, 72($3)
@@ -3856,7 +3858,7 @@ eq_else.9375:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-solver_surface_fast2.2935:
+solver_surface_fast2.2940:
 	lw	$2, 4($28)
 	lf	$f0, 0($5)
 	sw	$2, 0($3)
@@ -3864,14 +3866,14 @@ solver_surface_fast2.2935:
 	sw	$5, 8($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9376
+	bne	$2, $30, eq_else.9385
 	addi	$2, $0, 0
 	jr $31
-eq_else.9376:
+eq_else.9385:
 	lw	$2, 8($3)
 	lf	$f0, 0($2)
 	lw	$2, 4($3)
@@ -3881,7 +3883,7 @@ eq_else.9376:
 	sf	$f0, 0($2)
 	addi	$2, $0, 1
 	jr $31
-solver_second_fast2.2942:
+solver_second_fast2.2947:
 	lw	$7, 4($28)
 	lf	$f3, 0($5)
 	sw	$7, 0($3)
@@ -3895,11 +3897,11 @@ solver_second_fast2.2942:
 	movf	$f0, $f3
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9378
+	bne	$2, $30, eq_else.9387
 	lw	$2, 48($3)
 	lf	$f0, 8($2)
 	lf	$f1, 40($3)
@@ -3918,7 +3920,7 @@ solver_second_fast2.2942:
 	sf	$f1, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f1, 64($3)
@@ -3928,26 +3930,26 @@ solver_second_fast2.2942:
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9380
+	bne	$2, $30, eq_else.9389
 	addi	$2, $0, 0
 	jr $31
-eq_else.9380:
+eq_else.9389:
 	lw	$2, 4($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9381
+	bne	$2, $30, eq_else.9390
 	lf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 56($3)
@@ -3957,12 +3959,12 @@ eq_else.9380:
 	fmul	$f0, $f0, $f1
 	lw	$2, 0($3)
 	sf	$f0, 0($2)
-	j	eq_cont.9382
-eq_else.9381:
+	j	eq_cont.9391
+eq_else.9390:
 	lf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 56($3)
@@ -3972,13 +3974,13 @@ eq_else.9381:
 	fmul	$f0, $f0, $f1
 	lw	$2, 0($3)
 	sf	$f0, 0($2)
-eq_cont.9382:
+eq_cont.9391:
 	addi	$2, $0, 1
 	jr $31
-eq_else.9378:
+eq_else.9387:
 	addi	$2, $0, 0
 	jr $31
-solver_fast2.2949:
+solver_fast2.2954:
 	lw	$6, 16($28)
 	lw	$7, 12($28)
 	lw	$8, 8($28)
@@ -3995,7 +3997,7 @@ solver_fast2.2949:
 	mov	$2, $9
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_param_ctbl.2814
+	jal	o_param_ctbl.2819
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f0, 0($2)
@@ -4009,7 +4011,7 @@ solver_fast2.2949:
 	mov	$2, $5
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	d_const.2837
+	jal	d_const.2842
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lw	$5, 16($3)
@@ -4021,17 +4023,17 @@ solver_fast2.2949:
 	mov	$2, $5
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$2, $30, eq_else.9384
+	bne	$2, $30, eq_else.9393
 	lw	$2, 20($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	mov	$5, $2
@@ -4043,11 +4045,11 @@ solver_fast2.2949:
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9384:
+eq_else.9393:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9385
+	bne	$2, $30, eq_else.9394
 	lf	$f0, 48($3)
 	lf	$f1, 40($3)
 	lf	$f2, 32($3)
@@ -4057,7 +4059,7 @@ eq_else.9384:
 	lw	$28, 4($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9385:
+eq_else.9394:
 	lf	$f0, 48($3)
 	lf	$f1, 40($3)
 	lf	$f2, 32($3)
@@ -4067,7 +4069,7 @@ eq_else.9385:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-setup_rect_table.2952:
+setup_rect_table.2957:
 	addi	$6, $0, 6
 	ori	$30, $0, 1
 	slli	$30, $30, 16
@@ -4086,15 +4088,15 @@ setup_rect_table.2952:
 	sw	$2, 8($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9386
+	bne	$2, $30, eq_else.9395
 	lw	$2, 0($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$5, 4($3)
@@ -4102,14 +4104,14 @@ setup_rect_table.2952:
 	sw	$2, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	mov	$5, $2
 	lw	$2, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	xor.2630
+	jal	xor.2633
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 0($3)
@@ -4117,13 +4119,13 @@ setup_rect_table.2952:
 	mov	$2, $5
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$2, 16($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fneg_cond.2722
+	jal	fneg_cond.2727
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$2, 8($3)
@@ -4136,28 +4138,28 @@ setup_rect_table.2952:
 	lf	$f1, 0($5)
 	fdiv	$f0, $f0, $f1
 	sf	$f0, 8($2)
-	j	eq_cont.9387
-eq_else.9386:
+	j	eq_cont.9396
+eq_else.9395:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
 	lw	$2, 8($3)
 	sf	$f0, 8($2)
-eq_cont.9387:
+eq_cont.9396:
 	lw	$5, 4($3)
 	lf	$f0, 8($5)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9388
+	bne	$2, $30, eq_else.9397
 	lw	$2, 0($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 4($3)
@@ -4165,14 +4167,14 @@ eq_cont.9387:
 	sw	$2, 20($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	mov	$5, $2
 	lw	$2, 20($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	xor.2630
+	jal	xor.2633
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 0($3)
@@ -4180,13 +4182,13 @@ eq_cont.9387:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$2, 24($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fneg_cond.2722
+	jal	fneg_cond.2727
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$2, 8($3)
@@ -4199,28 +4201,28 @@ eq_cont.9387:
 	lf	$f1, 8($5)
 	fdiv	$f0, $f0, $f1
 	sf	$f0, 24($2)
-	j	eq_cont.9389
-eq_else.9388:
+	j	eq_cont.9398
+eq_else.9397:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
 	lw	$2, 8($3)
 	sf	$f0, 24($2)
-eq_cont.9389:
+eq_cont.9398:
 	lw	$5, 4($3)
 	lf	$f0, 16($5)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9390
+	bne	$2, $30, eq_else.9399
 	lw	$2, 0($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 4($3)
@@ -4228,14 +4230,14 @@ eq_cont.9389:
 	sw	$2, 28($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	mov	$5, $2
 	lw	$2, 28($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	xor.2630
+	jal	xor.2633
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$5, 0($3)
@@ -4243,13 +4245,13 @@ eq_cont.9389:
 	mov	$2, $5
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$2, 32($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fneg_cond.2722
+	jal	fneg_cond.2727
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$2, 8($3)
@@ -4262,17 +4264,17 @@ eq_cont.9389:
 	lf	$f1, 16($5)
 	fdiv	$f0, $f0, $f1
 	sf	$f0, 40($2)
-	j	eq_cont.9391
-eq_else.9390:
+	j	eq_cont.9400
+eq_else.9399:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
 	lw	$2, 8($3)
 	sf	$f0, 40($2)
-eq_cont.9391:
+eq_cont.9400:
 	jr $31
-setup_surface_table.2955:
+setup_surface_table.2960:
 	addi	$6, $0, 4
 	ori	$30, $0, 1
 	slli	$30, $30, 16
@@ -4294,7 +4296,7 @@ setup_surface_table.2955:
 	mov	$2, $6
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f1, 16($3)
@@ -4307,7 +4309,7 @@ setup_surface_table.2955:
 	mov	$2, $5
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 32($3)
@@ -4321,7 +4323,7 @@ setup_surface_table.2955:
 	sf	$f1, 48($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f1, 48($3)
@@ -4331,19 +4333,19 @@ setup_surface_table.2955:
 	sf	$f0, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9393
+	bne	$2, $30, eq_else.9402
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
 	lw	$2, 8($3)
 	sf	$f0, 0($2)
-	j	eq_cont.9394
-eq_else.9393:
+	j	eq_cont.9403
+eq_else.9402:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34800
@@ -4356,14 +4358,14 @@ eq_else.9393:
 	mov	$2, $5
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 56($3)
 	fdiv	$f0, $f0, $f1
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 8($3)
@@ -4372,14 +4374,14 @@ eq_else.9393:
 	mov	$2, $5
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 56($3)
 	fdiv	$f0, $f0, $f1
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 8($3)
@@ -4388,21 +4390,21 @@ eq_else.9393:
 	mov	$2, $5
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 56($3)
 	fdiv	$f0, $f0, $f1
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 8($3)
 	sf	$f0, 24($2)
-eq_cont.9394:
+eq_cont.9403:
 	jr $31
-setup_second_table.2958:
+setup_second_table.2963:
 	addi	$6, $0, 5
 	ori	$30, $0, 1
 	slli	$30, $30, 16
@@ -4425,7 +4427,7 @@ setup_second_table.2958:
 	mov	$2, $6
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	quadratic.2889
+	jal	quadratic.2894
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$2, 4($3)
@@ -4436,14 +4438,14 @@ setup_second_table.2958:
 	mov	$2, $5
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
 	fmul	$f0, $f1, $f0
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$2, 4($3)
@@ -4454,14 +4456,14 @@ setup_second_table.2958:
 	mov	$2, $5
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lf	$f1, 40($3)
 	fmul	$f0, $f1, $f0
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$2, 4($3)
@@ -4472,14 +4474,14 @@ setup_second_table.2958:
 	mov	$2, $5
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 56($3)
 	fmul	$f0, $f1, $f0
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 8($3)
@@ -4490,11 +4492,11 @@ setup_second_table.2958:
 	mov	$2, $5
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_isrot.2782
+	jal	o_isrot.2787
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9396
+	bne	$2, $30, eq_else.9405
 	lw	$2, 8($3)
 	lf	$f0, 32($3)
 	sf	$f0, 8($2)
@@ -4502,8 +4504,8 @@ setup_second_table.2958:
 	sf	$f0, 16($2)
 	lf	$f0, 64($3)
 	sf	$f0, 24($2)
-	j	eq_cont.9397
-eq_else.9396:
+	j	eq_cont.9406
+eq_else.9405:
 	lw	$2, 4($3)
 	lf	$f0, 16($2)
 	lw	$5, 0($3)
@@ -4511,7 +4513,7 @@ eq_else.9396:
 	mov	$2, $5
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	o_param_r2.2810
+	jal	o_param_r2.2815
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 72($3)
@@ -4524,7 +4526,7 @@ eq_else.9396:
 	mov	$2, $5
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	o_param_r3.2812
+	jal	o_param_r3.2817
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 88($3)
@@ -4533,7 +4535,7 @@ eq_else.9396:
 	fadd	$f0, $f1, $f0
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	fhalf.2633
+	jal	fhalf.2636
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 32($3)
@@ -4547,7 +4549,7 @@ eq_else.9396:
 	mov	$2, $6
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	o_param_r1.2808
+	jal	o_param_r1.2813
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 96($3)
@@ -4560,7 +4562,7 @@ eq_else.9396:
 	mov	$2, $5
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	o_param_r3.2812
+	jal	o_param_r3.2817
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	lf	$f1, 112($3)
@@ -4569,7 +4571,7 @@ eq_else.9396:
 	fadd	$f0, $f1, $f0
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	fhalf.2633
+	jal	fhalf.2636
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	lf	$f1, 48($3)
@@ -4583,7 +4585,7 @@ eq_else.9396:
 	mov	$2, $6
 	sw	$31, 132($3)
 	addi	$3, $3, 136
-	jal	o_param_r1.2808
+	jal	o_param_r1.2813
 	addi	$3, $3, -136
 	lw	$31, 132($3)
 	lf	$f1, 120($3)
@@ -4595,7 +4597,7 @@ eq_else.9396:
 	sf	$f1, 136($3)
 	sw	$31, 148($3)
 	addi	$3, $3, 152
-	jal	o_param_r2.2810
+	jal	o_param_r2.2815
 	addi	$3, $3, -152
 	lw	$31, 148($3)
 	lf	$f1, 136($3)
@@ -4604,22 +4606,22 @@ eq_else.9396:
 	fadd	$f0, $f1, $f0
 	sw	$31, 148($3)
 	addi	$3, $3, 152
-	jal	fhalf.2633
+	jal	fhalf.2636
 	addi	$3, $3, -152
 	lw	$31, 148($3)
 	lf	$f1, 64($3)
 	fsub	$f0, $f1, $f0
 	lw	$2, 8($3)
 	sf	$f0, 24($2)
-eq_cont.9397:
+eq_cont.9406:
 	lf	$f0, 16($3)
 	sw	$31, 148($3)
 	addi	$3, $3, 152
-	jal	fiszero.2625
+	jal	fiszero.2628
 	addi	$3, $3, -152
 	lw	$31, 148($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9398
+	bne	$2, $30, eq_else.9407
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
@@ -4628,16 +4630,16 @@ eq_cont.9397:
 	fdiv	$f0, $f0, $f1
 	lw	$2, 8($3)
 	sf	$f0, 32($2)
-	j	eq_cont.9399
-eq_else.9398:
-eq_cont.9399:
+	j	eq_cont.9408
+eq_else.9407:
+eq_cont.9408:
 	lw	$2, 8($3)
 	jr $31
-iter_setup_dirvec_constants.2961:
+iter_setup_dirvec_constants.2966:
 	lw	$6, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $5, $30
-	bne	$30, $0, eq_else.9400
+	bne	$30, $0, eq_else.9409
 	slli	$7, $5, 2
 	add	$30, $6, $7
 	lw	$6, 0($30)
@@ -4647,7 +4649,7 @@ iter_setup_dirvec_constants.2961:
 	sw	$2, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	d_const.2837
+	jal	d_const.2842
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 12($3)
@@ -4655,7 +4657,7 @@ iter_setup_dirvec_constants.2961:
 	mov	$2, $5
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 8($3)
@@ -4663,18 +4665,18 @@ iter_setup_dirvec_constants.2961:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$2, $30, eq_else.9401
+	bne	$2, $30, eq_else.9410
 	lw	$2, 20($3)
 	lw	$5, 8($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	setup_rect_table.2952
+	jal	setup_rect_table.2957
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 4($3)
@@ -4682,17 +4684,17 @@ iter_setup_dirvec_constants.2961:
 	lw	$7, 16($3)
 	add $30, $7, $6
 	sw	$2, 0($30)
-	j	eq_cont.9402
-eq_else.9401:
+	j	eq_cont.9411
+eq_else.9410:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9403
+	bne	$2, $30, eq_else.9412
 	lw	$2, 20($3)
 	lw	$5, 8($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	setup_surface_table.2955
+	jal	setup_surface_table.2960
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 4($3)
@@ -4700,13 +4702,13 @@ eq_else.9401:
 	lw	$7, 16($3)
 	add $30, $7, $6
 	sw	$2, 0($30)
-	j	eq_cont.9404
-eq_else.9403:
+	j	eq_cont.9413
+eq_else.9412:
 	lw	$2, 20($3)
 	lw	$5, 8($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	setup_second_table.2958
+	jal	setup_second_table.2963
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 4($3)
@@ -4714,27 +4716,27 @@ eq_else.9403:
 	lw	$7, 16($3)
 	add $30, $7, $6
 	sw	$2, 0($30)
-eq_cont.9404:
-eq_cont.9402:
+eq_cont.9413:
+eq_cont.9411:
 	addi	$5, $5, -1
 	lw	$2, 12($3)
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9400:
+eq_else.9409:
 	jr $31
-setup_dirvec_constants.2964:
+setup_dirvec_constants.2969:
 	lw	$5, 8($28)
 	lw	$28, 4($28)
 	lw	$5, 0($5)
 	addi	$5, $5, -1
 	lw $30, 0($28)
 	jr	$30
-setup_startp_constants.2966:
+setup_startp_constants.2971:
 	lw	$6, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $5, $30
-	bne	$30, $0, eq_else.9406
+	bne	$30, $0, eq_else.9415
 	slli	$7, $5, 2
 	add	$30, $6, $7
 	lw	$6, 0($30)
@@ -4745,7 +4747,7 @@ setup_startp_constants.2966:
 	mov	$2, $6
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_param_ctbl.2814
+	jal	o_param_ctbl.2819
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 12($3)
@@ -4753,7 +4755,7 @@ setup_startp_constants.2966:
 	mov	$2, $5
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 8($3)
@@ -4764,7 +4766,7 @@ setup_startp_constants.2966:
 	mov	$2, $6
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_x.2792
+	jal	o_param_x.2797
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -4778,7 +4780,7 @@ setup_startp_constants.2966:
 	mov	$2, $6
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_param_y.2794
+	jal	o_param_y.2799
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 32($3)
@@ -4792,7 +4794,7 @@ setup_startp_constants.2966:
 	mov	$2, $6
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_param_z.2796
+	jal	o_param_z.2801
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lf	$f1, 40($3)
@@ -4803,12 +4805,12 @@ setup_startp_constants.2966:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$5, $30, eq_else.9407
+	bne	$5, $30, eq_else.9416
 	lw	$5, 12($3)
 	mov	$2, $5
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_param_abc.2790
+	jal	o_param_abc.2795
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$5, 16($3)
@@ -4817,20 +4819,20 @@ setup_startp_constants.2966:
 	lf	$f2, 16($5)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	veciprod2.2752
+	jal	veciprod2.2757
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$2, 16($3)
 	sf	$f0, 24($2)
-	j	eq_cont.9408
-eq_else.9407:
+	j	eq_cont.9417
+eq_else.9416:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
 	slt	$30, $30, $5
-	bne	$30, $0, eq_else.9409
-	j	eq_cont.9410
-eq_else.9409:
+	bne	$30, $0, eq_else.9418
+	j	eq_cont.9419
+eq_else.9418:
 	lf	$f0, 0($2)
 	lf	$f1, 8($2)
 	lf	$f2, 16($2)
@@ -4838,35 +4840,35 @@ eq_else.9409:
 	mov	$2, $6
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	quadratic.2889
+	jal	quadratic.2894
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$2, 20($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 3
-	bne	$2, $30, eq_else.9411
+	bne	$2, $30, eq_else.9420
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f1, 0($30) # 1.000000
 	fsub	$f0, $f0, $f1
-	j	eq_cont.9412
-eq_else.9411:
-eq_cont.9412:
+	j	eq_cont.9421
+eq_else.9420:
+eq_cont.9421:
 	lw	$2, 16($3)
 	sf	$f0, 24($2)
-eq_cont.9410:
-eq_cont.9408:
+eq_cont.9419:
+eq_cont.9417:
 	lw	$2, 4($3)
 	addi	$5, $2, -1
 	lw	$2, 8($3)
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9406:
+eq_else.9415:
 	jr $31
-setup_startp.2969:
+setup_startp.2974:
 	lw	$5, 12($28)
 	lw	$6, 8($28)
 	lw	$7, 4($28)
@@ -4878,7 +4880,7 @@ setup_startp.2969:
 	mov	$2, $27
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$2, 8($3)
@@ -4888,107 +4890,107 @@ setup_startp.2969:
 	lw	$28, 4($3)
 	lw $30, 0($28)
 	jr	$30
-is_rect_outside.2971:
+is_rect_outside.2976:
 	sf	$f2, 0($3)
 	sf	$f1, 8($3)
 	sw	$2, 16($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$2, 16($3)
 	sf	$f0, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	movf	$f1, $f0
 	lf	$f0, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9415
+	bne	$2, $30, eq_else.9424
 	addi	$2, $0, 0
-	j	eq_cont.9416
-eq_else.9415:
+	j	eq_cont.9425
+eq_else.9424:
 	lf	$f0, 8($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$2, 16($3)
 	sf	$f0, 32($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	movf	$f1, $f0
 	lf	$f0, 32($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9417
+	bne	$2, $30, eq_else.9426
 	addi	$2, $0, 0
-	j	eq_cont.9418
-eq_else.9417:
+	j	eq_cont.9427
+eq_else.9426:
 	lf	$f0, 0($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$2, 16($3)
 	sf	$f0, 40($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	movf	$f1, $f0
 	lf	$f0, 40($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -56
 	lw	$31, 52($3)
-eq_cont.9418:
-eq_cont.9416:
+eq_cont.9427:
+eq_cont.9425:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9419
+	bne	$2, $30, eq_else.9428
 	lw	$2, 16($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9420
+	bne	$2, $30, eq_else.9429
 	addi	$2, $0, 1
 	jr $31
-eq_else.9420:
+eq_else.9429:
 	addi	$2, $0, 0
 	jr $31
-eq_else.9419:
+eq_else.9428:
 	lw	$2, 16($3)
-	j	o_isinvert.2780
-is_plane_outside.2976:
+	j	o_isinvert.2785
+is_plane_outside.2981:
 	sw	$2, 0($3)
 	sf	$f2, 8($3)
 	sf	$f1, 16($3)
 	sf	$f0, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_abc.2790
+	jal	o_param_abc.2795
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f0, 24($3)
@@ -4996,101 +4998,101 @@ is_plane_outside.2976:
 	lf	$f2, 8($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	veciprod2.2752
+	jal	veciprod2.2757
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$2, 0($3)
 	sf	$f0, 32($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f0, 32($3)
 	sw	$2, 40($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	mov	$5, $2
 	lw	$2, 40($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	xor.2630
+	jal	xor.2633
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9422
+	bne	$2, $30, eq_else.9431
 	addi	$2, $0, 1
 	jr $31
-eq_else.9422:
+eq_else.9431:
 	addi	$2, $0, 0
 	jr $31
-is_second_outside.2981:
+is_second_outside.2986:
 	sw	$2, 0($3)
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	quadratic.2889
+	jal	quadratic.2894
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	lw	$2, 0($3)
 	sf	$f0, 8($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 3
-	bne	$2, $30, eq_else.9424
+	bne	$2, $30, eq_else.9433
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
 	lf	$f0, 0($30) # 1.000000
 	lf	$f1, 8($3)
 	fsub	$f0, $f1, $f0
-	j	eq_cont.9425
-eq_else.9424:
+	j	eq_cont.9434
+eq_else.9433:
 	lf	$f0, 8($3)
-eq_cont.9425:
+eq_cont.9434:
 	lw	$2, 0($3)
 	sf	$f0, 16($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f0, 16($3)
 	sw	$2, 24($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	mov	$5, $2
 	lw	$2, 24($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	xor.2630
+	jal	xor.2633
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9426
+	bne	$2, $30, eq_else.9435
 	addi	$2, $0, 1
 	jr $31
-eq_else.9426:
+eq_else.9435:
 	addi	$2, $0, 0
 	jr $31
-is_outside.2986:
+is_outside.2991:
 	sf	$f2, 0($3)
 	sf	$f1, 8($3)
 	sw	$2, 16($3)
 	sf	$f0, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_x.2792
+	jal	o_param_x.2797
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -5099,7 +5101,7 @@ is_outside.2986:
 	sf	$f0, 32($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_param_y.2794
+	jal	o_param_y.2799
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 8($3)
@@ -5108,7 +5110,7 @@ is_outside.2986:
 	sf	$f0, 40($3)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_param_z.2796
+	jal	o_param_z.2801
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lf	$f1, 0($3)
@@ -5117,35 +5119,35 @@ is_outside.2986:
 	sf	$f0, 48($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$2, $30, eq_else.9428
+	bne	$2, $30, eq_else.9437
 	lf	$f0, 32($3)
 	lf	$f1, 40($3)
 	lf	$f2, 48($3)
 	lw	$2, 16($3)
-	j	is_rect_outside.2971
-eq_else.9428:
+	j	is_rect_outside.2976
+eq_else.9437:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9429
+	bne	$2, $30, eq_else.9438
 	lf	$f0, 32($3)
 	lf	$f1, 40($3)
 	lf	$f2, 48($3)
 	lw	$2, 16($3)
-	j	is_plane_outside.2976
-eq_else.9429:
+	j	is_plane_outside.2981
+eq_else.9438:
 	lf	$f0, 32($3)
 	lf	$f1, 40($3)
 	lf	$f2, 48($3)
 	lw	$2, 16($3)
-	j	is_second_outside.2981
-check_all_inside.2991:
+	j	is_second_outside.2986
+check_all_inside.2996:
 	lw	$6, 4($28)
 	slli	$7, $2, 2
 	add	$30, $5, $7
@@ -5153,10 +5155,10 @@ check_all_inside.2991:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$7, $30, eq_else.9430
+	bne	$7, $30, eq_else.9439
 	addi	$2, $0, 1
 	jr $31
-eq_else.9430:
+eq_else.9439:
 	slli	$7, $7, 2
 	add	$30, $6, $7
 	lw	$6, 0($30)
@@ -5169,11 +5171,11 @@ eq_else.9430:
 	mov	$2, $6
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	is_outside.2986
+	jal	is_outside.2991
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9431
+	bne	$2, $30, eq_else.9440
 	lw	$2, 32($3)
 	addi	$2, $2, 1
 	lf	$f0, 16($3)
@@ -5183,10 +5185,10 @@ eq_else.9430:
 	lw	$28, 28($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9431:
+eq_else.9440:
 	addi	$2, $0, 0
 	jr $31
-shadow_check_and_group.2997:
+shadow_check_and_group.3002:
 	lw	$6, 28($28)
 	lw	$7, 24($28)
 	lw	$8, 20($28)
@@ -5200,10 +5202,10 @@ shadow_check_and_group.2997:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$13, $30, eq_else.9432
+	bne	$13, $30, eq_else.9441
 	addi	$2, $0, 0
 	jr $31
-eq_else.9432:
+eq_else.9441:
 	slli	$13, $2, 2
 	add	$30, $5, $13
 	lw	$13, 0($30)
@@ -5230,22 +5232,22 @@ eq_else.9432:
 	lf	$f0, 0($5)
 	sf	$f0, 40($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9434
+	bne	$2, $30, eq_else.9443
 	addi	$2, $0, 0
-	j	eq_cont.9435
-eq_else.9434:
+	j	eq_cont.9444
+eq_else.9443:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34688
 	lf	$f1, 0($30) # -0.200000
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -56
 	lw	$31, 52($3)
-eq_cont.9435:
+eq_cont.9444:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9436
+	bne	$2, $30, eq_else.9445
 	lw	$2, 28($3)
 	slli	$2, $2, 2
 	lw	$5, 24($3)
@@ -5253,21 +5255,21 @@ eq_cont.9435:
 	lw	$2, 0($30)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9437
+	bne	$2, $30, eq_else.9446
 	addi	$2, $0, 0
 	jr $31
-eq_else.9437:
+eq_else.9446:
 	lw	$2, 20($3)
 	addi	$2, $2, 1
 	lw	$5, 12($3)
 	lw	$28, 16($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9436:
+eq_else.9445:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34680
@@ -5302,17 +5304,17 @@ eq_else.9436:
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9438
+	bne	$2, $30, eq_else.9447
 	lw	$2, 20($3)
 	addi	$2, $2, 1
 	lw	$5, 12($3)
 	lw	$28, 16($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9438:
+eq_else.9447:
 	addi	$2, $0, 1
 	jr $31
-shadow_check_one_or_group.3000:
+shadow_check_one_or_group.3005:
 	lw	$6, 8($28)
 	lw	$7, 4($28)
 	slli	$8, $2, 2
@@ -5321,10 +5323,10 @@ shadow_check_one_or_group.3000:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$8, $30, eq_else.9439
+	bne	$8, $30, eq_else.9448
 	addi	$2, $0, 0
 	jr $31
-eq_else.9439:
+eq_else.9448:
 	slli	$8, $8, 2
 	add	$30, $7, $8
 	lw	$7, 0($30)
@@ -5342,17 +5344,17 @@ eq_else.9439:
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9440
+	bne	$2, $30, eq_else.9449
 	lw	$2, 8($3)
 	addi	$2, $2, 1
 	lw	$5, 0($3)
 	lw	$28, 4($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9440:
+eq_else.9449:
 	addi	$2, $0, 1
 	jr $31
-shadow_check_one_or_matrix.3003:
+shadow_check_one_or_matrix.3008:
 	lw	$6, 20($28)
 	lw	$7, 16($28)
 	lw	$8, 12($28)
@@ -5365,10 +5367,10 @@ shadow_check_one_or_matrix.3003:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$12, $30, eq_else.9441
+	bne	$12, $30, eq_else.9450
 	addi	$2, $0, 0
 	jr $31
-eq_else.9441:
+eq_else.9450:
 	sw	$11, 0($3)
 	sw	$8, 4($3)
 	sw	$5, 8($3)
@@ -5377,10 +5379,10 @@ eq_else.9441:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 99
-	bne	$12, $30, eq_else.9442
+	bne	$12, $30, eq_else.9451
 	addi	$2, $0, 1
-	j	eq_cont.9443
-eq_else.9442:
+	j	eq_cont.9452
+eq_else.9451:
 	sw	$7, 20($3)
 	mov	$5, $9
 	mov	$2, $12
@@ -5393,10 +5395,10 @@ eq_else.9442:
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9444
+	bne	$2, $30, eq_else.9453
 	addi	$2, $0, 0
-	j	eq_cont.9445
-eq_else.9444:
+	j	eq_cont.9454
+eq_else.9453:
 	lw	$2, 20($3)
 	lf	$f0, 0($2)
 	ori	$30, $0, 1
@@ -5405,14 +5407,14 @@ eq_else.9444:
 	lf	$f1, 0($30) # -0.100000
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9446
+	bne	$2, $30, eq_else.9455
 	addi	$2, $0, 0
-	j	eq_cont.9447
-eq_else.9446:
+	j	eq_cont.9456
+eq_else.9455:
 	addi	$2, $0, 1
 	lw	$5, 0($3)
 	lw	$28, 4($3)
@@ -5423,24 +5425,24 @@ eq_else.9446:
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9448
+	bne	$2, $30, eq_else.9457
 	addi	$2, $0, 0
-	j	eq_cont.9449
-eq_else.9448:
+	j	eq_cont.9458
+eq_else.9457:
 	addi	$2, $0, 1
-eq_cont.9449:
-eq_cont.9447:
-eq_cont.9445:
-eq_cont.9443:
+eq_cont.9458:
+eq_cont.9456:
+eq_cont.9454:
+eq_cont.9452:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9450
+	bne	$2, $30, eq_else.9459
 	lw	$2, 16($3)
 	addi	$2, $2, 1
 	lw	$5, 8($3)
 	lw	$28, 12($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9450:
+eq_else.9459:
 	addi	$2, $0, 1
 	lw	$5, 0($3)
 	lw	$28, 4($3)
@@ -5451,17 +5453,17 @@ eq_else.9450:
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9451
+	bne	$2, $30, eq_else.9460
 	lw	$2, 16($3)
 	addi	$2, $2, 1
 	lw	$5, 8($3)
 	lw	$28, 12($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9451:
+eq_else.9460:
 	addi	$2, $0, 1
 	jr $31
-solve_each_element.3006:
+solve_each_element.3011:
 	lw	$7, 36($28)
 	lw	$8, 32($28)
 	lw	$9, 28($28)
@@ -5477,9 +5479,9 @@ solve_each_element.3006:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$16, $30, eq_else.9452
+	bne	$16, $30, eq_else.9461
 	jr $31
-eq_else.9452:
+eq_else.9461:
 	sw	$12, 0($3)
 	sw	$14, 4($3)
 	sw	$13, 8($3)
@@ -5504,7 +5506,7 @@ eq_else.9452:
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9454
+	bne	$2, $30, eq_else.9463
 	lw	$2, 48($3)
 	slli	$2, $2, 2
 	lw	$5, 44($3)
@@ -5512,13 +5514,13 @@ eq_else.9452:
 	lw	$2, 0($30)
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9455
+	bne	$2, $30, eq_else.9464
 	jr $31
-eq_else.9455:
+eq_else.9464:
 	lw	$2, 40($3)
 	addi	$2, $2, 1
 	lw	$5, 32($3)
@@ -5526,7 +5528,7 @@ eq_else.9455:
 	lw	$28, 36($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9454:
+eq_else.9463:
 	lw	$5, 24($3)
 	lf	$f1, 0($5)
 	ori	$30, $0, 1
@@ -5537,25 +5539,25 @@ eq_else.9454:
 	sf	$f1, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9457
-	j	eq_cont.9458
-eq_else.9457:
+	bne	$2, $30, eq_else.9466
+	j	eq_cont.9467
+eq_else.9466:
 	lw	$2, 20($3)
 	lf	$f1, 0($2)
 	lf	$f0, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9459
-	j	eq_cont.9460
-eq_else.9459:
+	bne	$2, $30, eq_else.9468
+	j	eq_cont.9469
+eq_else.9468:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34680
@@ -5595,9 +5597,9 @@ eq_else.9459:
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9461
-	j	eq_cont.9462
-eq_else.9461:
+	bne	$2, $30, eq_else.9470
+	j	eq_cont.9471
+eq_else.9470:
 	lw	$2, 20($3)
 	lf	$f0, 88($3)
 	sf	$f0, 0($2)
@@ -5607,7 +5609,7 @@ eq_else.9461:
 	lw	$2, 8($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	vecset.2728
+	jal	vecset.2733
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lw	$2, 4($3)
@@ -5616,9 +5618,9 @@ eq_else.9461:
 	lw	$2, 0($3)
 	lw	$5, 52($3)
 	sw	$5, 0($2)
-eq_cont.9462:
-eq_cont.9460:
-eq_cont.9458:
+eq_cont.9471:
+eq_cont.9469:
+eq_cont.9467:
 	lw	$2, 40($3)
 	addi	$2, $2, 1
 	lw	$5, 32($3)
@@ -5626,7 +5628,7 @@ eq_cont.9458:
 	lw	$28, 36($3)
 	lw $30, 0($28)
 	jr	$30
-solve_one_or_network.3010:
+solve_one_or_network.3015:
 	lw	$7, 8($28)
 	lw	$8, 4($28)
 	slli	$9, $2, 2
@@ -5635,9 +5637,9 @@ solve_one_or_network.3010:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$9, $30, eq_else.9463
+	bne	$9, $30, eq_else.9472
 	jr $31
-eq_else.9463:
+eq_else.9472:
 	slli	$9, $9, 2
 	add	$30, $8, $9
 	lw	$8, 0($30)
@@ -5662,7 +5664,7 @@ eq_else.9463:
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-trace_or_matrix.3014:
+trace_or_matrix.3019:
 	lw	$7, 20($28)
 	lw	$8, 16($28)
 	lw	$9, 12($28)
@@ -5675,9 +5677,9 @@ trace_or_matrix.3014:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$13, $30, eq_else.9465
+	bne	$13, $30, eq_else.9474
 	jr $31
-eq_else.9465:
+eq_else.9474:
 	sw	$6, 0($3)
 	sw	$5, 4($3)
 	sw	$28, 8($3)
@@ -5685,7 +5687,7 @@ eq_else.9465:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 99
-	bne	$13, $30, eq_else.9467
+	bne	$13, $30, eq_else.9476
 	addi	$7, $0, 1
 	mov	$5, $12
 	mov	$2, $7
@@ -5696,8 +5698,8 @@ eq_else.9465:
 	jalr	$31, $30
 	addi	$3, $3, -24
 	lw	$31, 20($3)
-	j	eq_cont.9468
-eq_else.9467:
+	j	eq_cont.9477
+eq_else.9476:
 	sw	$12, 16($3)
 	sw	$11, 20($3)
 	sw	$7, 24($3)
@@ -5713,22 +5715,22 @@ eq_else.9467:
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9469
-	j	eq_cont.9470
-eq_else.9469:
+	bne	$2, $30, eq_else.9478
+	j	eq_cont.9479
+eq_else.9478:
 	lw	$2, 28($3)
 	lf	$f0, 0($2)
 	lw	$2, 24($3)
 	lf	$f1, 0($2)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9471
-	j	eq_cont.9472
-eq_else.9471:
+	bne	$2, $30, eq_else.9480
+	j	eq_cont.9481
+eq_else.9480:
 	addi	$2, $0, 1
 	lw	$5, 16($3)
 	lw	$6, 0($3)
@@ -5739,9 +5741,9 @@ eq_else.9471:
 	jalr	$31, $30
 	addi	$3, $3, -40
 	lw	$31, 36($3)
-eq_cont.9472:
-eq_cont.9470:
-eq_cont.9468:
+eq_cont.9481:
+eq_cont.9479:
+eq_cont.9477:
 	lw	$2, 12($3)
 	addi	$2, $2, 1
 	lw	$5, 4($3)
@@ -5749,7 +5751,7 @@ eq_cont.9468:
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-judge_intersection.3018:
+judge_intersection.3023:
 	lw	$5, 12($28)
 	lw	$6, 8($28)
 	lw	$7, 4($28)
@@ -5780,21 +5782,21 @@ judge_intersection.3018:
 	sf	$f1, 8($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9474
+	bne	$2, $30, eq_else.9483
 	addi	$2, $0, 0
 	jr $31
-eq_else.9474:
+eq_else.9483:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34656
 	lf	$f1, 0($30) # 100000000.000000
 	lf	$f0, 8($3)
-	j	fless.2627
-solve_each_element_fast.3020:
+	j	fless.2630
+solve_each_element_fast.3025:
 	lw	$7, 36($28)
 	lw	$8, 32($28)
 	lw	$9, 28($28)
@@ -5820,7 +5822,7 @@ solve_each_element_fast.3020:
 	mov	$2, $6
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$5, 48($3)
@@ -5831,9 +5833,9 @@ solve_each_element_fast.3020:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$6, $30, eq_else.9475
+	bne	$6, $30, eq_else.9484
 	jr $31
-eq_else.9475:
+eq_else.9484:
 	lw	$8, 36($3)
 	lw	$28, 40($3)
 	sw	$2, 52($3)
@@ -5847,7 +5849,7 @@ eq_else.9475:
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9477
+	bne	$2, $30, eq_else.9486
 	lw	$2, 56($3)
 	slli	$2, $2, 2
 	lw	$5, 32($3)
@@ -5855,13 +5857,13 @@ eq_else.9475:
 	lw	$2, 0($30)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9478
+	bne	$2, $30, eq_else.9487
 	jr $31
-eq_else.9478:
+eq_else.9487:
 	lw	$2, 48($3)
 	addi	$2, $2, 1
 	lw	$5, 44($3)
@@ -5869,7 +5871,7 @@ eq_else.9478:
 	lw	$28, 28($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9477:
+eq_else.9486:
 	lw	$5, 24($3)
 	lf	$f1, 0($5)
 	ori	$30, $0, 1
@@ -5880,25 +5882,25 @@ eq_else.9477:
 	sf	$f1, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9480
-	j	eq_cont.9481
-eq_else.9480:
+	bne	$2, $30, eq_else.9489
+	j	eq_cont.9490
+eq_else.9489:
 	lw	$2, 20($3)
 	lf	$f1, 0($2)
 	lf	$f0, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9482
-	j	eq_cont.9483
-eq_else.9482:
+	bne	$2, $30, eq_else.9491
+	j	eq_cont.9492
+eq_else.9491:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34680
@@ -5936,9 +5938,9 @@ eq_else.9482:
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9484
-	j	eq_cont.9485
-eq_else.9484:
+	bne	$2, $30, eq_else.9493
+	j	eq_cont.9494
+eq_else.9493:
 	lw	$2, 20($3)
 	lf	$f0, 96($3)
 	sf	$f0, 0($2)
@@ -5948,7 +5950,7 @@ eq_else.9484:
 	lw	$2, 8($3)
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	vecset.2728
+	jal	vecset.2733
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lw	$2, 4($3)
@@ -5957,9 +5959,9 @@ eq_else.9484:
 	lw	$2, 0($3)
 	lw	$5, 60($3)
 	sw	$5, 0($2)
-eq_cont.9485:
-eq_cont.9483:
-eq_cont.9481:
+eq_cont.9494:
+eq_cont.9492:
+eq_cont.9490:
 	lw	$2, 48($3)
 	addi	$2, $2, 1
 	lw	$5, 44($3)
@@ -5967,7 +5969,7 @@ eq_cont.9481:
 	lw	$28, 28($3)
 	lw $30, 0($28)
 	jr	$30
-solve_one_or_network_fast.3024:
+solve_one_or_network_fast.3029:
 	lw	$7, 8($28)
 	lw	$8, 4($28)
 	slli	$9, $2, 2
@@ -5976,9 +5978,9 @@ solve_one_or_network_fast.3024:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$9, $30, eq_else.9486
+	bne	$9, $30, eq_else.9495
 	jr $31
-eq_else.9486:
+eq_else.9495:
 	slli	$9, $9, 2
 	add	$30, $8, $9
 	lw	$8, 0($30)
@@ -6003,7 +6005,7 @@ eq_else.9486:
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-trace_or_matrix_fast.3028:
+trace_or_matrix_fast.3033:
 	lw	$7, 16($28)
 	lw	$8, 12($28)
 	lw	$9, 8($28)
@@ -6015,9 +6017,9 @@ trace_or_matrix_fast.3028:
 	ori	$30, $0, 65535
 	slli	$30, $30, 16
 	ori	$30, $30, 65535
-	bne	$12, $30, eq_else.9488
+	bne	$12, $30, eq_else.9497
 	jr $31
-eq_else.9488:
+eq_else.9497:
 	sw	$6, 0($3)
 	sw	$5, 4($3)
 	sw	$28, 8($3)
@@ -6025,7 +6027,7 @@ eq_else.9488:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 99
-	bne	$12, $30, eq_else.9490
+	bne	$12, $30, eq_else.9499
 	addi	$7, $0, 1
 	mov	$5, $11
 	mov	$2, $7
@@ -6036,8 +6038,8 @@ eq_else.9488:
 	jalr	$31, $30
 	addi	$3, $3, -24
 	lw	$31, 20($3)
-	j	eq_cont.9491
-eq_else.9490:
+	j	eq_cont.9500
+eq_else.9499:
 	sw	$11, 16($3)
 	sw	$10, 20($3)
 	sw	$7, 24($3)
@@ -6052,22 +6054,22 @@ eq_else.9490:
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9492
-	j	eq_cont.9493
-eq_else.9492:
+	bne	$2, $30, eq_else.9501
+	j	eq_cont.9502
+eq_else.9501:
 	lw	$2, 28($3)
 	lf	$f0, 0($2)
 	lw	$2, 24($3)
 	lf	$f1, 0($2)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9494
-	j	eq_cont.9495
-eq_else.9494:
+	bne	$2, $30, eq_else.9503
+	j	eq_cont.9504
+eq_else.9503:
 	addi	$2, $0, 1
 	lw	$5, 16($3)
 	lw	$6, 0($3)
@@ -6078,9 +6080,9 @@ eq_else.9494:
 	jalr	$31, $30
 	addi	$3, $3, -40
 	lw	$31, 36($3)
-eq_cont.9495:
-eq_cont.9493:
-eq_cont.9491:
+eq_cont.9504:
+eq_cont.9502:
+eq_cont.9500:
 	lw	$2, 12($3)
 	addi	$2, $2, 1
 	lw	$5, 4($3)
@@ -6088,7 +6090,7 @@ eq_cont.9491:
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-judge_intersection_fast.3032:
+judge_intersection_fast.3037:
 	lw	$5, 12($28)
 	lw	$6, 8($28)
 	lw	$7, 4($28)
@@ -6119,21 +6121,21 @@ judge_intersection_fast.3032:
 	sf	$f1, 8($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9497
+	bne	$2, $30, eq_else.9506
 	addi	$2, $0, 0
 	jr $31
-eq_else.9497:
+eq_else.9506:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34656
 	lf	$f1, 0($30) # 100000000.000000
 	lf	$f0, 8($3)
-	j	fless.2627
-get_nvector_rect.3034:
+	j	fless.2630
+get_nvector_rect.3039:
 	lw	$5, 8($28)
 	lw	$6, 4($28)
 	lw	$6, 0($6)
@@ -6143,7 +6145,7 @@ get_nvector_rect.3034:
 	mov	$2, $5
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	vecbzero.2736
+	jal	vecbzero.2741
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$2, 8($3)
@@ -6156,12 +6158,12 @@ lf	$f0, 0($30)
 	sw	$5, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	sgn.2720
+	jal	sgn.2725
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$2, 12($3)
@@ -6170,18 +6172,18 @@ lf	$f0, 0($30)
 	add	$30, $5, $2
 sf	$f0, 0($30)
 	jr $31
-get_nvector_plane.3036:
+get_nvector_plane.3041:
 	lw	$5, 4($28)
 	sw	$2, 0($3)
 	sw	$5, 4($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$2, 4($3)
@@ -6190,12 +6192,12 @@ get_nvector_plane.3036:
 	mov	$2, $5
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$2, 4($3)
@@ -6204,18 +6206,18 @@ get_nvector_plane.3036:
 	mov	$2, $5
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$2, 4($3)
 	sf	$f0, 16($2)
 	jr $31
-get_nvector_second.3038:
+get_nvector_second.3043:
 	lw	$5, 8($28)
 	lw	$6, 4($28)
 	lf	$f0, 0($6)
@@ -6225,7 +6227,7 @@ get_nvector_second.3038:
 	sf	$f0, 16($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_param_x.2792
+	jal	o_param_x.2797
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f1, 16($3)
@@ -6238,7 +6240,7 @@ get_nvector_second.3038:
 	mov	$2, $5
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_param_y.2794
+	jal	o_param_y.2799
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 32($3)
@@ -6250,7 +6252,7 @@ get_nvector_second.3038:
 	sf	$f1, 48($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_param_z.2796
+	jal	o_param_z.2801
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f1, 48($3)
@@ -6259,7 +6261,7 @@ get_nvector_second.3038:
 	sf	$f0, 56($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lf	$f1, 24($3)
@@ -6268,7 +6270,7 @@ get_nvector_second.3038:
 	sf	$f0, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f1, 40($3)
@@ -6277,7 +6279,7 @@ get_nvector_second.3038:
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 56($3)
@@ -6286,11 +6288,11 @@ get_nvector_second.3038:
 	sf	$f0, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	o_isrot.2782
+	jal	o_isrot.2787
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9501
+	bne	$2, $30, eq_else.9510
 	lw	$2, 0($3)
 	lf	$f0, 64($3)
 	sf	$f0, 0($2)
@@ -6298,12 +6300,12 @@ get_nvector_second.3038:
 	sf	$f0, 8($2)
 	lf	$f0, 80($3)
 	sf	$f0, 16($2)
-	j	eq_cont.9502
-eq_else.9501:
+	j	eq_cont.9511
+eq_else.9510:
 	lw	$2, 4($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	o_param_r3.2812
+	jal	o_param_r3.2817
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 40($3)
@@ -6312,7 +6314,7 @@ eq_else.9501:
 	sf	$f0, 88($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	o_param_r2.2810
+	jal	o_param_r2.2815
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 56($3)
@@ -6321,7 +6323,7 @@ eq_else.9501:
 	fadd	$f0, $f2, $f0
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	fhalf.2633
+	jal	fhalf.2636
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 64($3)
@@ -6332,7 +6334,7 @@ eq_else.9501:
 	mov	$2, $5
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	o_param_r3.2812
+	jal	o_param_r3.2817
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 24($3)
@@ -6341,7 +6343,7 @@ eq_else.9501:
 	sf	$f0, 96($3)
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	o_param_r1.2808
+	jal	o_param_r1.2813
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 56($3)
@@ -6350,7 +6352,7 @@ eq_else.9501:
 	fadd	$f0, $f1, $f0
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	fhalf.2633
+	jal	fhalf.2636
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 72($3)
@@ -6361,7 +6363,7 @@ eq_else.9501:
 	mov	$2, $5
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	o_param_r2.2810
+	jal	o_param_r2.2815
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 24($3)
@@ -6370,7 +6372,7 @@ eq_else.9501:
 	sf	$f0, 104($3)
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	o_param_r1.2808
+	jal	o_param_r1.2813
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	lf	$f1, 40($3)
@@ -6379,25 +6381,25 @@ eq_else.9501:
 	fadd	$f0, $f1, $f0
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	fhalf.2633
+	jal	fhalf.2636
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	lf	$f1, 80($3)
 	fadd	$f0, $f1, $f0
 	lw	$2, 0($3)
 	sf	$f0, 16($2)
-eq_cont.9502:
+eq_cont.9511:
 	lw	$5, 4($3)
 	mov	$2, $5
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	o_isinvert.2780
+	jal	o_isinvert.2785
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	mov	$5, $2
 	lw	$2, 0($3)
-	j	vecunit_sgn.2746
-get_nvector.3040:
+	j	vecunit_sgn.2751
+get_nvector.3045:
 	lw	$6, 12($28)
 	lw	$7, 8($28)
 	lw	$8, 4($28)
@@ -6408,32 +6410,32 @@ get_nvector.3040:
 	sw	$7, 16($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$2, $30, eq_else.9503
+	bne	$2, $30, eq_else.9512
 	lw	$2, 12($3)
 	lw	$28, 16($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9503:
+eq_else.9512:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9504
+	bne	$2, $30, eq_else.9513
 	lw	$2, 4($3)
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9504:
+eq_else.9513:
 	lw	$2, 4($3)
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-utexture.3043:
+utexture.3048:
 	lw	$6, 12($28)
 	lw	$7, 8($28)
 	lw	$8, 4($28)
@@ -6444,7 +6446,7 @@ utexture.3043:
 	sw	$2, 16($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_texturetype.2774
+	jal	o_texturetype.2779
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 16($3)
@@ -6452,7 +6454,7 @@ utexture.3043:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_color_red.2802
+	jal	o_color_red.2807
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$2, 12($3)
@@ -6461,7 +6463,7 @@ utexture.3043:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_color_green.2804
+	jal	o_color_green.2809
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$2, 12($3)
@@ -6470,7 +6472,7 @@ utexture.3043:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	o_color_blue.2806
+	jal	o_color_blue.2811
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$2, 12($3)
@@ -6479,7 +6481,7 @@ utexture.3043:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$5, $30, eq_else.9505
+	bne	$5, $30, eq_else.9514
 	lw	$5, 8($3)
 	lf	$f0, 0($5)
 	lw	$6, 16($3)
@@ -6487,7 +6489,7 @@ utexture.3043:
 	mov	$2, $6
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_param_x.2792
+	jal	o_param_x.2797
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -6501,7 +6503,7 @@ utexture.3043:
 	movf	$f0, $f1
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	floor.2657
+	jal	floor.2662
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	ori	$30, $0, 1
@@ -6517,7 +6519,7 @@ utexture.3043:
 	lf	$f1, 0($30) # 10.000000
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$5, 8($3)
@@ -6528,7 +6530,7 @@ utexture.3043:
 	mov	$2, $5
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_param_z.2796
+	jal	o_param_z.2801
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f1, 48($3)
@@ -6542,7 +6544,7 @@ utexture.3043:
 	movf	$f0, $f1
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	floor.2657
+	jal	floor.2662
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 1
@@ -6558,49 +6560,49 @@ utexture.3043:
 	lf	$f1, 0($30) # 10.000000
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$5, 40($3)
 	ori	$30, $0, 0
-	bne	$5, $30, eq_else.9507
+	bne	$5, $30, eq_else.9516
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9509
+	bne	$2, $30, eq_else.9518
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34608
 	lf	$f0, 0($30) # 255.000000
-	j	eq_cont.9510
-eq_else.9509:
+	j	eq_cont.9519
+eq_else.9518:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
-eq_cont.9510:
-	j	eq_cont.9508
-eq_else.9507:
+eq_cont.9519:
+	j	eq_cont.9517
+eq_else.9516:
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9511
+	bne	$2, $30, eq_else.9520
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
-	j	eq_cont.9512
-eq_else.9511:
+	j	eq_cont.9521
+eq_else.9520:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34608
 	lf	$f0, 0($30) # 255.000000
-eq_cont.9512:
-eq_cont.9508:
+eq_cont.9521:
+eq_cont.9517:
 	lw	$2, 12($3)
 	sf	$f0, 8($2)
 	jr $31
-eq_else.9505:
+eq_else.9514:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$5, $30, eq_else.9514
+	bne	$5, $30, eq_else.9523
 	lw	$5, 8($3)
 	lf	$f0, 8($5)
 	ori	$30, $0, 1
@@ -6617,7 +6619,7 @@ eq_else.9505:
 	lw	$31, 68($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 1
@@ -6639,11 +6641,11 @@ eq_else.9505:
 	fmul	$f0, $f1, $f0
 	sf	$f0, 8($2)
 	jr $31
-eq_else.9514:
+eq_else.9523:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 3
-	bne	$5, $30, eq_else.9516
+	bne	$5, $30, eq_else.9525
 	lw	$5, 8($3)
 	lf	$f0, 0($5)
 	lw	$6, 16($3)
@@ -6651,7 +6653,7 @@ eq_else.9514:
 	mov	$2, $6
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_param_x.2792
+	jal	o_param_x.2797
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f1, 64($3)
@@ -6663,7 +6665,7 @@ eq_else.9514:
 	sf	$f1, 80($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	o_param_z.2796
+	jal	o_param_z.2801
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 80($3)
@@ -6673,7 +6675,7 @@ eq_else.9514:
 	movf	$f0, $f1
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 88($3)
@@ -6681,14 +6683,14 @@ eq_else.9514:
 	movf	$f0, $f1
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 96($3)
 	fadd	$f0, $f1, $f0
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	ori	$30, $0, 1
@@ -6699,7 +6701,7 @@ eq_else.9514:
 	sf	$f0, 104($3)
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	floor.2657
+	jal	floor.2662
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	lf	$f1, 104($3)
@@ -6718,7 +6720,7 @@ eq_else.9514:
 	lw	$31, 116($3)
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	ori	$30, $0, 1
@@ -6740,11 +6742,11 @@ eq_else.9514:
 	fmul	$f0, $f0, $f1
 	sf	$f0, 16($2)
 	jr $31
-eq_else.9516:
+eq_else.9525:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 4
-	bne	$5, $30, eq_else.9518
+	bne	$5, $30, eq_else.9527
 	lw	$5, 8($3)
 	lf	$f0, 0($5)
 	lw	$6, 16($3)
@@ -6752,7 +6754,7 @@ eq_else.9516:
 	mov	$2, $6
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	o_param_x.2792
+	jal	o_param_x.2797
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	lf	$f1, 112($3)
@@ -6761,12 +6763,12 @@ eq_else.9516:
 	sf	$f0, 120($3)
 	sw	$31, 132($3)
 	addi	$3, $3, 136
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -136
 	lw	$31, 132($3)
 	sw	$31, 132($3)
 	addi	$3, $3, 136
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -136
 	lw	$31, 132($3)
 	lf	$f1, 120($3)
@@ -6779,7 +6781,7 @@ eq_else.9516:
 	mov	$2, $5
 	sw	$31, 148($3)
 	addi	$3, $3, 152
-	jal	o_param_z.2796
+	jal	o_param_z.2801
 	addi	$3, $3, -152
 	lw	$31, 148($3)
 	lf	$f1, 136($3)
@@ -6788,12 +6790,12 @@ eq_else.9516:
 	sf	$f0, 144($3)
 	sw	$31, 156($3)
 	addi	$3, $3, 160
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -160
 	lw	$31, 156($3)
 	sw	$31, 156($3)
 	addi	$3, $3, 160
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -160
 	lw	$31, 156($3)
 	lf	$f1, 144($3)
@@ -6803,7 +6805,7 @@ eq_else.9516:
 	movf	$f0, $f1
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	lf	$f1, 152($3)
@@ -6811,7 +6813,7 @@ eq_else.9516:
 	movf	$f0, $f1
 	sw	$31, 172($3)
 	addi	$3, $3, 176
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -176
 	lw	$31, 172($3)
 	lf	$f1, 160($3)
@@ -6821,7 +6823,7 @@ eq_else.9516:
 	movf	$f0, $f1
 	sw	$31, 180($3)
 	addi	$3, $3, 184
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -184
 	lw	$31, 180($3)
 	ori	$30, $0, 1
@@ -6830,22 +6832,22 @@ eq_else.9516:
 	lf	$f1, 0($30) # 0.000100
 	sw	$31, 180($3)
 	addi	$3, $3, 184
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -184
 	lw	$31, 180($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9519
+	bne	$2, $30, eq_else.9528
 	lf	$f0, 128($3)
 	lf	$f1, 152($3)
 	fdiv	$f0, $f1, $f0
 	sw	$31, 180($3)
 	addi	$3, $3, 184
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -184
 	lw	$31, 180($3)
 	sw	$31, 180($3)
 	addi	$3, $3, 184
-	jal	atan.2714
+	jal	atan.2719
 	addi	$3, $3, -184
 	lw	$31, 180($3)
 	ori	$30, $0, 1
@@ -6858,17 +6860,17 @@ eq_else.9516:
 	ori	$30, $30, 34624
 	lf	$f1, 0($30) # 3.141593
 	fdiv	$f0, $f0, $f1
-	j	eq_cont.9520
-eq_else.9519:
+	j	eq_cont.9529
+eq_else.9528:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34640
 	lf	$f0, 0($30) # 15.000000
-eq_cont.9520:
+eq_cont.9529:
 	sf	$f0, 176($3)
 	sw	$31, 188($3)
 	addi	$3, $3, 192
-	jal	floor.2657
+	jal	floor.2662
 	addi	$3, $3, -192
 	lw	$31, 188($3)
 	lf	$f1, 176($3)
@@ -6880,7 +6882,7 @@ eq_cont.9520:
 	sf	$f1, 192($3)
 	sw	$31, 204($3)
 	addi	$3, $3, 208
-	jal	o_param_y.2794
+	jal	o_param_y.2799
 	addi	$3, $3, -208
 	lw	$31, 204($3)
 	lf	$f1, 192($3)
@@ -6889,12 +6891,12 @@ eq_cont.9520:
 	sf	$f0, 200($3)
 	sw	$31, 212($3)
 	addi	$3, $3, 216
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -216
 	lw	$31, 212($3)
 	sw	$31, 212($3)
 	addi	$3, $3, 216
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -216
 	lw	$31, 212($3)
 	lf	$f1, 200($3)
@@ -6904,7 +6906,7 @@ eq_cont.9520:
 	movf	$f0, $f1
 	sw	$31, 220($3)
 	addi	$3, $3, 224
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -224
 	lw	$31, 220($3)
 	ori	$30, $0, 1
@@ -6913,22 +6915,22 @@ eq_cont.9520:
 	lf	$f1, 0($30) # 0.000100
 	sw	$31, 220($3)
 	addi	$3, $3, 224
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -224
 	lw	$31, 220($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9521
+	bne	$2, $30, eq_else.9530
 	lf	$f0, 168($3)
 	lf	$f1, 208($3)
 	fdiv	$f0, $f1, $f0
 	sw	$31, 220($3)
 	addi	$3, $3, 224
-	jal	fabs.2637
+	jal	fabs.2640
 	addi	$3, $3, -224
 	lw	$31, 220($3)
 	sw	$31, 220($3)
 	addi	$3, $3, 224
-	jal	atan.2714
+	jal	atan.2719
 	addi	$3, $3, -224
 	lw	$31, 220($3)
 	ori	$30, $0, 1
@@ -6941,17 +6943,17 @@ eq_cont.9520:
 	ori	$30, $30, 34624
 	lf	$f1, 0($30) # 3.141593
 	fdiv	$f0, $f0, $f1
-	j	eq_cont.9522
-eq_else.9521:
+	j	eq_cont.9531
+eq_else.9530:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34640
 	lf	$f0, 0($30) # 15.000000
-eq_cont.9522:
+eq_cont.9531:
 	sf	$f0, 216($3)
 	sw	$31, 228($3)
 	addi	$3, $3, 232
-	jal	floor.2657
+	jal	floor.2662
 	addi	$3, $3, -232
 	lw	$31, 228($3)
 	lf	$f1, 216($3)
@@ -6971,7 +6973,7 @@ eq_cont.9522:
 	movf	$f0, $f2
 	sw	$31, 244($3)
 	addi	$3, $3, 248
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -248
 	lw	$31, 244($3)
 	lf	$f1, 232($3)
@@ -6986,7 +6988,7 @@ eq_cont.9522:
 	movf	$f0, $f1
 	sw	$31, 252($3)
 	addi	$3, $3, 256
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -256
 	lw	$31, 252($3)
 	lf	$f1, 240($3)
@@ -6994,19 +6996,19 @@ eq_cont.9522:
 	sf	$f0, 248($3)
 	sw	$31, 260($3)
 	addi	$3, $3, 264
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -264
 	lw	$31, 260($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9523
+	bne	$2, $30, eq_else.9532
 	lf	$f0, 248($3)
-	j	eq_cont.9524
-eq_else.9523:
+	j	eq_cont.9533
+eq_else.9532:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
-eq_cont.9524:
+eq_cont.9533:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34608
@@ -7020,9 +7022,9 @@ eq_cont.9524:
 	lw	$2, 12($3)
 	sf	$f0, 16($2)
 	jr $31
-eq_else.9518:
+eq_else.9527:
 	jr $31
-add_light.3046:
+add_light.3051:
 	lw	$2, 8($28)
 	lw	$5, 4($28)
 	sf	$f2, 0($3)
@@ -7032,41 +7034,41 @@ add_light.3046:
 	sw	$5, 28($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9527
-	j	eq_cont.9528
-eq_else.9527:
+	bne	$2, $30, eq_else.9536
+	j	eq_cont.9537
+eq_else.9536:
 	lf	$f0, 16($3)
 	lw	$2, 28($3)
 	lw	$5, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	vecaccum.2757
+	jal	vecaccum.2762
 	addi	$3, $3, -40
 	lw	$31, 36($3)
-eq_cont.9528:
+eq_cont.9537:
 	lf	$f0, 8($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9529
+	bne	$2, $30, eq_else.9538
 	jr $31
-eq_else.9529:
+eq_else.9538:
 	lf	$f0, 8($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 0($3)
@@ -7082,7 +7084,7 @@ eq_else.9529:
 	fadd	$f0, $f1, $f0
 	sf	$f0, 16($2)
 	jr $31
-trace_reflections.3050:
+trace_reflections.3055:
 	lw	$6, 32($28)
 	lw	$7, 28($28)
 	lw	$8, 24($28)
@@ -7093,7 +7095,7 @@ trace_reflections.3050:
 	lw	$13, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9532
+	bne	$30, $0, eq_else.9541
 	slli	$14, $2, 2
 	add	$30, $7, $14
 	lw	$7, 0($30)
@@ -7113,7 +7115,7 @@ trace_reflections.3050:
 	mov	$2, $7
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	r_dvec.2841
+	jal	r_dvec.2846
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lw	$28, 56($3)
@@ -7125,9 +7127,9 @@ trace_reflections.3050:
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9533
-	j	eq_cont.9534
-eq_else.9533:
+	bne	$2, $30, eq_else.9542
+	j	eq_cont.9543
+eq_else.9542:
 	lw	$2, 52($3)
 	lw	$2, 0($2)
 	addi	$5, $0, 4
@@ -7140,11 +7142,11 @@ eq_else.9533:
 	mov	$2, $5
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	r_surface_id.2839
+	jal	r_surface_id.2844
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$5, 64($3)
-	bne	$5, $2, eq_else.9535
+	bne	$5, $2, eq_else.9544
 	addi	$2, $0, 0
 	lw	$5, 40($3)
 	lw	$5, 0($5)
@@ -7156,25 +7158,25 @@ eq_else.9533:
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9537
+	bne	$2, $30, eq_else.9546
 	lw	$2, 60($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	mov	$5, $2
 	lw	$2, 32($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 44($3)
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	r_bright.2843
+	jal	r_bright.2848
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 24($3)
@@ -7186,14 +7188,14 @@ eq_else.9533:
 	sf	$f0, 88($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	mov	$5, $2
 	lw	$2, 20($3)
 	sw	$31, 100($3)
 	addi	$3, $3, 104
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -104
 	lw	$31, 100($3)
 	lf	$f1, 88($3)
@@ -7207,13 +7209,13 @@ eq_else.9533:
 	jalr	$31, $30
 	addi	$3, $3, -104
 	lw	$31, 100($3)
-	j	eq_cont.9538
-eq_else.9537:
-eq_cont.9538:
-	j	eq_cont.9536
-eq_else.9535:
-eq_cont.9536:
-eq_cont.9534:
+	j	eq_cont.9547
+eq_else.9546:
+eq_cont.9547:
+	j	eq_cont.9545
+eq_else.9544:
+eq_cont.9545:
+eq_cont.9543:
 	lw	$2, 4($3)
 	addi	$2, $2, -1
 	lf	$f0, 24($3)
@@ -7222,9 +7224,9 @@ eq_cont.9534:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9532:
+eq_else.9541:
 	jr $31
-trace_ray.3055:
+trace_ray.3060:
 	lw	$7, 80($28)
 	lw	$8, 76($28)
 	lw	$9, 72($28)
@@ -7249,7 +7251,7 @@ trace_ray.3055:
 	slli	$30, $30, 16
 	ori	$30, $30, 4
 	slt	$30, $30, $2
-	bne	$30, $0, eq_else.9541
+	bne	$30, $0, eq_else.9550
 	sw	$28, 0($3)
 	sf	$f1, 8($3)
 	sw	$9, 16($3)
@@ -7279,7 +7281,7 @@ trace_ray.3055:
 	mov	$2, $6
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	p_surface_ids.2820
+	jal	p_surface_ids.2825
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	lw	$5, 112($3)
@@ -7293,7 +7295,7 @@ trace_ray.3055:
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9544
+	bne	$2, $30, eq_else.9553
 	addi	$2, $0, -1
 	lw	$5, 108($3)
 	slli	$6, $5, 2
@@ -7301,35 +7303,35 @@ trace_ray.3055:
 	add $30, $7, $6
 	sw	$2, 0($30)
 	ori	$30, $0, 0
-	bne	$5, $30, eq_else.9545
+	bne	$5, $30, eq_else.9554
 	jr $31
-eq_else.9545:
+eq_else.9554:
 	lw	$2, 112($3)
 	lw	$5, 104($3)
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	sw	$31, 124($3)
 	addi	$3, $3, 128
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -128
 	lw	$31, 124($3)
 	sf	$f0, 128($3)
 	sw	$31, 140($3)
 	addi	$3, $3, 144
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -144
 	lw	$31, 140($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9548
+	bne	$2, $30, eq_else.9557
 	jr $31
-eq_else.9548:
+eq_else.9557:
 	lf	$f0, 128($3)
 	sw	$31, 140($3)
 	addi	$3, $3, 144
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -144
 	lw	$31, 140($3)
 	lf	$f1, 128($3)
@@ -7350,7 +7352,7 @@ eq_else.9548:
 	fadd	$f0, $f1, $f0
 	sf	$f0, 16($2)
 	jr $31
-eq_else.9544:
+eq_else.9553:
 	lw	$2, 80($3)
 	lw	$2, 0($2)
 	slli	$5, $2, 2
@@ -7362,7 +7364,7 @@ eq_else.9544:
 	mov	$2, $5
 	sw	$31, 148($3)
 	addi	$3, $3, 152
-	jal	o_reflectiontype.2778
+	jal	o_reflectiontype.2783
 	addi	$3, $3, -152
 	lw	$31, 148($3)
 	lw	$5, 140($3)
@@ -7370,7 +7372,7 @@ eq_else.9544:
 	mov	$2, $5
 	sw	$31, 148($3)
 	addi	$3, $3, 152
-	jal	o_diffuse.2798
+	jal	o_diffuse.2803
 	addi	$3, $3, -152
 	lw	$31, 148($3)
 	lf	$f1, 96($3)
@@ -7389,7 +7391,7 @@ eq_else.9544:
 	lw	$5, 64($3)
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	lw	$2, 140($3)
@@ -7415,7 +7417,7 @@ eq_else.9544:
 	lw	$2, 52($3)
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	p_intersection_points.2818
+	jal	p_intersection_points.2823
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	lw	$5, 108($3)
@@ -7426,13 +7428,13 @@ eq_else.9544:
 	mov	$5, $6
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	lw	$2, 52($3)
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	p_calc_diffuse.2822
+	jal	p_calc_diffuse.2827
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	lw	$5, 140($3)
@@ -7440,7 +7442,7 @@ eq_else.9544:
 	mov	$2, $5
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	o_diffuse.2798
+	jal	o_diffuse.2803
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	ori	$30, $0, 1
@@ -7449,11 +7451,11 @@ eq_else.9544:
 	lf	$f1, 0($30) # 0.500000
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9552
+	bne	$2, $30, eq_else.9561
 	addi	$2, $0, 1
 	lw	$5, 108($3)
 	slli	$6, $5, 2
@@ -7463,7 +7465,7 @@ eq_else.9544:
 	lw	$2, 52($3)
 	sw	$31, 164($3)
 	addi	$3, $3, 168
-	jal	p_energy.2824
+	jal	p_energy.2829
 	addi	$3, $3, -168
 	lw	$31, 164($3)
 	lw	$5, 108($3)
@@ -7476,7 +7478,7 @@ eq_else.9544:
 	mov	$2, $6
 	sw	$31, 172($3)
 	addi	$3, $3, 176
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -176
 	lw	$31, 172($3)
 	lw	$2, 108($3)
@@ -7493,13 +7495,13 @@ eq_else.9544:
 	mov	$2, $5
 	sw	$31, 172($3)
 	addi	$3, $3, 176
-	jal	vecscale.2767
+	jal	vecscale.2772
 	addi	$3, $3, -176
 	lw	$31, 172($3)
 	lw	$2, 52($3)
 	sw	$31, 172($3)
 	addi	$3, $3, 176
-	jal	p_nvectors.2833
+	jal	p_nvectors.2838
 	addi	$3, $3, -176
 	lw	$31, 172($3)
 	lw	$5, 108($3)
@@ -7510,18 +7512,18 @@ eq_else.9544:
 	mov	$5, $6
 	sw	$31, 172($3)
 	addi	$3, $3, 176
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -176
 	lw	$31, 172($3)
-	j	eq_cont.9553
-eq_else.9552:
+	j	eq_cont.9562
+eq_else.9561:
 	addi	$2, $0, 0
 	lw	$5, 108($3)
 	slli	$6, $5, 2
 	lw	$7, 160($3)
 	add $30, $7, $6
 	sw	$2, 0($30)
-eq_cont.9553:
+eq_cont.9562:
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34552
@@ -7531,7 +7533,7 @@ eq_cont.9553:
 	sf	$f0, 168($3)
 	sw	$31, 180($3)
 	addi	$3, $3, 184
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -184
 	lw	$31, 180($3)
 	lf	$f1, 168($3)
@@ -7540,13 +7542,13 @@ eq_cont.9553:
 	lw	$5, 44($3)
 	sw	$31, 180($3)
 	addi	$3, $3, 184
-	jal	vecaccum.2757
+	jal	vecaccum.2762
 	addi	$3, $3, -184
 	lw	$31, 180($3)
 	lw	$2, 140($3)
 	sw	$31, 180($3)
 	addi	$3, $3, 184
-	jal	o_hilight.2800
+	jal	o_hilight.2805
 	addi	$3, $3, -184
 	lw	$31, 180($3)
 	lf	$f1, 96($3)
@@ -7563,17 +7565,17 @@ eq_cont.9553:
 	addi	$3, $3, -192
 	lw	$31, 188($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9554
+	bne	$2, $30, eq_else.9563
 	lw	$2, 44($3)
 	lw	$5, 104($3)
 	sw	$31, 188($3)
 	addi	$3, $3, 192
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -192
 	lw	$31, 188($3)
 	sw	$31, 188($3)
 	addi	$3, $3, 192
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -192
 	lw	$31, 188($3)
 	lf	$f1, 152($3)
@@ -7583,12 +7585,12 @@ eq_cont.9553:
 	sf	$f0, 184($3)
 	sw	$31, 196($3)
 	addi	$3, $3, 200
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -200
 	lw	$31, 196($3)
 	sw	$31, 196($3)
 	addi	$3, $3, 200
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -200
 	lw	$31, 196($3)
 	movf	$f1, $f0
@@ -7601,9 +7603,9 @@ eq_cont.9553:
 	jalr	$31, $30
 	addi	$3, $3, -200
 	lw	$31, 196($3)
-	j	eq_cont.9555
-eq_else.9554:
-eq_cont.9555:
+	j	eq_cont.9564
+eq_else.9563:
+eq_cont.9564:
 	lw	$2, 64($3)
 	lw	$28, 28($3)
 	sw	$31, 196($3)
@@ -7632,33 +7634,33 @@ eq_cont.9555:
 	lf	$f1, 96($3)
 	sw	$31, 196($3)
 	addi	$3, $3, 200
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -200
 	lw	$31, 196($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9556
+	bne	$2, $30, eq_else.9565
 	jr $31
-eq_else.9556:
+eq_else.9565:
 	lw	$2, 108($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 4
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9558
-	j	eq_cont.9559
-eq_else.9558:
+	bne	$30, $0, eq_else.9567
+	j	eq_cont.9568
+eq_else.9567:
 	addi	$5, $2, 1
 	addi	$6, $0, -1
 	slli	$5, $5, 2
 	lw	$7, 120($3)
 	add $30, $7, $5
 	sw	$6, 0($30)
-eq_cont.9559:
+eq_cont.9568:
 	lw	$5, 144($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$5, $30, eq_else.9560
+	bne	$5, $30, eq_else.9569
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34816
@@ -7668,7 +7670,7 @@ eq_cont.9559:
 	mov	$2, $5
 	sw	$31, 204($3)
 	addi	$3, $3, 208
-	jal	o_diffuse.2798
+	jal	o_diffuse.2803
 	addi	$3, $3, -208
 	lw	$31, 204($3)
 	lf	$f1, 192($3)
@@ -7686,11 +7688,11 @@ eq_cont.9559:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9560:
+eq_else.9569:
 	jr $31
-eq_else.9541:
+eq_else.9550:
 	jr $31
-trace_diffuse_ray.3061:
+trace_diffuse_ray.3066:
 	lw	$5, 48($28)
 	lw	$6, 44($28)
 	lw	$7, 40($28)
@@ -7724,9 +7726,9 @@ trace_diffuse_ray.3061:
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9563
+	bne	$2, $30, eq_else.9572
 	jr $31
-eq_else.9563:
+eq_else.9572:
 	lw	$2, 52($3)
 	lw	$2, 0($2)
 	slli	$2, $2, 2
@@ -7738,7 +7740,7 @@ eq_else.9563:
 	mov	$2, $5
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	mov	$5, $2
@@ -7770,56 +7772,56 @@ eq_else.9563:
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9565
+	bne	$2, $30, eq_else.9574
 	lw	$2, 20($3)
 	lw	$5, 16($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	sf	$f0, 64($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fispos.2621
+	jal	fispos.2624
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9567
+	bne	$2, $30, eq_else.9576
 	ori	$30, $0, 1
 	slli	$30, $30, 16
 	ori	$30, $30, 34848
 	lf	$f0, 0($30) # 0.000000
-	j	eq_cont.9568
-eq_else.9567:
+	j	eq_cont.9577
+eq_else.9576:
 	lf	$f0, 64($3)
-eq_cont.9568:
+eq_cont.9577:
 	lf	$f1, 8($3)
 	fmul	$f0, $f1, $f0
 	lw	$2, 56($3)
 	sf	$f0, 72($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	o_diffuse.2798
+	jal	o_diffuse.2803
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 72($3)
 	fmul	$f0, $f1, $f0
 	lw	$2, 4($3)
 	lw	$5, 0($3)
-	j	vecaccum.2757
-eq_else.9565:
+	j	vecaccum.2762
+eq_else.9574:
 	jr $31
-iter_trace_diffuse_rays.3064:
+iter_trace_diffuse_rays.3069:
 	lw	$8, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $7, $30
-	bne	$30, $0, eq_else.9570
+	bne	$30, $0, eq_else.9579
 	slli	$9, $7, 2
 	add	$30, $2, $9
 	lw	$9, 0($30)
@@ -7832,23 +7834,23 @@ iter_trace_diffuse_rays.3064:
 	mov	$2, $9
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 20($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	sf	$f0, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fisneg.2623
+	jal	fisneg.2626
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9571
+	bne	$2, $30, eq_else.9580
 	lw	$2, 16($3)
 	slli	$5, $2, 2
 	lw	$6, 12($3)
@@ -7868,8 +7870,8 @@ iter_trace_diffuse_rays.3064:
 	jalr	$31, $30
 	addi	$3, $3, -40
 	lw	$31, 36($3)
-	j	eq_cont.9572
-eq_else.9571:
+	j	eq_cont.9581
+eq_else.9580:
 	lw	$2, 16($3)
 	addi	$5, $2, 1
 	slli	$5, $5, 2
@@ -7890,7 +7892,7 @@ eq_else.9571:
 	jalr	$31, $30
 	addi	$3, $3, -40
 	lw	$31, 36($3)
-eq_cont.9572:
+eq_cont.9581:
 	lw	$2, 16($3)
 	addi	$7, $2, -2
 	lw	$2, 12($3)
@@ -7899,9 +7901,9 @@ eq_cont.9572:
 	lw	$28, 4($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9570:
+eq_else.9579:
 	jr $31
-trace_diffuse_rays.3069:
+trace_diffuse_rays.3074:
 	lw	$7, 8($28)
 	lw	$8, 4($28)
 	sw	$6, 0($3)
@@ -7923,7 +7925,7 @@ trace_diffuse_rays.3069:
 	lw	$28, 12($3)
 	lw $30, 0($28)
 	jr	$30
-trace_diffuse_ray_80percent.3073:
+trace_diffuse_ray_80percent.3078:
 	lw	$7, 8($28)
 	lw	$8, 4($28)
 	sw	$6, 0($3)
@@ -7932,9 +7934,9 @@ trace_diffuse_ray_80percent.3073:
 	sw	$8, 12($3)
 	sw	$2, 16($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9574
-	j	eq_cont.9575
-eq_else.9574:
+	bne	$2, $30, eq_else.9583
+	j	eq_cont.9584
+eq_else.9583:
 	lw	$9, 0($8)
 	mov	$2, $9
 	mov	$28, $7
@@ -7944,14 +7946,14 @@ eq_else.9574:
 	jalr	$31, $30
 	addi	$3, $3, -24
 	lw	$31, 20($3)
-eq_cont.9575:
+eq_cont.9584:
 	lw	$2, 16($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$2, $30, eq_else.9576
-	j	eq_cont.9577
-eq_else.9576:
+	bne	$2, $30, eq_else.9585
+	j	eq_cont.9586
+eq_else.9585:
 	lw	$5, 12($3)
 	lw	$6, 4($5)
 	lw	$7, 4($3)
@@ -7966,14 +7968,14 @@ eq_else.9576:
 	jalr	$31, $30
 	addi	$3, $3, -24
 	lw	$31, 20($3)
-eq_cont.9577:
+eq_cont.9586:
 	lw	$2, 16($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9578
-	j	eq_cont.9579
-eq_else.9578:
+	bne	$2, $30, eq_else.9587
+	j	eq_cont.9588
+eq_else.9587:
 	lw	$5, 12($3)
 	lw	$6, 8($5)
 	lw	$7, 4($3)
@@ -7988,14 +7990,14 @@ eq_else.9578:
 	jalr	$31, $30
 	addi	$3, $3, -24
 	lw	$31, 20($3)
-eq_cont.9579:
+eq_cont.9588:
 	lw	$2, 16($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 3
-	bne	$2, $30, eq_else.9580
-	j	eq_cont.9581
-eq_else.9580:
+	bne	$2, $30, eq_else.9589
+	j	eq_cont.9590
+eq_else.9589:
 	lw	$5, 12($3)
 	lw	$6, 12($5)
 	lw	$7, 4($3)
@@ -8010,14 +8012,14 @@ eq_else.9580:
 	jalr	$31, $30
 	addi	$3, $3, -24
 	lw	$31, 20($3)
-eq_cont.9581:
+eq_cont.9590:
 	lw	$2, 16($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 4
-	bne	$2, $30, eq_else.9582
+	bne	$2, $30, eq_else.9591
 	jr $31
-eq_else.9582:
+eq_else.9591:
 	lw	$2, 12($3)
 	lw	$2, 16($2)
 	lw	$5, 4($3)
@@ -8025,7 +8027,7 @@ eq_else.9582:
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-calc_diffuse_using_1point.3077:
+calc_diffuse_using_1point.3082:
 	lw	$6, 12($28)
 	lw	$7, 8($28)
 	lw	$8, 4($28)
@@ -8036,7 +8038,7 @@ calc_diffuse_using_1point.3077:
 	sw	$2, 16($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	p_received_ray_20percent.2826
+	jal	p_received_ray_20percent.2831
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 16($3)
@@ -8044,7 +8046,7 @@ calc_diffuse_using_1point.3077:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	p_nvectors.2833
+	jal	p_nvectors.2838
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 16($3)
@@ -8052,7 +8054,7 @@ calc_diffuse_using_1point.3077:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	p_intersection_points.2818
+	jal	p_intersection_points.2823
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 16($3)
@@ -8060,7 +8062,7 @@ calc_diffuse_using_1point.3077:
 	mov	$2, $5
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	p_energy.2824
+	jal	p_energy.2829
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$5, 12($3)
@@ -8074,13 +8076,13 @@ calc_diffuse_using_1point.3077:
 	mov	$2, $7
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$2, 16($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	p_group_id.2828
+	jal	p_group_id.2833
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$5, 12($3)
@@ -8108,8 +8110,8 @@ calc_diffuse_using_1point.3077:
 	lw	$5, 0($30)
 	lw	$2, 0($3)
 	lw	$6, 8($3)
-	j	vecaccumv.2770
-calc_diffuse_using_5points.3080:
+	j	vecaccumv.2775
+calc_diffuse_using_5points.3085:
 	lw	$9, 8($28)
 	lw	$10, 4($28)
 	slli	$11, $2, 2
@@ -8124,7 +8126,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	p_received_ray_20percent.2826
+	jal	p_received_ray_20percent.2831
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 20($3)
@@ -8137,7 +8139,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $6
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	p_received_ray_20percent.2826
+	jal	p_received_ray_20percent.2831
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 20($3)
@@ -8149,7 +8151,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $6
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	p_received_ray_20percent.2826
+	jal	p_received_ray_20percent.2831
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$5, 20($3)
@@ -8162,7 +8164,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $6
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	p_received_ray_20percent.2826
+	jal	p_received_ray_20percent.2831
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$5, 20($3)
@@ -8174,7 +8176,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $6
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	p_received_ray_20percent.2826
+	jal	p_received_ray_20percent.2831
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$5, 8($3)
@@ -8188,7 +8190,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $7
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$2, 8($3)
@@ -8200,7 +8202,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $6
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	vecadd.2761
+	jal	vecadd.2766
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$2, 8($3)
@@ -8212,7 +8214,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $6
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	vecadd.2761
+	jal	vecadd.2766
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$2, 8($3)
@@ -8224,7 +8226,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $6
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	vecadd.2761
+	jal	vecadd.2766
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$2, 8($3)
@@ -8236,7 +8238,7 @@ calc_diffuse_using_5points.3080:
 	mov	$2, $6
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	vecadd.2761
+	jal	vecadd.2766
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$2, 20($3)
@@ -8246,7 +8248,7 @@ calc_diffuse_using_5points.3080:
 	lw	$2, 0($30)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	p_energy.2824
+	jal	p_energy.2829
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$5, 8($3)
@@ -8255,21 +8257,21 @@ calc_diffuse_using_5points.3080:
 	lw	$5, 0($30)
 	lw	$2, 0($3)
 	lw	$6, 4($3)
-	j	vecaccumv.2770
-do_without_neighbors.3086:
+	j	vecaccumv.2775
+do_without_neighbors.3091:
 	lw	$6, 4($28)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 4
 	slt	$30, $30, $5
-	bne	$30, $0, eq_else.9584
+	bne	$30, $0, eq_else.9593
 	sw	$28, 0($3)
 	sw	$6, 4($3)
 	sw	$2, 8($3)
 	sw	$5, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	p_surface_ids.2820
+	jal	p_surface_ids.2825
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 12($3)
@@ -8278,11 +8280,11 @@ do_without_neighbors.3086:
 	lw	$2, 0($30)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9585
+	bne	$30, $0, eq_else.9594
 	lw	$2, 8($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	p_calc_diffuse.2822
+	jal	p_calc_diffuse.2827
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 12($3)
@@ -8290,9 +8292,9 @@ do_without_neighbors.3086:
 	add	$30, $2, $6
 	lw	$2, 0($30)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9586
-	j	eq_cont.9587
-eq_else.9586:
+	bne	$2, $30, eq_else.9595
+	j	eq_cont.9596
+eq_else.9595:
 	lw	$2, 8($3)
 	lw	$28, 4($3)
 	sw	$31, 20($3)
@@ -8301,52 +8303,52 @@ eq_else.9586:
 	jalr	$31, $30
 	addi	$3, $3, -24
 	lw	$31, 20($3)
-eq_cont.9587:
+eq_cont.9596:
 	lw	$2, 12($3)
 	addi	$5, $2, 1
 	lw	$2, 8($3)
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9585:
+eq_else.9594:
 	jr $31
-eq_else.9584:
+eq_else.9593:
 	jr $31
-neighbors_exist.3089:
+neighbors_exist.3094:
 	lw	$6, 4($28)
 	lw	$7, 4($6)
 	addi	$8, $5, 1
 	slt	$30, $8, $7
-	bne	$30, $0, eq_else.9590
+	bne	$30, $0, eq_else.9599
 	addi	$2, $0, 0
 	jr $31
-eq_else.9590:
+eq_else.9599:
 	ori	$30, $0, 0
 	slt	$30, $30, $5
-	bne	$30, $0, eq_else.9591
+	bne	$30, $0, eq_else.9600
 	addi	$2, $0, 0
 	jr $31
-eq_else.9591:
+eq_else.9600:
 	lw	$5, 0($6)
 	addi	$6, $2, 1
 	slt	$30, $6, $5
-	bne	$30, $0, eq_else.9592
+	bne	$30, $0, eq_else.9601
 	addi	$2, $0, 0
 	jr $31
-eq_else.9592:
+eq_else.9601:
 	ori	$30, $0, 0
 	slt	$30, $30, $2
-	bne	$30, $0, eq_else.9593
+	bne	$30, $0, eq_else.9602
 	addi	$2, $0, 0
 	jr $31
-eq_else.9593:
+eq_else.9602:
 	addi	$2, $0, 1
 	jr $31
-get_surface_id.3093:
+get_surface_id.3098:
 	sw	$5, 0($3)
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	p_surface_ids.2820
+	jal	p_surface_ids.2825
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	lw	$5, 0($3)
@@ -8354,7 +8356,7 @@ get_surface_id.3093:
 	add	$30, $2, $5
 	lw	$2, 0($30)
 	jr $31
-neighbors_are_available.3096:
+neighbors_are_available.3101:
 	slli	$9, $2, 2
 	add	$30, $6, $9
 	lw	$9, 0($30)
@@ -8367,7 +8369,7 @@ neighbors_are_available.3096:
 	mov	$2, $9
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	get_surface_id.3093
+	jal	get_surface_id.3098
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	lw	$5, 16($3)
@@ -8381,11 +8383,11 @@ neighbors_are_available.3096:
 	mov	$2, $6
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	get_surface_id.3093
+	jal	get_surface_id.3098
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 20($3)
-	bne	$2, $5, eq_else.9594
+	bne	$2, $5, eq_else.9603
 	lw	$2, 16($3)
 	slli	$6, $2, 2
 	lw	$7, 4($3)
@@ -8396,11 +8398,11 @@ neighbors_are_available.3096:
 	mov	$2, $6
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	get_surface_id.3093
+	jal	get_surface_id.3098
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 20($3)
-	bne	$2, $5, eq_else.9595
+	bne	$2, $5, eq_else.9604
 	lw	$2, 16($3)
 	addi	$6, $2, -1
 	slli	$6, $6, 2
@@ -8412,11 +8414,11 @@ neighbors_are_available.3096:
 	mov	$2, $6
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	get_surface_id.3093
+	jal	get_surface_id.3098
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 20($3)
-	bne	$2, $5, eq_else.9596
+	bne	$2, $5, eq_else.9605
 	lw	$2, 16($3)
 	addi	$2, $2, 1
 	slli	$2, $2, 2
@@ -8427,26 +8429,26 @@ neighbors_are_available.3096:
 	mov	$5, $6
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	get_surface_id.3093
+	jal	get_surface_id.3098
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 20($3)
-	bne	$2, $5, eq_else.9597
+	bne	$2, $5, eq_else.9606
 	addi	$2, $0, 1
 	jr $31
-eq_else.9597:
+eq_else.9606:
 	addi	$2, $0, 0
 	jr $31
-eq_else.9596:
+eq_else.9605:
 	addi	$2, $0, 0
 	jr $31
-eq_else.9595:
+eq_else.9604:
 	addi	$2, $0, 0
 	jr $31
-eq_else.9594:
+eq_else.9603:
 	addi	$2, $0, 0
 	jr $31
-try_exploit_neighbors.3102:
+try_exploit_neighbors.3107:
 	lw	$10, 8($28)
 	lw	$11, 4($28)
 	slli	$12, $2, 2
@@ -8456,7 +8458,7 @@ try_exploit_neighbors.3102:
 	slli	$30, $30, 16
 	ori	$30, $30, 4
 	slt	$30, $30, $9
-	bne	$30, $0, eq_else.9598
+	bne	$30, $0, eq_else.9607
 	sw	$5, 0($3)
 	sw	$28, 4($3)
 	sw	$11, 8($3)
@@ -8471,12 +8473,12 @@ try_exploit_neighbors.3102:
 	mov	$2, $12
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	get_surface_id.3093
+	jal	get_surface_id.3098
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9599
+	bne	$30, $0, eq_else.9608
 	lw	$2, 36($3)
 	lw	$5, 32($3)
 	lw	$6, 28($3)
@@ -8484,11 +8486,11 @@ try_exploit_neighbors.3102:
 	lw	$8, 20($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	neighbors_are_available.3096
+	jal	neighbors_are_available.3101
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9600
+	bne	$2, $30, eq_else.9609
 	lw	$2, 36($3)
 	slli	$2, $2, 2
 	lw	$5, 28($3)
@@ -8498,11 +8500,11 @@ try_exploit_neighbors.3102:
 	lw	$28, 16($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9600:
+eq_else.9609:
 	lw	$2, 12($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	p_calc_diffuse.2822
+	jal	p_calc_diffuse.2827
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$8, 20($3)
@@ -8510,9 +8512,9 @@ eq_else.9600:
 	add	$30, $2, $5
 	lw	$2, 0($30)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9601
-	j	eq_cont.9602
-eq_else.9601:
+	bne	$2, $30, eq_else.9610
+	j	eq_cont.9611
+eq_else.9610:
 	lw	$2, 36($3)
 	lw	$5, 32($3)
 	lw	$6, 28($3)
@@ -8524,7 +8526,7 @@ eq_else.9601:
 	jalr	$31, $30
 	addi	$3, $3, -48
 	lw	$31, 44($3)
-eq_cont.9602:
+eq_cont.9611:
 	lw	$2, 20($3)
 	addi	$9, $2, 1
 	lw	$2, 36($3)
@@ -8535,11 +8537,11 @@ eq_cont.9602:
 	lw	$28, 4($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9599:
+eq_else.9608:
 	jr $31
-eq_else.9598:
+eq_else.9607:
 	jr $31
-write_ppm_header.3109:
+write_ppm_header.3114:
 	lw	$2, 4($28)
 	addi	$5, $0, 80
 	sw	$2, 0($3)
@@ -8566,7 +8568,7 @@ write_ppm_header.3109:
 	mov	$2, $5
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	print_int.2718
+	jal	print_int.2723
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	addi	$2, $0, 32
@@ -8579,7 +8581,7 @@ write_ppm_header.3109:
 	lw	$2, 4($2)
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	print_int.2718
+	jal	print_int.2723
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	addi	$2, $0, 32
@@ -8591,41 +8593,41 @@ write_ppm_header.3109:
 	addi	$2, $0, 255
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	print_int.2718
+	jal	print_int.2723
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	addi	$2, $0, 10
 	j	min_caml_print_char
-write_rgb_element.3111:
+write_rgb_element.3116:
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	int_of_float.2653
+	jal	int_of_float.2658
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 255
 	slt	$30, $30, $2
-	bne	$30, $0, eq_else.9605
+	bne	$30, $0, eq_else.9614
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9607
-	j	eq_cont.9608
-eq_else.9607:
+	bne	$30, $0, eq_else.9616
+	j	eq_cont.9617
+eq_else.9616:
 	addi	$2, $0, 0
-eq_cont.9608:
-	j	eq_cont.9606
-eq_else.9605:
+eq_cont.9617:
+	j	eq_cont.9615
+eq_else.9614:
 	addi	$2, $0, 255
-eq_cont.9606:
-	j	print_int.2718
-write_rgb.3113:
+eq_cont.9615:
+	j	print_int.2723
+write_rgb.3118:
 	lw	$2, 4($28)
 	lf	$f0, 0($2)
 	sw	$2, 0($3)
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	write_rgb_element.3111
+	jal	write_rgb_element.3116
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	addi	$2, $0, 32
@@ -8638,7 +8640,7 @@ write_rgb.3113:
 	lf	$f0, 8($2)
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	write_rgb_element.3111
+	jal	write_rgb_element.3116
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	addi	$2, $0, 32
@@ -8651,12 +8653,12 @@ write_rgb.3113:
 	lf	$f0, 16($2)
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	write_rgb_element.3111
+	jal	write_rgb_element.3116
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	addi	$2, $0, 10
 	j	min_caml_print_char
-pretrace_diffuse_rays.3115:
+pretrace_diffuse_rays.3120:
 	lw	$6, 12($28)
 	lw	$7, 8($28)
 	lw	$8, 4($28)
@@ -8664,7 +8666,7 @@ pretrace_diffuse_rays.3115:
 	slli	$30, $30, 16
 	ori	$30, $30, 4
 	slt	$30, $30, $5
-	bne	$30, $0, eq_else.9609
+	bne	$30, $0, eq_else.9618
 	sw	$28, 0($3)
 	sw	$6, 4($3)
 	sw	$7, 8($3)
@@ -8673,16 +8675,16 @@ pretrace_diffuse_rays.3115:
 	sw	$2, 20($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	get_surface_id.3093
+	jal	get_surface_id.3098
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9610
+	bne	$30, $0, eq_else.9619
 	lw	$2, 20($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	p_calc_diffuse.2822
+	jal	p_calc_diffuse.2827
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 16($3)
@@ -8690,13 +8692,13 @@ pretrace_diffuse_rays.3115:
 	add	$30, $2, $6
 	lw	$2, 0($30)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9611
-	j	eq_cont.9612
-eq_else.9611:
+	bne	$2, $30, eq_else.9620
+	j	eq_cont.9621
+eq_else.9620:
 	lw	$2, 20($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	p_group_id.2828
+	jal	p_group_id.2833
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 12($3)
@@ -8704,13 +8706,13 @@ eq_else.9611:
 	mov	$2, $5
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	vecbzero.2736
+	jal	vecbzero.2741
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$2, 20($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	p_nvectors.2833
+	jal	p_nvectors.2838
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lw	$5, 20($3)
@@ -8718,7 +8720,7 @@ eq_else.9611:
 	mov	$2, $5
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	p_intersection_points.2818
+	jal	p_intersection_points.2823
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$5, 24($3)
@@ -8747,7 +8749,7 @@ eq_else.9611:
 	lw	$2, 20($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	p_received_ray_20percent.2826
+	jal	p_received_ray_20percent.2831
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lw	$5, 16($3)
@@ -8758,21 +8760,21 @@ eq_else.9611:
 	mov	$5, $6
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -40
 	lw	$31, 36($3)
-eq_cont.9612:
+eq_cont.9621:
 	lw	$2, 16($3)
 	addi	$5, $2, 1
 	lw	$2, 20($3)
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9610:
+eq_else.9619:
 	jr $31
-eq_else.9609:
+eq_else.9618:
 	jr $31
-pretrace_pixels.3118:
+pretrace_pixels.3123:
 	lw	$7, 36($28)
 	lw	$8, 32($28)
 	lw	$9, 28($28)
@@ -8784,7 +8786,7 @@ pretrace_pixels.3118:
 	lw	$15, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $5, $30
-	bne	$30, $0, eq_else.9615
+	bne	$30, $0, eq_else.9624
 	lf	$f3, 0($11)
 	lw	$11, 0($15)
 	sub	$11, $5, $11
@@ -8806,7 +8808,7 @@ pretrace_pixels.3118:
 	mov	$2, $11
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	float_of_int.2649
+	jal	float_of_int.2654
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 80($3)
@@ -8834,20 +8836,20 @@ pretrace_pixels.3118:
 	mov	$2, $27
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	vecunit_sgn.2746
+	jal	vecunit_sgn.2751
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lw	$2, 32($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	vecbzero.2736
+	jal	vecbzero.2741
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lw	$2, 28($3)
 	lw	$5, 24($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	addi	$2, $0, 0
@@ -8881,13 +8883,13 @@ pretrace_pixels.3118:
 	mov	$2, $5
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	p_rgb.2816
+	jal	p_rgb.2821
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lw	$5, 32($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lw	$2, 20($3)
@@ -8900,7 +8902,7 @@ pretrace_pixels.3118:
 	mov	$5, $7
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	p_set_group_id.2830
+	jal	p_set_group_id.2835
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lw	$2, 20($3)
@@ -8926,7 +8928,7 @@ pretrace_pixels.3118:
 	mov	$2, $6
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	add_mod5.2725
+	jal	add_mod5.2730
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	mov	$6, $2
@@ -8938,9 +8940,9 @@ pretrace_pixels.3118:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9615:
+eq_else.9624:
 	jr $31
-pretrace_line.3125:
+pretrace_line.3130:
 	lw	$7, 24($28)
 	lw	$8, 20($28)
 	lw	$9, 16($28)
@@ -8960,7 +8962,7 @@ pretrace_line.3125:
 	mov	$2, $5
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	float_of_int.2649
+	jal	float_of_int.2654
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -8991,7 +8993,7 @@ pretrace_line.3125:
 	movf	$f1, $f30
 	lw $30, 0($28)
 	jr	$30
-scan_pixel.3129:
+scan_pixel.3134:
 	lw	$9, 24($28)
 	lw	$10, 20($28)
 	lw	$11, 16($28)
@@ -9000,9 +9002,9 @@ scan_pixel.3129:
 	lw	$14, 4($28)
 	lw	$13, 0($13)
 	slt	$30, $2, $13
-	bne	$30, $0, eq_else.9620
+	bne	$30, $0, eq_else.9629
 	jr $31
-eq_else.9620:
+eq_else.9629:
 	slli	$13, $2, 2
 	add	$30, $7, $13
 	lw	$13, 0($30)
@@ -9020,14 +9022,14 @@ eq_else.9620:
 	mov	$2, $13
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	p_rgb.2816
+	jal	p_rgb.2821
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	mov	$5, $2
 	lw	$2, 40($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$2, 32($3)
@@ -9041,7 +9043,7 @@ eq_else.9620:
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9622
+	bne	$2, $30, eq_else.9631
 	lw	$2, 32($3)
 	slli	$5, $2, 2
 	lw	$6, 20($3)
@@ -9057,8 +9059,8 @@ eq_else.9620:
 	jalr	$31, $30
 	addi	$3, $3, -48
 	lw	$31, 44($3)
-	j	eq_cont.9623
-eq_else.9622:
+	j	eq_cont.9632
+eq_else.9631:
 	addi	$9, $0, 0
 	lw	$2, 32($3)
 	lw	$5, 28($3)
@@ -9072,7 +9074,7 @@ eq_else.9622:
 	jalr	$31, $30
 	addi	$3, $3, -48
 	lw	$31, 44($3)
-eq_cont.9623:
+eq_cont.9632:
 	lw	$28, 4($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
@@ -9089,15 +9091,15 @@ eq_cont.9623:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-scan_line.3135:
+scan_line.3140:
 	lw	$9, 12($28)
 	lw	$10, 8($28)
 	lw	$11, 4($28)
 	lw	$12, 4($11)
 	slt	$30, $2, $12
-	bne	$30, $0, eq_else.9624
+	bne	$30, $0, eq_else.9633
 	jr $31
-eq_else.9624:
+eq_else.9633:
 	lw	$11, 4($11)
 	addi	$11, $11, -1
 	sw	$28, 0($3)
@@ -9108,9 +9110,9 @@ eq_else.9624:
 	sw	$2, 20($3)
 	sw	$9, 24($3)
 	slt	$30, $2, $11
-	bne	$30, $0, eq_else.9626
-	j	eq_cont.9627
-eq_else.9626:
+	bne	$30, $0, eq_else.9635
+	j	eq_cont.9636
+eq_else.9635:
 	addi	$11, $2, 1
 	mov	$6, $8
 	mov	$5, $11
@@ -9122,7 +9124,7 @@ eq_else.9626:
 	jalr	$31, $30
 	addi	$3, $3, -32
 	lw	$31, 28($3)
-eq_cont.9627:
+eq_cont.9636:
 	addi	$2, $0, 0
 	lw	$5, 20($3)
 	lw	$6, 16($3)
@@ -9143,7 +9145,7 @@ eq_cont.9627:
 	mov	$2, $6
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	add_mod5.2725
+	jal	add_mod5.2730
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	mov	$8, $2
@@ -9154,7 +9156,7 @@ eq_cont.9627:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-create_float5x3array.3141:
+create_float5x3array.3146:
 	addi	$2, $0, 3
 	ori	$30, $0, 1
 	slli	$30, $30, 16
@@ -9224,7 +9226,7 @@ create_float5x3array.3141:
 	sw	$2, 16($5)
 	mov	$2, $5
 	jr $31
-create_pixel.3143:
+create_pixel.3148:
 	addi	$2, $0, 3
 	ori	$30, $0, 1
 	slli	$30, $30, 16
@@ -9238,7 +9240,7 @@ create_pixel.3143:
 	sw	$2, 0($3)
 	sw	$31, 4($3)
 	addi	$3, $3, 8
-	jal	create_float5x3array.3141
+	jal	create_float5x3array.3146
 	addi	$3, $3, -8
 	lw	$31, 4($3)
 	addi	$5, $0, 5
@@ -9264,13 +9266,13 @@ create_pixel.3143:
 	sw	$2, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	create_float5x3array.3141
+	jal	create_float5x3array.3146
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	sw	$2, 16($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	create_float5x3array.3141
+	jal	create_float5x3array.3146
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	addi	$5, $0, 1
@@ -9286,7 +9288,7 @@ create_pixel.3143:
 	sw	$2, 24($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	create_float5x3array.3141
+	jal	create_float5x3array.3146
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	mov	$5, $4
@@ -9308,15 +9310,15 @@ create_pixel.3143:
 	sw	$2, 0($5)
 	mov	$2, $5
 	jr $31
-init_line_elements.3145:
+init_line_elements.3150:
 	ori	$30, $0, 0
 	slt	$30, $5, $30
-	bne	$30, $0, eq_else.9628
+	bne	$30, $0, eq_else.9637
 	sw	$2, 0($3)
 	sw	$5, 4($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	create_pixel.3143
+	jal	create_pixel.3148
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	lw	$5, 4($3)
@@ -9326,17 +9328,17 @@ init_line_elements.3145:
 	sw	$2, 0($30)
 	addi	$5, $5, -1
 	mov	$2, $7
-	j	init_line_elements.3145
-eq_else.9628:
+	j	init_line_elements.3150
+eq_else.9637:
 	jr $31
-create_pixelline.3148:
+create_pixelline.3153:
 	lw	$2, 4($28)
 	lw	$5, 0($2)
 	sw	$2, 0($3)
 	sw	$5, 4($3)
 	sw	$31, 12($3)
 	addi	$3, $3, 16
-	jal	create_pixel.3143
+	jal	create_pixel.3148
 	addi	$3, $3, -16
 	lw	$31, 12($3)
 	mov	$5, $2
@@ -9349,8 +9351,8 @@ create_pixelline.3148:
 	lw	$5, 0($3)
 	lw	$5, 0($5)
 	addi	$5, $5, -2
-	j	init_line_elements.3145
-tan.3150:
+	j	init_line_elements.3150
+tan.3155:
 	lw	$2, 8($28)
 	lw	$5, 4($28)
 	sf	$f0, 0($3)
@@ -9375,7 +9377,7 @@ tan.3150:
 	lf	$f1, 16($3)
 	fdiv	$f0, $f1, $f0
 	jr $31
-adjust_position.3152:
+adjust_position.3157:
 	lw	$2, 4($28)
 	fmul	$f0, $f0, $f0
 	ori	$30, $0, 1
@@ -9387,7 +9389,7 @@ adjust_position.3152:
 	sf	$f1, 8($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 1
@@ -9399,7 +9401,7 @@ adjust_position.3152:
 	movf	$f0, $f1
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	atan.2714
+	jal	atan.2719
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	lf	$f1, 8($3)
@@ -9414,14 +9416,14 @@ adjust_position.3152:
 	lf	$f1, 16($3)
 	fmul	$f0, $f0, $f1
 	jr $31
-calc_dirvec.3155:
+calc_dirvec.3160:
 	lw	$7, 8($28)
 	lw	$8, 4($28)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 5
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9631
+	bne	$30, $0, eq_else.9640
 	sw	$6, 0($3)
 	sw	$7, 4($3)
 	sw	$5, 8($3)
@@ -9429,7 +9431,7 @@ calc_dirvec.3155:
 	sf	$f1, 24($3)
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -9437,7 +9439,7 @@ calc_dirvec.3155:
 	movf	$f0, $f1
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	fsqr.2635
+	jal	fsqr.2638
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 32($3)
@@ -9449,7 +9451,7 @@ calc_dirvec.3155:
 	fadd	$f0, $f0, $f1
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	sqrt.2645
+	jal	sqrt.2648
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lf	$f1, 16($3)
@@ -9477,7 +9479,7 @@ calc_dirvec.3155:
 	mov	$2, $6
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f0, 64($3)
@@ -9485,7 +9487,7 @@ calc_dirvec.3155:
 	lf	$f2, 48($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	vecset.2728
+	jal	vecset.2733
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lw	$2, 0($3)
@@ -9497,14 +9499,14 @@ calc_dirvec.3155:
 	mov	$2, $5
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f0, 56($3)
 	sw	$2, 72($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	movf	$f2, $f0
@@ -9513,7 +9515,7 @@ calc_dirvec.3155:
 	lw	$2, 72($3)
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	vecset.2728
+	jal	vecset.2733
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lw	$2, 0($3)
@@ -9525,14 +9527,14 @@ calc_dirvec.3155:
 	mov	$2, $5
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f0, 64($3)
 	sw	$2, 76($3)
 	sw	$31, 84($3)
 	addi	$3, $3, 88
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -88
 	lw	$31, 84($3)
 	lf	$f1, 56($3)
@@ -9540,7 +9542,7 @@ calc_dirvec.3155:
 	movf	$f0, $f1
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	movf	$f2, $f0
@@ -9549,7 +9551,7 @@ calc_dirvec.3155:
 	lw	$2, 76($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	vecset.2728
+	jal	vecset.2733
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lw	$2, 0($3)
@@ -9561,14 +9563,14 @@ calc_dirvec.3155:
 	mov	$2, $5
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f0, 64($3)
 	sw	$2, 88($3)
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 56($3)
@@ -9576,7 +9578,7 @@ calc_dirvec.3155:
 	movf	$f0, $f1
 	sw	$31, 108($3)
 	addi	$3, $3, 112
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -112
 	lw	$31, 108($3)
 	lf	$f1, 48($3)
@@ -9584,7 +9586,7 @@ calc_dirvec.3155:
 	movf	$f0, $f1
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	movf	$f2, $f0
@@ -9593,7 +9595,7 @@ calc_dirvec.3155:
 	lw	$2, 88($3)
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	vecset.2728
+	jal	vecset.2733
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	lw	$2, 0($3)
@@ -9605,14 +9607,14 @@ calc_dirvec.3155:
 	mov	$2, $5
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	lf	$f0, 64($3)
 	sw	$2, 112($3)
 	sw	$31, 116($3)
 	addi	$3, $3, 120
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -120
 	lw	$31, 116($3)
 	lf	$f1, 48($3)
@@ -9620,7 +9622,7 @@ calc_dirvec.3155:
 	movf	$f0, $f1
 	sw	$31, 132($3)
 	addi	$3, $3, 136
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -136
 	lw	$31, 132($3)
 	movf	$f1, $f0
@@ -9629,7 +9631,7 @@ calc_dirvec.3155:
 	lw	$2, 112($3)
 	sw	$31, 132($3)
 	addi	$3, $3, 136
-	jal	vecset.2728
+	jal	vecset.2733
 	addi	$3, $3, -136
 	lw	$31, 132($3)
 	lw	$2, 0($3)
@@ -9640,21 +9642,21 @@ calc_dirvec.3155:
 	lw	$2, 0($30)
 	sw	$31, 132($3)
 	addi	$3, $3, 136
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -136
 	lw	$31, 132($3)
 	lf	$f0, 48($3)
 	sw	$2, 128($3)
 	sw	$31, 132($3)
 	addi	$3, $3, 136
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -136
 	lw	$31, 132($3)
 	lf	$f1, 64($3)
 	lf	$f2, 56($3)
 	lw	$2, 128($3)
-	j	vecset.2728
-eq_else.9631:
+	j	vecset.2733
+eq_else.9640:
 	sf	$f2, 136($3)
 	sw	$6, 0($3)
 	sw	$5, 8($3)
@@ -9693,11 +9695,11 @@ eq_else.9631:
 	lw	$28, 144($3)
 	lw $30, 0($28)
 	jr	$30
-calc_dirvecs.3163:
+calc_dirvecs.3168:
 	lw	$7, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9638
+	bne	$30, $0, eq_else.9647
 	sw	$28, 0($3)
 	sw	$2, 4($3)
 	sf	$f0, 8($3)
@@ -9706,7 +9708,7 @@ calc_dirvecs.3163:
 	sw	$7, 24($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	float_of_int.2649
+	jal	float_of_int.2654
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 1
@@ -9741,7 +9743,7 @@ calc_dirvecs.3163:
 	lw	$2, 4($3)
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	float_of_int.2649
+	jal	float_of_int.2654
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	ori	$30, $0, 1
@@ -9783,7 +9785,7 @@ calc_dirvecs.3163:
 	mov	$2, $6
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	add_mod5.2725
+	jal	add_mod5.2730
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	mov	$5, $2
@@ -9793,13 +9795,13 @@ calc_dirvecs.3163:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9638:
+eq_else.9647:
 	jr $31
-calc_dirvec_rows.3168:
+calc_dirvec_rows.3173:
 	lw	$7, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9640
+	bne	$30, $0, eq_else.9649
 	sw	$28, 0($3)
 	sw	$2, 4($3)
 	sw	$6, 8($3)
@@ -9807,7 +9809,7 @@ calc_dirvec_rows.3168:
 	sw	$7, 16($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	float_of_int.2649
+	jal	float_of_int.2654
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 1
@@ -9838,7 +9840,7 @@ calc_dirvec_rows.3168:
 	mov	$2, $6
 	sw	$31, 28($3)
 	addi	$3, $3, 32
-	jal	add_mod5.2725
+	jal	add_mod5.2730
 	addi	$3, $3, -32
 	lw	$31, 28($3)
 	mov	$5, $2
@@ -9848,9 +9850,9 @@ calc_dirvec_rows.3168:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9640:
+eq_else.9649:
 	jr $31
-create_dirvec.3172:
+create_dirvec.3177:
 	lw	$2, 4($28)
 	addi	$5, $0, 3
 	ori	$30, $0, 1
@@ -9880,11 +9882,11 @@ create_dirvec.3172:
 	sw	$2, 0($5)
 	mov	$2, $5
 	jr $31
-create_dirvec_elements.3174:
+create_dirvec_elements.3179:
 	lw	$6, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $5, $30
-	bne	$30, $0, eq_else.9642
+	bne	$30, $0, eq_else.9651
 	sw	$28, 0($3)
 	sw	$2, 4($3)
 	sw	$5, 8($3)
@@ -9905,15 +9907,15 @@ create_dirvec_elements.3174:
 	mov	$2, $7
 	lw $30, 0($28)
 	jr	$30
-eq_else.9642:
+eq_else.9651:
 	jr $31
-create_dirvecs.3177:
+create_dirvecs.3182:
 	lw	$5, 12($28)
 	lw	$6, 8($28)
 	lw	$7, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9644
+	bne	$30, $0, eq_else.9653
 	addi	$8, $0, 120
 	sw	$28, 0($3)
 	sw	$6, 4($3)
@@ -9956,13 +9958,13 @@ create_dirvecs.3177:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9644:
+eq_else.9653:
 	jr $31
-init_dirvec_constants.3179:
+init_dirvec_constants.3184:
 	lw	$6, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $5, $30
-	bne	$30, $0, eq_else.9646
+	bne	$30, $0, eq_else.9655
 	slli	$7, $5, 2
 	add	$30, $2, $7
 	lw	$7, 0($30)
@@ -9983,14 +9985,14 @@ init_dirvec_constants.3179:
 	lw	$28, 4($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9646:
+eq_else.9655:
 	jr $31
-init_vecset_constants.3182:
+init_vecset_constants.3187:
 	lw	$5, 8($28)
 	lw	$6, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9648
+	bne	$30, $0, eq_else.9657
 	slli	$7, $2, 2
 	add	$30, $6, $7
 	lw	$6, 0($30)
@@ -10011,9 +10013,9 @@ init_vecset_constants.3182:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9648:
+eq_else.9657:
 	jr $31
-init_dirvecs.3184:
+init_dirvecs.3189:
 	lw	$2, 12($28)
 	lw	$5, 8($28)
 	lw	$6, 4($28)
@@ -10042,7 +10044,7 @@ init_dirvecs.3184:
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-add_reflection.3186:
+add_reflection.3191:
 	lw	$6, 12($28)
 	lw	$7, 8($28)
 	lw	$28, 4($28)
@@ -10063,7 +10065,7 @@ add_reflection.3186:
 	sw	$2, 56($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f0, 48($3)
@@ -10071,7 +10073,7 @@ add_reflection.3186:
 	lf	$f2, 32($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	vecset.2728
+	jal	vecset.2733
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lw	$2, 56($3)
@@ -10096,7 +10098,7 @@ add_reflection.3186:
 	add $30, $6, $5
 	sw	$2, 0($30)
 	jr $31
-setup_rect_reflection.3193:
+setup_rect_reflection.3198:
 	lw	$6, 12($28)
 	lw	$7, 8($28)
 	lw	$8, 4($28)
@@ -10116,7 +10118,7 @@ setup_rect_reflection.3193:
 	mov	$2, $5
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_diffuse.2798
+	jal	o_diffuse.2803
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -10127,7 +10129,7 @@ setup_rect_reflection.3193:
 	movf	$f0, $f1
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	lw	$2, 16($3)
@@ -10136,7 +10138,7 @@ setup_rect_reflection.3193:
 	movf	$f0, $f1
 	sw	$31, 52($3)
 	addi	$3, $3, 56
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -56
 	lw	$31, 52($3)
 	lw	$2, 16($3)
@@ -10145,7 +10147,7 @@ setup_rect_reflection.3193:
 	movf	$f0, $f1
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	fneg.2639
+	jal	fneg.2642
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	movf	$f3, $f0
@@ -10206,7 +10208,7 @@ setup_rect_reflection.3193:
 	lw	$5, 0($3)
 	sw	$2, 0($5)
 	jr $31
-setup_surface_reflection.3196:
+setup_surface_reflection.3201:
 	lw	$6, 12($28)
 	lw	$7, 8($28)
 	lw	$8, 4($28)
@@ -10228,7 +10230,7 @@ setup_surface_reflection.3196:
 	mov	$2, $5
 	sw	$31, 36($3)
 	addi	$3, $3, 40
-	jal	o_diffuse.2798
+	jal	o_diffuse.2803
 	addi	$3, $3, -40
 	lw	$31, 36($3)
 	lf	$f1, 24($3)
@@ -10237,14 +10239,14 @@ setup_surface_reflection.3196:
 	sf	$f0, 32($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	o_param_abc.2790
+	jal	o_param_abc.2795
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	mov	$5, $2
 	lw	$2, 16($3)
 	sw	$31, 44($3)
 	addi	$3, $3, 48
-	jal	veciprod.2749
+	jal	veciprod.2754
 	addi	$3, $3, -48
 	lw	$31, 44($3)
 	ori	$30, $0, 1
@@ -10256,7 +10258,7 @@ setup_surface_reflection.3196:
 	sf	$f1, 48($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	o_param_a.2784
+	jal	o_param_a.2789
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f1, 48($3)
@@ -10276,7 +10278,7 @@ setup_surface_reflection.3196:
 	mov	$2, $5
 	sw	$31, 76($3)
 	addi	$3, $3, 80
-	jal	o_param_b.2786
+	jal	o_param_b.2791
 	addi	$3, $3, -80
 	lw	$31, 76($3)
 	lf	$f1, 64($3)
@@ -10296,7 +10298,7 @@ setup_surface_reflection.3196:
 	mov	$2, $5
 	sw	$31, 92($3)
 	addi	$3, $3, 96
-	jal	o_param_c.2788
+	jal	o_param_c.2793
 	addi	$3, $3, -96
 	lw	$31, 92($3)
 	lf	$f1, 80($3)
@@ -10323,13 +10325,13 @@ setup_surface_reflection.3196:
 	lw	$5, 0($3)
 	sw	$2, 0($5)
 	jr $31
-setup_reflections.3199:
+setup_reflections.3204:
 	lw	$5, 12($28)
 	lw	$6, 8($28)
 	lw	$7, 4($28)
 	ori	$30, $0, 0
 	slt	$30, $2, $30
-	bne	$30, $0, eq_else.9656
+	bne	$30, $0, eq_else.9665
 	slli	$8, $2, 2
 	add	$30, $7, $8
 	lw	$7, 0($30)
@@ -10340,17 +10342,17 @@ setup_reflections.3199:
 	mov	$2, $7
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_reflectiontype.2778
+	jal	o_reflectiontype.2783
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9657
+	bne	$2, $30, eq_else.9666
 	lw	$2, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_diffuse.2798
+	jal	o_diffuse.2803
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 1
@@ -10359,45 +10361,45 @@ setup_reflections.3199:
 	lf	$f1, 0($30) # 1.000000
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	fless.2627
+	jal	fless.2630
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 0
-	bne	$2, $30, eq_else.9658
+	bne	$2, $30, eq_else.9667
 	jr $31
-eq_else.9658:
+eq_else.9667:
 	lw	$2, 12($3)
 	sw	$31, 20($3)
 	addi	$3, $3, 24
-	jal	o_form.2776
+	jal	o_form.2781
 	addi	$3, $3, -24
 	lw	$31, 20($3)
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 1
-	bne	$2, $30, eq_else.9660
+	bne	$2, $30, eq_else.9669
 	lw	$2, 4($3)
 	lw	$5, 12($3)
 	lw	$28, 8($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9660:
+eq_else.9669:
 	ori	$30, $0, 0
 	slli	$30, $30, 16
 	ori	$30, $30, 2
-	bne	$2, $30, eq_else.9661
+	bne	$2, $30, eq_else.9670
 	lw	$2, 4($3)
 	lw	$5, 12($3)
 	lw	$28, 0($3)
 	lw $30, 0($28)
 	jr	$30
-eq_else.9661:
+eq_else.9670:
 	jr $31
-eq_else.9657:
+eq_else.9666:
 	jr $31
-eq_else.9656:
+eq_else.9665:
 	jr $31
-rt.3201:
+rt.3206:
 	lw	$6, 56($28)
 	lw	$7, 52($28)
 	lw	$8, 48($28)
@@ -10414,9 +10416,13 @@ rt.3201:
 	lw	$19, 4($28)
 	sw	$2, 0($17)
 	sw	$5, 4($17)
-	srli	$17, $2, 1
+	#addi	$17, $0, 2
+	#div	$17, $2, $17
+  srai $17, $2, 1
 	sw	$17, 0($18)
-	srli	$5, $5, 1
+	addi	$17, $0, 2
+	#div	$5, $5, $17
+  srai $17, $5, 1
 	sw	$5, 4($18)
 	ori	$30, $0, 1
 	slli	$30, $30, 16
@@ -10437,7 +10443,7 @@ rt.3201:
 	sf	$f0, 48($3)
 	sw	$31, 60($3)
 	addi	$3, $3, 64
-	jal	float_of_int.2649
+	jal	float_of_int.2654
 	addi	$3, $3, -64
 	lw	$31, 60($3)
 	lf	$f1, 48($3)
@@ -10492,13 +10498,13 @@ rt.3201:
 	lw	$2, 24($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	d_vec.2835
+	jal	d_vec.2840
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$5, 20($3)
 	sw	$31, 68($3)
 	addi	$3, $3, 72
-	jal	veccpy.2738
+	jal	veccpy.2743
 	addi	$3, $3, -72
 	lw	$31, 68($3)
 	lw	$2, 24($3)
@@ -11048,89 +11054,89 @@ Main:
 	lf	$f6, 0($30) # 0.001370
 	mov	$5, $4
 	addi	$4, $4, 32
-	ori	$6, $0, ha(kernel_sin.2686)
+	ori	$6, $0, ha(kernel_sin.2691)
 	slli	$6, $6, 16
-	ori	$6, $6, lo(kernel_sin.2686)
+	ori	$6, $6, lo(kernel_sin.2691)
 	sw	$6, 0($5)
 	sf	$f3, 24($5)
 	sf	$f2, 16($5)
 	sf	$f1, 8($5)
 	mov	$6, $4
 	addi	$4, $4, 32
-	ori	$7, $0, ha(kernel_cos.2688)
+	ori	$7, $0, ha(kernel_cos.2693)
 	slli	$7, $7, 16
-	ori	$7, $7, lo(kernel_cos.2688)
+	ori	$7, $7, lo(kernel_cos.2693)
 	sw	$7, 0($6)
 	sf	$f6, 24($6)
 	sf	$f5, 16($6)
 	sf	$f4, 8($6)
 	mov	$7, $4
 	addi	$4, $4, 16
-	ori	$8, $0, ha(sin_sub3.2690)
+	ori	$8, $0, ha(sin_sub3.2695)
 	slli	$8, $8, 16
-	ori	$8, $8, lo(sin_sub3.2690)
+	ori	$8, $8, lo(sin_sub3.2695)
 	sw	$8, 0($7)
 	sw	$5, 8($7)
 	sw	$6, 4($7)
 	mov	$8, $4
 	addi	$4, $4, 24
-	ori	$9, $0, ha(sin_sub2.2693)
+	ori	$9, $0, ha(sin_sub2.2698)
 	slli	$9, $9, 16
-	ori	$9, $9, lo(sin_sub2.2693)
+	ori	$9, $9, lo(sin_sub2.2698)
 	sw	$9, 0($8)
 	sw	$7, 16($8)
 	sf	$f0, 8($8)
 	mov	$7, $4
 	addi	$4, $4, 24
-	ori	$9, $0, ha(sin_sub1.2696)
+	ori	$9, $0, ha(sin_sub1.2701)
 	slli	$9, $9, 16
-	ori	$9, $9, lo(sin_sub1.2696)
+	ori	$9, $9, lo(sin_sub1.2701)
 	sw	$9, 0($7)
 	sw	$8, 16($7)
 	sf	$f0, 8($7)
 	mov	$8, $4
 	addi	$4, $4, 8
-	ori	$9, $0, ha(sin.2699)
+	ori	$9, $0, ha(sin.2704)
 	slli	$9, $9, 16
-	ori	$9, $9, lo(sin.2699)
+	ori	$9, $9, lo(sin.2704)
 	sw	$9, 0($8)
 	sw	$7, 4($8)
 	mov	$7, $4
 	addi	$4, $4, 16
-	ori	$9, $0, ha(cos_sub3.2701)
+	ori	$9, $0, ha(cos_sub3.2706)
 	slli	$9, $9, 16
-	ori	$9, $9, lo(cos_sub3.2701)
+	ori	$9, $9, lo(cos_sub3.2706)
 	sw	$9, 0($7)
 	sw	$5, 8($7)
 	sw	$6, 4($7)
 	mov	$5, $4
 	addi	$4, $4, 16
-	ori	$6, $0, ha(cos_sub2.2704)
+	ori	$6, $0, ha(cos_sub2.2709)
 	slli	$6, $6, 16
-	ori	$6, $6, lo(cos_sub2.2704)
+	ori	$6, $6, lo(cos_sub2.2709)
 	sw	$6, 0($5)
 	sf	$f0, 8($5)
 	sw	$7, 4($5)
 	mov	$6, $4
 	addi	$4, $4, 16
-	ori	$7, $0, ha(cos_sub1.2707)
+	ori	$7, $0, ha(cos_sub1.2712)
 	slli	$7, $7, 16
-	ori	$7, $7, lo(cos_sub1.2707)
+	ori	$7, $7, lo(cos_sub1.2712)
 	sw	$7, 0($6)
 	sf	$f0, 8($6)
 	sw	$5, 4($6)
 	mov	$5, $4
 	addi	$4, $4, 8
-	ori	$7, $0, ha(cos.2710)
+	ori	$7, $0, ha(cos.2715)
 	slli	$7, $7, 16
-	ori	$7, $7, lo(cos.2710)
+	ori	$7, $7, lo(cos.2715)
 	sw	$7, 0($5)
 	sw	$6, 4($5)
 	mov	$6, $4
 	addi	$4, $4, 32
-	ori	$7, $0, ha(read_screen_settings.2847)
+	ori	$7, $0, ha(read_screen_settings.2852)
 	slli	$7, $7, 16
-	ori	$7, $7, lo(read_screen_settings.2847)
+	ori	$7, $7, lo(read_screen_settings.2852)
 	sw	$7, 0($6)
 	lw	$7, 12($3)
 	sw	$7, 28($6)
@@ -11146,9 +11152,9 @@ Main:
 	sw	$5, 4($6)
 	mov	$12, $4
 	addi	$4, $4, 24
-	ori	$13, $0, ha(read_light.2849)
+	ori	$13, $0, ha(read_light.2854)
 	slli	$13, $13, 16
-	ori	$13, $13, lo(read_light.2849)
+	ori	$13, $13, lo(read_light.2854)
 	sw	$13, 0($12)
 	sw	$8, 16($12)
 	lw	$13, 16($3)
@@ -11158,50 +11164,50 @@ Main:
 	sw	$14, 4($12)
 	mov	$15, $4
 	addi	$4, $4, 16
-	ori	$16, $0, ha(rotate_quadratic_matrix.2851)
+	ori	$16, $0, ha(rotate_quadratic_matrix.2856)
 	slli	$16, $16, 16
-	ori	$16, $16, lo(rotate_quadratic_matrix.2851)
+	ori	$16, $16, lo(rotate_quadratic_matrix.2856)
 	sw	$16, 0($15)
 	sw	$8, 8($15)
 	sw	$5, 4($15)
 	mov	$16, $4
 	addi	$4, $4, 16
-	ori	$17, $0, ha(read_nth_object.2854)
+	ori	$17, $0, ha(read_nth_object.2859)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(read_nth_object.2854)
+	ori	$17, $17, lo(read_nth_object.2859)
 	sw	$17, 0($16)
 	sw	$15, 8($16)
 	lw	$15, 4($3)
 	sw	$15, 4($16)
 	mov	$17, $4
 	addi	$4, $4, 16
-	ori	$18, $0, ha(read_object.2856)
+	ori	$18, $0, ha(read_object.2861)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(read_object.2856)
+	ori	$18, $18, lo(read_object.2861)
 	sw	$18, 0($17)
 	sw	$16, 8($17)
 	lw	$16, 0($3)
 	sw	$16, 4($17)
 	mov	$18, $4
 	addi	$4, $4, 8
-	ori	$19, $0, ha(read_all_object.2858)
+	ori	$19, $0, ha(read_all_object.2863)
 	slli	$19, $19, 16
-	ori	$19, $19, lo(read_all_object.2858)
+	ori	$19, $19, lo(read_all_object.2863)
 	sw	$19, 0($18)
 	sw	$17, 4($18)
 	mov	$17, $4
 	addi	$4, $4, 8
-	ori	$19, $0, ha(read_and_network.2864)
+	ori	$19, $0, ha(read_and_network.2869)
 	slli	$19, $19, 16
-	ori	$19, $19, lo(read_and_network.2864)
+	ori	$19, $19, lo(read_and_network.2869)
 	sw	$19, 0($17)
 	lw	$19, 28($3)
 	sw	$19, 4($17)
 	mov	$20, $4
 	addi	$4, $4, 24
-	ori	$21, $0, ha(read_parameter.2866)
+	ori	$21, $0, ha(read_parameter.2871)
 	slli	$21, $21, 16
-	ori	$21, $21, lo(read_parameter.2866)
+	ori	$21, $21, lo(read_parameter.2871)
 	sw	$21, 0($20)
 	sw	$6, 20($20)
 	sw	$12, 16($20)
@@ -11211,38 +11217,38 @@ Main:
 	sw	$6, 4($20)
 	mov	$12, $4
 	addi	$4, $4, 8
-	ori	$17, $0, ha(solver_rect_surface.2868)
+	ori	$17, $0, ha(solver_rect_surface.2873)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(solver_rect_surface.2868)
+	ori	$17, $17, lo(solver_rect_surface.2873)
 	sw	$17, 0($12)
 	lw	$17, 40($3)
 	sw	$17, 4($12)
 	mov	$18, $4
 	addi	$4, $4, 8
-	ori	$21, $0, ha(solver_rect.2877)
+	ori	$21, $0, ha(solver_rect.2882)
 	slli	$21, $21, 16
-	ori	$21, $21, lo(solver_rect.2877)
+	ori	$21, $21, lo(solver_rect.2882)
 	sw	$21, 0($18)
 	sw	$12, 4($18)
 	mov	$12, $4
 	addi	$4, $4, 8
-	ori	$21, $0, ha(solver_surface.2883)
+	ori	$21, $0, ha(solver_surface.2888)
 	slli	$21, $21, 16
-	ori	$21, $21, lo(solver_surface.2883)
+	ori	$21, $21, lo(solver_surface.2888)
 	sw	$21, 0($12)
 	sw	$17, 4($12)
 	mov	$21, $4
 	addi	$4, $4, 8
-	ori	$22, $0, ha(solver_second.2902)
+	ori	$22, $0, ha(solver_second.2907)
 	slli	$22, $22, 16
-	ori	$22, $22, lo(solver_second.2902)
+	ori	$22, $22, lo(solver_second.2907)
 	sw	$22, 0($21)
 	sw	$17, 4($21)
 	mov	$22, $4
 	addi	$4, $4, 24
-	ori	$23, $0, ha(solver.2908)
+	ori	$23, $0, ha(solver.2913)
 	slli	$23, $23, 16
-	ori	$23, $23, lo(solver.2908)
+	ori	$23, $23, lo(solver.2913)
 	sw	$23, 0($22)
 	sw	$12, 16($22)
 	sw	$21, 12($22)
@@ -11250,30 +11256,30 @@ Main:
 	sw	$15, 4($22)
 	mov	$12, $4
 	addi	$4, $4, 8
-	ori	$18, $0, ha(solver_rect_fast.2912)
+	ori	$18, $0, ha(solver_rect_fast.2917)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(solver_rect_fast.2912)
+	ori	$18, $18, lo(solver_rect_fast.2917)
 	sw	$18, 0($12)
 	sw	$17, 4($12)
 	mov	$18, $4
 	addi	$4, $4, 8
-	ori	$21, $0, ha(solver_surface_fast.2919)
+	ori	$21, $0, ha(solver_surface_fast.2924)
 	slli	$21, $21, 16
-	ori	$21, $21, lo(solver_surface_fast.2919)
+	ori	$21, $21, lo(solver_surface_fast.2924)
 	sw	$21, 0($18)
 	sw	$17, 4($18)
 	mov	$21, $4
 	addi	$4, $4, 8
-	ori	$23, $0, ha(solver_second_fast.2925)
+	ori	$23, $0, ha(solver_second_fast.2930)
 	slli	$23, $23, 16
-	ori	$23, $23, lo(solver_second_fast.2925)
+	ori	$23, $23, lo(solver_second_fast.2930)
 	sw	$23, 0($21)
 	sw	$17, 4($21)
 	mov	$23, $4
 	addi	$4, $4, 24
-	ori	$24, $0, ha(solver_fast.2931)
+	ori	$24, $0, ha(solver_fast.2936)
 	slli	$24, $24, 16
-	ori	$24, $24, lo(solver_fast.2931)
+	ori	$24, $24, lo(solver_fast.2936)
 	sw	$24, 0($23)
 	sw	$18, 16($23)
 	sw	$21, 12($23)
@@ -11281,23 +11287,23 @@ Main:
 	sw	$15, 4($23)
 	mov	$18, $4
 	addi	$4, $4, 8
-	ori	$21, $0, ha(solver_surface_fast2.2935)
+	ori	$21, $0, ha(solver_surface_fast2.2940)
 	slli	$21, $21, 16
-	ori	$21, $21, lo(solver_surface_fast2.2935)
+	ori	$21, $21, lo(solver_surface_fast2.2940)
 	sw	$21, 0($18)
 	sw	$17, 4($18)
 	mov	$21, $4
 	addi	$4, $4, 8
-	ori	$24, $0, ha(solver_second_fast2.2942)
+	ori	$24, $0, ha(solver_second_fast2.2947)
 	slli	$24, $24, 16
-	ori	$24, $24, lo(solver_second_fast2.2942)
+	ori	$24, $24, lo(solver_second_fast2.2947)
 	sw	$24, 0($21)
 	sw	$17, 4($21)
 	mov	$24, $4
 	addi	$4, $4, 24
-	ori	$25, $0, ha(solver_fast2.2949)
+	ori	$25, $0, ha(solver_fast2.2954)
 	slli	$25, $25, 16
-	ori	$25, $25, lo(solver_fast2.2949)
+	ori	$25, $25, lo(solver_fast2.2954)
 	sw	$25, 0($24)
 	sw	$18, 16($24)
 	sw	$21, 12($24)
@@ -11305,31 +11311,31 @@ Main:
 	sw	$15, 4($24)
 	mov	$12, $4
 	addi	$4, $4, 8
-	ori	$18, $0, ha(iter_setup_dirvec_constants.2961)
+	ori	$18, $0, ha(iter_setup_dirvec_constants.2966)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(iter_setup_dirvec_constants.2961)
+	ori	$18, $18, lo(iter_setup_dirvec_constants.2966)
 	sw	$18, 0($12)
 	sw	$15, 4($12)
 	mov	$18, $4
 	addi	$4, $4, 16
-	ori	$21, $0, ha(setup_dirvec_constants.2964)
+	ori	$21, $0, ha(setup_dirvec_constants.2969)
 	slli	$21, $21, 16
-	ori	$21, $21, lo(setup_dirvec_constants.2964)
+	ori	$21, $21, lo(setup_dirvec_constants.2969)
 	sw	$21, 0($18)
 	sw	$16, 8($18)
 	sw	$12, 4($18)
 	mov	$12, $4
 	addi	$4, $4, 8
-	ori	$21, $0, ha(setup_startp_constants.2966)
+	ori	$21, $0, ha(setup_startp_constants.2971)
 	slli	$21, $21, 16
-	ori	$21, $21, lo(setup_startp_constants.2966)
+	ori	$21, $21, lo(setup_startp_constants.2971)
 	sw	$21, 0($12)
 	sw	$15, 4($12)
 	mov	$21, $4
 	addi	$4, $4, 16
-	ori	$25, $0, ha(setup_startp.2969)
+	ori	$25, $0, ha(setup_startp.2974)
 	slli	$25, $25, 16
-	ori	$25, $25, lo(setup_startp.2969)
+	ori	$25, $25, lo(setup_startp.2974)
 	sw	$25, 0($21)
 	lw	$25, 92($3)
 	sw	$25, 12($21)
@@ -11337,16 +11343,16 @@ Main:
 	sw	$16, 4($21)
 	mov	$12, $4
 	addi	$4, $4, 8
-	ori	$26, $0, ha(check_all_inside.2991)
+	ori	$26, $0, ha(check_all_inside.2996)
 	slli	$26, $26, 16
-	ori	$26, $26, lo(check_all_inside.2991)
+	ori	$26, $26, lo(check_all_inside.2996)
 	sw	$26, 0($12)
 	sw	$15, 4($12)
 	mov	$26, $4
 	addi	$4, $4, 32
-	ori	$27, $0, ha(shadow_check_and_group.2997)
+	ori	$27, $0, ha(shadow_check_and_group.3002)
 	slli	$27, $27, 16
-	ori	$27, $27, lo(shadow_check_and_group.2997)
+	ori	$27, $27, lo(shadow_check_and_group.3002)
 	sw	$27, 0($26)
 	sw	$23, 28($26)
 	sw	$17, 24($26)
@@ -11361,17 +11367,17 @@ Main:
 	mov	$20, $4
 	addi	$4, $4, 16
 	sw	$18, 144($3)
-	ori	$18, $0, ha(shadow_check_one_or_group.3000)
+	ori	$18, $0, ha(shadow_check_one_or_group.3005)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(shadow_check_one_or_group.3000)
+	ori	$18, $18, lo(shadow_check_one_or_group.3005)
 	sw	$18, 0($20)
 	sw	$26, 8($20)
 	sw	$19, 4($20)
 	mov	$18, $4
 	addi	$4, $4, 24
-	ori	$26, $0, ha(shadow_check_one_or_matrix.3003)
+	ori	$26, $0, ha(shadow_check_one_or_matrix.3008)
 	slli	$26, $26, 16
-	ori	$26, $26, lo(shadow_check_one_or_matrix.3003)
+	ori	$26, $26, lo(shadow_check_one_or_matrix.3008)
 	sw	$26, 0($18)
 	sw	$23, 20($18)
 	sw	$17, 16($18)
@@ -11380,9 +11386,9 @@ Main:
 	sw	$28, 4($18)
 	mov	$20, $4
 	addi	$4, $4, 40
-	ori	$23, $0, ha(solve_each_element.3006)
+	ori	$23, $0, ha(solve_each_element.3011)
 	slli	$23, $23, 16
-	ori	$23, $23, lo(solve_each_element.3006)
+	ori	$23, $23, lo(solve_each_element.3011)
 	sw	$23, 0($20)
 	lw	$23, 48($3)
 	sw	$23, 36($20)
@@ -11399,17 +11405,17 @@ Main:
 	sw	$12, 4($20)
 	mov	$10, $4
 	addi	$4, $4, 16
-	ori	$9, $0, ha(solve_one_or_network.3010)
+	ori	$9, $0, ha(solve_one_or_network.3015)
 	slli	$9, $9, 16
-	ori	$9, $9, lo(solve_one_or_network.3010)
+	ori	$9, $9, lo(solve_one_or_network.3015)
 	sw	$9, 0($10)
 	sw	$20, 8($10)
 	sw	$19, 4($10)
 	mov	$9, $4
 	addi	$4, $4, 24
-	ori	$20, $0, ha(trace_or_matrix.3014)
+	ori	$20, $0, ha(trace_or_matrix.3019)
 	slli	$20, $20, 16
-	ori	$20, $20, lo(trace_or_matrix.3014)
+	ori	$20, $20, lo(trace_or_matrix.3019)
 	sw	$20, 0($9)
 	sw	$23, 20($9)
 	sw	$26, 16($9)
@@ -11418,18 +11424,18 @@ Main:
 	sw	$10, 4($9)
 	mov	$10, $4
 	addi	$4, $4, 16
-	ori	$20, $0, ha(judge_intersection.3018)
+	ori	$20, $0, ha(judge_intersection.3023)
 	slli	$20, $20, 16
-	ori	$20, $20, lo(judge_intersection.3018)
+	ori	$20, $20, lo(judge_intersection.3023)
 	sw	$20, 0($10)
 	sw	$9, 12($10)
 	sw	$23, 8($10)
 	sw	$6, 4($10)
 	mov	$9, $4
 	addi	$4, $4, 40
-	ori	$20, $0, ha(solve_each_element_fast.3020)
+	ori	$20, $0, ha(solve_each_element_fast.3025)
 	slli	$20, $20, 16
-	ori	$20, $20, lo(solve_each_element_fast.3020)
+	ori	$20, $20, lo(solve_each_element_fast.3025)
 	sw	$20, 0($9)
 	sw	$23, 36($9)
 	sw	$25, 32($9)
@@ -11442,17 +11448,17 @@ Main:
 	sw	$12, 4($9)
 	mov	$12, $4
 	addi	$4, $4, 16
-	ori	$20, $0, ha(solve_one_or_network_fast.3024)
+	ori	$20, $0, ha(solve_one_or_network_fast.3029)
 	slli	$20, $20, 16
-	ori	$20, $20, lo(solve_one_or_network_fast.3024)
+	ori	$20, $20, lo(solve_one_or_network_fast.3029)
 	sw	$20, 0($12)
 	sw	$9, 8($12)
 	sw	$19, 4($12)
 	mov	$9, $4
 	addi	$4, $4, 24
-	ori	$19, $0, ha(trace_or_matrix_fast.3028)
+	ori	$19, $0, ha(trace_or_matrix_fast.3033)
 	slli	$19, $19, 16
-	ori	$19, $19, lo(trace_or_matrix_fast.3028)
+	ori	$19, $19, lo(trace_or_matrix_fast.3033)
 	sw	$19, 0($9)
 	sw	$23, 16($9)
 	sw	$24, 12($9)
@@ -11460,51 +11466,51 @@ Main:
 	sw	$12, 4($9)
 	mov	$12, $4
 	addi	$4, $4, 16
-	ori	$17, $0, ha(judge_intersection_fast.3032)
+	ori	$17, $0, ha(judge_intersection_fast.3037)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(judge_intersection_fast.3032)
+	ori	$17, $17, lo(judge_intersection_fast.3037)
 	sw	$17, 0($12)
 	sw	$9, 12($12)
 	sw	$23, 8($12)
 	sw	$6, 4($12)
 	mov	$9, $4
 	addi	$4, $4, 16
-	ori	$17, $0, ha(get_nvector_rect.3034)
+	ori	$17, $0, ha(get_nvector_rect.3039)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(get_nvector_rect.3034)
+	ori	$17, $17, lo(get_nvector_rect.3039)
 	sw	$17, 0($9)
 	lw	$17, 60($3)
 	sw	$17, 8($9)
 	sw	$27, 4($9)
 	mov	$19, $4
 	addi	$4, $4, 8
-	ori	$20, $0, ha(get_nvector_plane.3036)
+	ori	$20, $0, ha(get_nvector_plane.3041)
 	slli	$20, $20, 16
-	ori	$20, $20, lo(get_nvector_plane.3036)
+	ori	$20, $20, lo(get_nvector_plane.3041)
 	sw	$20, 0($19)
 	sw	$17, 4($19)
 	mov	$20, $4
 	addi	$4, $4, 16
-	ori	$22, $0, ha(get_nvector_second.3038)
+	ori	$22, $0, ha(get_nvector_second.3043)
 	slli	$22, $22, 16
-	ori	$22, $22, lo(get_nvector_second.3038)
+	ori	$22, $22, lo(get_nvector_second.3043)
 	sw	$22, 0($20)
 	sw	$17, 8($20)
 	sw	$28, 4($20)
 	mov	$22, $4
 	addi	$4, $4, 16
-	ori	$24, $0, ha(get_nvector.3040)
+	ori	$24, $0, ha(get_nvector.3045)
 	slli	$24, $24, 16
-	ori	$24, $24, lo(get_nvector.3040)
+	ori	$24, $24, lo(get_nvector.3045)
 	sw	$24, 0($22)
 	sw	$20, 12($22)
 	sw	$9, 8($22)
 	sw	$19, 4($22)
 	mov	$9, $4
 	addi	$4, $4, 16
-	ori	$19, $0, ha(utexture.3043)
+	ori	$19, $0, ha(utexture.3048)
 	slli	$19, $19, 16
-	ori	$19, $19, lo(utexture.3043)
+	ori	$19, $19, lo(utexture.3048)
 	sw	$19, 0($9)
 	lw	$19, 64($3)
 	sw	$19, 12($9)
@@ -11512,9 +11518,9 @@ Main:
 	sw	$5, 4($9)
 	mov	$20, $4
 	addi	$4, $4, 16
-	ori	$24, $0, ha(add_light.3046)
+	ori	$24, $0, ha(add_light.3051)
 	slli	$24, $24, 16
-	ori	$24, $24, lo(add_light.3046)
+	ori	$24, $24, lo(add_light.3051)
 	sw	$24, 0($20)
 	sw	$19, 8($20)
 	lw	$24, 72($3)
@@ -11522,9 +11528,9 @@ Main:
 	mov	$25, $4
 	addi	$4, $4, 40
 	sw	$5, 148($3)
-	ori	$5, $0, ha(trace_reflections.3050)
+	ori	$5, $0, ha(trace_reflections.3055)
 	slli	$5, $5, 16
-	ori	$5, $5, lo(trace_reflections.3050)
+	ori	$5, $5, lo(trace_reflections.3055)
 	sw	$5, 0($25)
 	sw	$18, 32($25)
 	lw	$5, 136($3)
@@ -11538,9 +11544,9 @@ Main:
 	mov	$5, $4
 	addi	$4, $4, 88
 	sw	$8, 152($3)
-	ori	$8, $0, ha(trace_ray.3055)
+	ori	$8, $0, ha(trace_ray.3060)
 	slli	$8, $8, 16
-	ori	$8, $8, lo(trace_ray.3055)
+	ori	$8, $8, lo(trace_ray.3060)
 	sw	$8, 0($5)
 	sw	$9, 80($5)
 	sw	$25, 76($5)
@@ -11564,9 +11570,9 @@ Main:
 	sw	$20, 4($5)
 	mov	$8, $4
 	addi	$4, $4, 56
-	ori	$10, $0, ha(trace_diffuse_ray.3061)
+	ori	$10, $0, ha(trace_diffuse_ray.3066)
 	slli	$10, $10, 16
-	ori	$10, $10, lo(trace_diffuse_ray.3061)
+	ori	$10, $10, lo(trace_diffuse_ray.3066)
 	sw	$10, 0($8)
 	sw	$9, 48($8)
 	sw	$19, 44($8)
@@ -11583,96 +11589,96 @@ Main:
 	sw	$6, 4($8)
 	mov	$9, $4
 	addi	$4, $4, 8
-	ori	$10, $0, ha(iter_trace_diffuse_rays.3064)
+	ori	$10, $0, ha(iter_trace_diffuse_rays.3069)
 	slli	$10, $10, 16
-	ori	$10, $10, lo(iter_trace_diffuse_rays.3064)
+	ori	$10, $10, lo(iter_trace_diffuse_rays.3069)
 	sw	$10, 0($9)
 	sw	$8, 4($9)
 	mov	$8, $4
 	addi	$4, $4, 16
-	ori	$10, $0, ha(trace_diffuse_rays.3069)
+	ori	$10, $0, ha(trace_diffuse_rays.3074)
 	slli	$10, $10, 16
-	ori	$10, $10, lo(trace_diffuse_rays.3069)
+	ori	$10, $10, lo(trace_diffuse_rays.3074)
 	sw	$10, 0($8)
 	sw	$21, 8($8)
 	sw	$9, 4($8)
 	mov	$9, $4
 	addi	$4, $4, 16
-	ori	$10, $0, ha(trace_diffuse_ray_80percent.3073)
+	ori	$10, $0, ha(trace_diffuse_ray_80percent.3078)
 	slli	$10, $10, 16
-	ori	$10, $10, lo(trace_diffuse_ray_80percent.3073)
+	ori	$10, $10, lo(trace_diffuse_ray_80percent.3078)
 	sw	$10, 0($9)
 	sw	$8, 8($9)
 	lw	$10, 116($3)
 	sw	$10, 4($9)
 	mov	$12, $4
 	addi	$4, $4, 16
-	ori	$14, $0, ha(calc_diffuse_using_1point.3077)
+	ori	$14, $0, ha(calc_diffuse_using_1point.3082)
 	slli	$14, $14, 16
-	ori	$14, $14, lo(calc_diffuse_using_1point.3077)
+	ori	$14, $14, lo(calc_diffuse_using_1point.3082)
 	sw	$14, 0($12)
 	sw	$9, 12($12)
 	sw	$24, 8($12)
 	sw	$6, 4($12)
 	mov	$9, $4
 	addi	$4, $4, 16
-	ori	$14, $0, ha(calc_diffuse_using_5points.3080)
+	ori	$14, $0, ha(calc_diffuse_using_5points.3085)
 	slli	$14, $14, 16
-	ori	$14, $14, lo(calc_diffuse_using_5points.3080)
+	ori	$14, $14, lo(calc_diffuse_using_5points.3085)
 	sw	$14, 0($9)
 	sw	$24, 8($9)
 	sw	$6, 4($9)
 	mov	$14, $4
 	addi	$4, $4, 8
-	ori	$16, $0, ha(do_without_neighbors.3086)
+	ori	$16, $0, ha(do_without_neighbors.3091)
 	slli	$16, $16, 16
-	ori	$16, $16, lo(do_without_neighbors.3086)
+	ori	$16, $16, lo(do_without_neighbors.3091)
 	sw	$16, 0($14)
 	sw	$12, 4($14)
 	mov	$12, $4
 	addi	$4, $4, 8
-	ori	$16, $0, ha(neighbors_exist.3089)
+	ori	$16, $0, ha(neighbors_exist.3094)
 	slli	$16, $16, 16
-	ori	$16, $16, lo(neighbors_exist.3089)
+	ori	$16, $16, lo(neighbors_exist.3094)
 	sw	$16, 0($12)
 	lw	$16, 76($3)
 	sw	$16, 4($12)
 	mov	$17, $4
 	addi	$4, $4, 16
-	ori	$18, $0, ha(try_exploit_neighbors.3102)
+	ori	$18, $0, ha(try_exploit_neighbors.3107)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(try_exploit_neighbors.3102)
+	ori	$18, $18, lo(try_exploit_neighbors.3107)
 	sw	$18, 0($17)
 	sw	$14, 8($17)
 	sw	$9, 4($17)
 	mov	$9, $4
 	addi	$4, $4, 8
-	ori	$18, $0, ha(write_ppm_header.3109)
+	ori	$18, $0, ha(write_ppm_header.3114)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(write_ppm_header.3109)
+	ori	$18, $18, lo(write_ppm_header.3114)
 	sw	$18, 0($9)
 	sw	$16, 4($9)
 	mov	$18, $4
 	addi	$4, $4, 8
-	ori	$19, $0, ha(write_rgb.3113)
+	ori	$19, $0, ha(write_rgb.3118)
 	slli	$19, $19, 16
-	ori	$19, $19, lo(write_rgb.3113)
+	ori	$19, $19, lo(write_rgb.3118)
 	sw	$19, 0($18)
 	sw	$24, 4($18)
 	mov	$19, $4
 	addi	$4, $4, 16
-	ori	$20, $0, ha(pretrace_diffuse_rays.3115)
+	ori	$20, $0, ha(pretrace_diffuse_rays.3120)
 	slli	$20, $20, 16
-	ori	$20, $20, lo(pretrace_diffuse_rays.3115)
+	ori	$20, $20, lo(pretrace_diffuse_rays.3120)
 	sw	$20, 0($19)
 	sw	$8, 12($19)
 	sw	$10, 8($19)
 	sw	$6, 4($19)
 	mov	$6, $4
 	addi	$4, $4, 40
-	ori	$8, $0, ha(pretrace_pixels.3118)
+	ori	$8, $0, ha(pretrace_pixels.3123)
 	slli	$8, $8, 16
-	ori	$8, $8, lo(pretrace_pixels.3118)
+	ori	$8, $8, lo(pretrace_pixels.3123)
 	sw	$8, 0($6)
 	sw	$7, 36($6)
 	sw	$5, 32($6)
@@ -11688,9 +11694,9 @@ Main:
 	sw	$7, 4($6)
 	mov	$8, $4
 	addi	$4, $4, 32
-	ori	$11, $0, ha(pretrace_line.3125)
+	ori	$11, $0, ha(pretrace_line.3130)
 	slli	$11, $11, 16
-	ori	$11, $11, lo(pretrace_line.3125)
+	ori	$11, $11, lo(pretrace_line.3130)
 	sw	$11, 0($8)
 	lw	$11, 104($3)
 	sw	$11, 24($8)
@@ -11702,9 +11708,9 @@ Main:
 	sw	$7, 4($8)
 	mov	$6, $4
 	addi	$4, $4, 32
-	ori	$11, $0, ha(scan_pixel.3129)
+	ori	$11, $0, ha(scan_pixel.3134)
 	slli	$11, $11, 16
-	ori	$11, $11, lo(scan_pixel.3129)
+	ori	$11, $11, lo(scan_pixel.3134)
 	sw	$11, 0($6)
 	sw	$18, 24($6)
 	sw	$17, 20($6)
@@ -11714,25 +11720,25 @@ Main:
 	sw	$14, 4($6)
 	mov	$11, $4
 	addi	$4, $4, 16
-	ori	$12, $0, ha(scan_line.3135)
+	ori	$12, $0, ha(scan_line.3140)
 	slli	$12, $12, 16
-	ori	$12, $12, lo(scan_line.3135)
+	ori	$12, $12, lo(scan_line.3140)
 	sw	$12, 0($11)
 	sw	$6, 12($11)
 	sw	$8, 8($11)
 	sw	$16, 4($11)
 	mov	$6, $4
 	addi	$4, $4, 8
-	ori	$12, $0, ha(create_pixelline.3148)
+	ori	$12, $0, ha(create_pixelline.3153)
 	slli	$12, $12, 16
-	ori	$12, $12, lo(create_pixelline.3148)
+	ori	$12, $12, lo(create_pixelline.3153)
 	sw	$12, 0($6)
 	sw	$16, 4($6)
 	mov	$12, $4
 	addi	$4, $4, 16
-	ori	$14, $0, ha(tan.3150)
+	ori	$14, $0, ha(tan.3155)
 	slli	$14, $14, 16
-	ori	$14, $14, lo(tan.3150)
+	ori	$14, $14, lo(tan.3155)
 	sw	$14, 0($12)
 	lw	$14, 152($3)
 	sw	$14, 8($12)
@@ -11740,87 +11746,87 @@ Main:
 	sw	$14, 4($12)
 	mov	$14, $4
 	addi	$4, $4, 8
-	ori	$17, $0, ha(adjust_position.3152)
+	ori	$17, $0, ha(adjust_position.3157)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(adjust_position.3152)
+	ori	$17, $17, lo(adjust_position.3157)
 	sw	$17, 0($14)
 	sw	$12, 4($14)
 	mov	$12, $4
 	addi	$4, $4, 16
-	ori	$17, $0, ha(calc_dirvec.3155)
+	ori	$17, $0, ha(calc_dirvec.3160)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(calc_dirvec.3155)
+	ori	$17, $17, lo(calc_dirvec.3160)
 	sw	$17, 0($12)
 	sw	$10, 8($12)
 	sw	$14, 4($12)
 	mov	$14, $4
 	addi	$4, $4, 8
-	ori	$17, $0, ha(calc_dirvecs.3163)
+	ori	$17, $0, ha(calc_dirvecs.3168)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(calc_dirvecs.3163)
+	ori	$17, $17, lo(calc_dirvecs.3168)
 	sw	$17, 0($14)
 	sw	$12, 4($14)
 	mov	$12, $4
 	addi	$4, $4, 8
-	ori	$17, $0, ha(calc_dirvec_rows.3168)
+	ori	$17, $0, ha(calc_dirvec_rows.3173)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(calc_dirvec_rows.3168)
+	ori	$17, $17, lo(calc_dirvec_rows.3173)
 	sw	$17, 0($12)
 	sw	$14, 4($12)
 	mov	$14, $4
 	addi	$4, $4, 8
-	ori	$17, $0, ha(create_dirvec.3172)
+	ori	$17, $0, ha(create_dirvec.3177)
 	slli	$17, $17, 16
-	ori	$17, $17, lo(create_dirvec.3172)
+	ori	$17, $17, lo(create_dirvec.3177)
 	sw	$17, 0($14)
 	lw	$17, 0($3)
 	sw	$17, 4($14)
 	mov	$18, $4
 	addi	$4, $4, 8
-	ori	$19, $0, ha(create_dirvec_elements.3174)
+	ori	$19, $0, ha(create_dirvec_elements.3179)
 	slli	$19, $19, 16
-	ori	$19, $19, lo(create_dirvec_elements.3174)
+	ori	$19, $19, lo(create_dirvec_elements.3179)
 	sw	$19, 0($18)
 	sw	$14, 4($18)
 	mov	$19, $4
 	addi	$4, $4, 16
-	ori	$20, $0, ha(create_dirvecs.3177)
+	ori	$20, $0, ha(create_dirvecs.3182)
 	slli	$20, $20, 16
-	ori	$20, $20, lo(create_dirvecs.3177)
+	ori	$20, $20, lo(create_dirvecs.3182)
 	sw	$20, 0($19)
 	sw	$10, 12($19)
 	sw	$18, 8($19)
 	sw	$14, 4($19)
 	mov	$18, $4
 	addi	$4, $4, 8
-	ori	$20, $0, ha(init_dirvec_constants.3179)
+	ori	$20, $0, ha(init_dirvec_constants.3184)
 	slli	$20, $20, 16
-	ori	$20, $20, lo(init_dirvec_constants.3179)
+	ori	$20, $20, lo(init_dirvec_constants.3184)
 	sw	$20, 0($18)
 	lw	$20, 144($3)
 	sw	$20, 4($18)
 	mov	$21, $4
 	addi	$4, $4, 16
-	ori	$22, $0, ha(init_vecset_constants.3182)
+	ori	$22, $0, ha(init_vecset_constants.3187)
 	slli	$22, $22, 16
-	ori	$22, $22, lo(init_vecset_constants.3182)
+	ori	$22, $22, lo(init_vecset_constants.3187)
 	sw	$22, 0($21)
 	sw	$18, 8($21)
 	sw	$10, 4($21)
 	mov	$10, $4
 	addi	$4, $4, 16
-	ori	$18, $0, ha(init_dirvecs.3184)
+	ori	$18, $0, ha(init_dirvecs.3189)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(init_dirvecs.3184)
+	ori	$18, $18, lo(init_dirvecs.3189)
 	sw	$18, 0($10)
 	sw	$21, 12($10)
 	sw	$19, 8($10)
 	sw	$12, 4($10)
 	mov	$12, $4
 	addi	$4, $4, 16
-	ori	$18, $0, ha(add_reflection.3186)
+	ori	$18, $0, ha(add_reflection.3191)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(add_reflection.3186)
+	ori	$18, $18, lo(add_reflection.3191)
 	sw	$18, 0($12)
 	sw	$20, 12($12)
 	lw	$18, 136($3)
@@ -11828,36 +11834,36 @@ Main:
 	sw	$14, 4($12)
 	mov	$14, $4
 	addi	$4, $4, 16
-	ori	$18, $0, ha(setup_rect_reflection.3193)
+	ori	$18, $0, ha(setup_rect_reflection.3198)
 	slli	$18, $18, 16
-	ori	$18, $18, lo(setup_rect_reflection.3193)
+	ori	$18, $18, lo(setup_rect_reflection.3198)
 	sw	$18, 0($14)
 	sw	$2, 12($14)
 	sw	$13, 8($14)
 	sw	$12, 4($14)
 	mov	$18, $4
 	addi	$4, $4, 16
-	ori	$19, $0, ha(setup_surface_reflection.3196)
+	ori	$19, $0, ha(setup_surface_reflection.3201)
 	slli	$19, $19, 16
-	ori	$19, $19, lo(setup_surface_reflection.3196)
+	ori	$19, $19, lo(setup_surface_reflection.3201)
 	sw	$19, 0($18)
 	sw	$2, 12($18)
 	sw	$13, 8($18)
 	sw	$12, 4($18)
 	mov	$2, $4
 	addi	$4, $4, 16
-	ori	$12, $0, ha(setup_reflections.3199)
+	ori	$12, $0, ha(setup_reflections.3204)
 	slli	$12, $12, 16
-	ori	$12, $12, lo(setup_reflections.3199)
+	ori	$12, $12, lo(setup_reflections.3204)
 	sw	$12, 0($2)
 	sw	$18, 12($2)
 	sw	$14, 8($2)
 	sw	$15, 4($2)
 	mov	$28, $4
 	addi	$4, $4, 64
-	ori	$12, $0, ha(rt.3201)
+	ori	$12, $0, ha(rt.3206)
 	slli	$12, $12, 16
-	ori	$12, $12, lo(rt.3201)
+	ori	$12, $12, lo(rt.3206)
 	sw	$12, 0($28)
 	sw	$9, 56($28)
 	sw	$2, 52($28)

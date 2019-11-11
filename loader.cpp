@@ -17,6 +17,7 @@ loader::loader(const char *fname) {
     file_name = fname;
     load_line_num = 0;
     line_num = 0; // reset line number
+    end_line_num = 1000000;
 
     output_exist = false;
     input_exist = false;
@@ -687,11 +688,11 @@ unsigned int loader::format_code(vector<string> code) {
             exit(1);
         }
 
-    } else if (opecode == "div") { // DIV rd <- rs / rt
+    } else if (opecode == "div10") { // DIV10 rd <- rs / 10
         unsigned int op_bit = 0x0;
         unsigned int rd_bit = 0x0;
         unsigned int rs_bit = 0x0;
-        unsigned int rt_bit = 0x0;
+        unsigned int rt_bit = 0xa << 11;
         unsigned int shamt_bit = (0x2 << 6);
         unsigned int funct_bit = 0x1A;
         try {
@@ -709,15 +710,8 @@ unsigned int loader::format_code(vector<string> code) {
                 rs_bit = ((unsigned int)rs << 16);
                 iter++;
             }
-            if (iter == code.end()) {
-                throw 3;
-            } else {
-                int rt = get_reg_num(*iter);
-                rt_bit = ((unsigned int)rt << 11);
-                iter++;
-            }
             if (iter != code.end()) {
-                throw 4;
+                throw 3;
             }
 
             result = op_bit | rd_bit | rs_bit | rt_bit | shamt_bit | funct_bit;
