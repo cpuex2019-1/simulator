@@ -1,5 +1,5 @@
 # simulator for 2nd (mipsim)
-## version 0.1
+## version 0.1.1
 ### how to use
 Make sure you can use `g++` and `c++11`, then, compile the programs:
 ```

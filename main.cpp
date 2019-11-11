@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
                 };
             }
 
-        } else if (str == "e" |
+        } else if (str == "e" ||
                    str ==
                        "execute") { // execute instructions for designated times
 
