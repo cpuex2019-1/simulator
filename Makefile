@@ -14,7 +14,7 @@ $(PROG): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(PROG) $(OBJS)
 
 $(PROG2): $(OBJS2)
-$(CXX) $(CXXFLAGS) -o $(PROG2) $(OBJS2)
+	$(CXX) $(CXXFLAGS) -o $(PROG2) $(OBJS2)
 
 clean:
 	rm -f $(PROG) $(OBJS) $(PROG2) $(OBJS2)
