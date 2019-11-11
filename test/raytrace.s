@@ -344,7 +344,7 @@ eq_else.9239:
 	fsub	$f0, $f0, $f2
 	j	sqrt_sub.2641
 sqrt.2645:
-	addi	$2, $0, 6
+	addi	$2, $0, 13
 	movf	$f1, $f0
 	j	sqrt_sub.2641
 float_of_int_sub.2647:
@@ -10414,9 +10414,9 @@ rt.3201:
 	lw	$19, 4($28)
 	sw	$2, 0($17)
 	sw	$5, 4($17)
-	srli	$17, $2, 1
+	srai	$17, $2, 1
 	sw	$17, 0($18)
-	srli	$5, $5, 1
+	srai	$5, $5, 1
 	sw	$5, 4($18)
 	ori	$30, $0, 1
 	slli	$30, $30, 16
