@@ -709,6 +709,69 @@ void controller::exec_code(unsigned int one_code) {
             break;
         }
 
+        case 5: { // SIN rd <- sin(rs)
+            inst_times[SIN] += 1;
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d) <- sin(rs($f%d):%f)\n", rd, rs,
+                       fregs[rs].data.f);
+            }
+            fregs[rd].data.f = sin(fregs[rs].data.f);
+
+            if (log_level >= DEBUG) {
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            }
+
+            line_num++;
+            break;
+        }
+
+        case 6: { // COS rd <- cos(rs)
+            inst_times[COS] += 1;
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d) <- cos(rs($f%d):%f)\n", rd, rs,
+                       fregs[rs].data.f);
+            }
+            fregs[rd].data.f = cos(fregs[rs].data.f);
+
+            if (log_level >= DEBUG) {
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            }
+
+            line_num++;
+            break;
+        }
+
+        case 7: { // ATAN rd <- atan(rs)
+            inst_times[ATAN] += 1;
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d) <- atan(rs($f%d):%f)\n", rd, rs,
+                       fregs[rs].data.f);
+            }
+            fregs[rd].data.f = atan(fregs[rs].data.f);
+
+            if (log_level >= DEBUG) {
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            }
+
+            line_num++;
+            break;
+        }
+
         case 8: { // SLTF Rd[0] = if Rs < Rt then 1 else 0
             inst_times[SLTF] += 1;
             // * rd is a general register

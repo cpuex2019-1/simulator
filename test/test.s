@@ -4,6 +4,7 @@ input_output:
     inf     $f1
     outf    $f1
     div10   $2, $1
+    itof   $f2, $1
 arith_float:
     addi    $29, $0, 10000
     addi    $4, $0, 16256   # 1.0の上位16bit
