@@ -688,6 +688,69 @@ void controller::exec_code(unsigned int one_code) {
             break;
         }
 
+        case 10: { // FABS rd <- abs(rs)
+            inst_times[FABS] += 1;
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d) <- abs(rs($f%d):%f)\n", rd, rs,
+                       fregs[rs].data.f);
+            }
+            fregs[rd].data.f = abs(fregs[rs].data.f);
+
+            if (log_level >= DEBUG) {
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            }
+
+            line_num++;
+            break;
+        }
+
+        case 11: { // FLOOR rd <- floor(rs)
+            inst_times[FLOOR] += 1;
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d) <- FLOOR(rs($f%d):%f)\n", rd, rs,
+                       fregs[rs].data.f);
+            }
+            fregs[rd].data.f = floor(fregs[rs].data.f);
+
+            if (log_level >= DEBUG) {
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            }
+
+            line_num++;
+            break;
+        }
+
+        case 12: { // FTOI rd <- ftoi(rs)
+            inst_times[FTOI] += 1;
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+                printf("\trd($%d) <- ftoi(rs($f%d):%f)\n", rd, rs,
+                       fregs[rs].data.f);
+            }
+            regs[rd].data = (int)fregs[rs].data.f;
+
+            if (log_level >= DEBUG) {
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+            }
+
+            line_num++;
+            break;
+        }
+
         case 4: { // SQRT rd <- sqrt(rs)
             inst_times[SQRT] += 1;
             rd = (one_code & rd_mask) >> 21;
@@ -1499,6 +1562,29 @@ void controller::print_statistic_to_file() {
         case FNEG:
             tmp = "FNEG";
             break;
+
+        case SIN:
+            tmp = "SIN";
+            break;
+        case COS:
+            tmp = "COS ";
+            break;
+        case ATAN:
+            tmp = "ATAN";
+            break;
+        case FABS:
+            tmp = "FABS";
+            break;
+        case FLOOR:
+            tmp = "FLOOR ";
+            break;
+        case FTOI:
+            tmp = "FTOI";
+            break;
+        case ITOF:
+            tmp = "ITOF";
+            break;
+
         case SQRT:
             tmp = "SQRT";
             break;
@@ -1681,6 +1767,29 @@ void controller::print_inst_times() {
         case FNEG:
             tmp = "FNEG";
             break;
+
+        case SIN:
+            tmp = "SIN";
+            break;
+        case COS:
+            tmp = "COS ";
+            break;
+        case ATAN:
+            tmp = "ATAN";
+            break;
+        case FABS:
+            tmp = "FABS";
+            break;
+        case FLOOR:
+            tmp = "FLOOR ";
+            break;
+        case FTOI:
+            tmp = "FTOI";
+            break;
+        case ITOF:
+            tmp = "ITOF";
+            break;
+
         case SQRT:
             tmp = "SQRT";
             break;

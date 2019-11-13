@@ -1,4 +1,5 @@
 .clang-format
 *.o
+*.ppm
 /mipsim
 /mipsim-all

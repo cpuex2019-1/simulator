@@ -395,6 +395,30 @@ void controller::exec_code(unsigned int one_code) {
             break;
         }
 
+        case 10: { // FABS rd <- abs(rs)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            fregs[rd].f = abs(fregs[rs].f);
+            line_num++;
+            break;
+        }
+
+        case 11: { // FLOOR rd <- -rs
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            fregs[rd].f = floor(fregs[rs].f);
+            line_num++;
+            break;
+        }
+
+        case 12: { // FTOI rd <- ftoi(rs)
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            regs[rd] = (int)fregs[rs].f;
+            line_num++;
+            break;
+        }
+
         case 4: { // SQRT rd <- sqrt(rs)
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
@@ -2261,6 +2285,109 @@ unsigned int controller::format_code(vector<string> code) {
                 throw 1;
             } else {
                 int rd = get_freg_num(*iter);
+                rd_bit = ((unsigned int)rd << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_freg_num(*iter);
+                rs_bit = ((unsigned int)rs << 16);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 3;
+            }
+
+            result = op_bit | rd_bit | rs_bit | rt_bit | shamt_bit | funct_bit;
+
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "fabs") { // FABS rd <- abs(rs)
+        unsigned int op_bit = ((unsigned int)0x11 << 26);
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int rt_bit = 0x0;
+        unsigned int shamt_bit = 0x0;
+        unsigned int funct_bit = 0xa;
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_freg_num(*iter);
+                rd_bit = ((unsigned int)rd << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_freg_num(*iter);
+                rs_bit = ((unsigned int)rs << 16);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 3;
+            }
+
+            result = op_bit | rd_bit | rs_bit | rt_bit | shamt_bit | funct_bit;
+
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "floor") { // FLOOR rd <- floor(rs)
+        unsigned int op_bit = ((unsigned int)0x11 << 26);
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int rt_bit = 0x0;
+        unsigned int shamt_bit = 0x0;
+        unsigned int funct_bit = 0xb;
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_freg_num(*iter);
+                rd_bit = ((unsigned int)rd << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_freg_num(*iter);
+                rs_bit = ((unsigned int)rs << 16);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 3;
+            }
+
+            result = op_bit | rd_bit | rs_bit | rt_bit | shamt_bit | funct_bit;
+
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "ftoi") { // FTOI rd <- ftoi(rs)
+        // rd is a general register
+        unsigned int op_bit = ((unsigned int)0x11 << 26);
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int rt_bit = 0x0;
+        unsigned int shamt_bit = 0x0;
+        unsigned int funct_bit = 0xc;
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
                 rd_bit = ((unsigned int)rd << 21);
                 iter++;
             }
