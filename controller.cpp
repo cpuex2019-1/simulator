@@ -249,6 +249,28 @@ void controller::exec_code(unsigned int one_code) {
             break;
         }
 
+        // ITOF
+        case 12: { // ITOF *rd <- itof(rs)
+            inst_times[ITOF] += 1;
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d) <- itof(rs($%d):%d)\n", rd, rs,
+                       regs[rs].data);
+            }
+
+            rd = (one_code & rd_mask) >> 21;
+            rs = (one_code & rs_mask) >> 16;
+            fregs[rd].data.f = (float)(regs[rs].data);
+            if (log_level >= DEBUG) {
+                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            }
+            line_num++;
+            break;
+        }
+
         // SRL
         case 6: { // SRL rd <- rs >> rt (logical)
             inst_times[SRL] += 1;

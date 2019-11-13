@@ -22,6 +22,7 @@ enum Asm {
     SRA,
     SRL,
     SLL,
+    ITOF,
     FADD,
     FSUB,
     FMUL,
