@@ -15,6 +15,8 @@
 #include <string>
 using namespace std;
 
+long long count_zero_plus_one = 0;
+
 controller::controller(const char *fname, loader *l, memory *m, reg r[],
                        freg fr[]) {
     ld = l;
@@ -988,6 +990,9 @@ void controller::exec_code(unsigned int one_code) {
         if ((immediate & 0x8000) == 0x8000) { //符号拡張
             immediate = 0xffff0000 | immediate;
         }
+        if (rs == 0 && immediate == 1) {
+            count_zero_plus_one++;
+        }
 
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
@@ -1464,6 +1469,7 @@ void controller::print_statistic_to_file() {
 
     fprintf(out_statistic, "max hp:%d\n", hp_max);
     fprintf(out_statistic, "max sp:%d\n", sp_max);
+    fprintf(out_statistic, "$0 + 1:%d\n", count_zero_plus_one);
 
     vector<pair<int, long long int>>
         jump_times_pairs;              // <labelの番号, labelのjamp回数>
