@@ -16,6 +16,12 @@
 using namespace std;
 
 long long count_zero_plus_one = 0;
+long long bne_true_plus = 0;
+long long bne_true_minus = 0;
+long long bne_false = 0;
+long long beq_true_plus = 0;
+long long beq_true_minus = 0;
+long long beq_false = 0;
 
 controller::controller(const char *fname, loader *l, memory *m, reg r[],
                        freg fr[]) {
@@ -984,9 +990,15 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         if (regs[rs].data == regs[rt].data) {
+            if (label_line > 0) {
+                beq_true_plus++;
+            } else {
+                beq_true_minus++;
+            }
             line_num = line_num + label_line;
             record_jump(line_num);
         } else {
+            beq_false++;
             line_num++;
         }
 
@@ -1014,9 +1026,16 @@ void controller::exec_code(unsigned int one_code) {
         }
 
         if (regs[rs].data != regs[rt].data) {
+            if (label_line > 0) {
+                bne_true_plus++;
+            } else {
+                bne_true_minus++;
+            }
+
             line_num = line_num + label_line;
             record_jump(line_num);
         } else {
+            bne_false++;
             line_num++;
         }
         if (log_level >= DEBUG) {
@@ -1254,7 +1273,7 @@ void controller::exec_code(unsigned int one_code) {
             printf("DEBUG\n");
             printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
                    ((unsigned int)fregs[rd].data.i));
-            printf("\trd($f%d) <- memory[%d]:(hex)%8x\n", rd, addr,
+            printf("\trd($f%d) <- memory[%d]:(hex:%8x)\n", rd, addr,
                    memo->read_word(addr));
         }
         fregs[rd].data.i = memo->read_word(addr);
@@ -1523,7 +1542,13 @@ void controller::print_statistic_to_file() {
 
     fprintf(out_statistic, "max hp:%d\n", hp_max);
     fprintf(out_statistic, "max sp:%d\n", sp_max);
-    fprintf(out_statistic, "$0 + 1:%lld\n", count_zero_plus_one);
+    fprintf(out_statistic, "$0 +1:%lld\n", count_zero_plus_one);
+    fprintf(out_statistic, "beq true plus:%lld\n", beq_true_plus);
+    fprintf(out_statistic, "beq true minus:%lld\n", beq_true_minus);
+    fprintf(out_statistic, "beq false:%lld\n", beq_false);
+    fprintf(out_statistic, "bne true plus:%lld\n", bne_true_plus);
+    fprintf(out_statistic, "bne true minus:%lld\n", bne_true_minus);
+    fprintf(out_statistic, "bne false:%lld\n", bne_false);
 
     vector<pair<int, long long int>>
         jump_times_pairs;              // <labelの番号, labelのjamp回数>
