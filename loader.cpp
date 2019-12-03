@@ -454,6 +454,7 @@ void loader::load_line_label(string line) {
 
     if (label_str != "") {
         label_map.insert(std::make_pair(label_str, line_num));
+        label_vec.push_back(label_str);
     }
     if (res != "") { // 命令がある場合
         line_num++;  // increment before processing the line

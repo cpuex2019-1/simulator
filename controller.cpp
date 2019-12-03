@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <regex>
+#include <set>
 #include <string>
 using namespace std;
 
@@ -1439,11 +1440,13 @@ void controller::record_jump(int jump_line_num) {
 }
 
 bool compare_by_b_lld(pair<int, long long int> a, pair<int, long long int> b) {
+    return a.second > b.second;
+    /*
     if (a.second != b.second) {
         return a.second > b.second;
     } else {
         return a.first > b.first;
-    }
+    }*/
 }
 
 void controller::print_statistic_to_file() {
@@ -1462,20 +1465,26 @@ void controller::print_statistic_to_file() {
     fprintf(out_statistic, "max hp:%d\n", hp_max);
     fprintf(out_statistic, "max sp:%d\n", sp_max);
 
-    vector<pair<int, long long int>> jump_times_pairs;
-    map<int, string> label_map_by_num;
-    for (auto itr = ld->label_map.begin(); itr != ld->label_map.end(); ++itr) {
-        label_map_by_num.insert(make_pair(itr->second, itr->first));
+    vector<pair<int, long long int>>
+        jump_times_pairs;              // <labelの番号, labelのjamp回数>
+    map<int, string> label_map_by_num; // <labelの番号,labelのstr>
+    for (auto pair : ld->label_map) {
+        label_map_by_num.insert(make_pair(pair.second, pair.first));
         jump_times_pairs.push_back(
-            make_pair(itr->second, jump_times[itr->second]));
+            make_pair(pair.second, jump_times[pair.second]));
     }
+    // jamp回数でソート
     sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b_lld);
 
     fprintf(out_statistic, "jump times\n");
-    for (auto itr = jump_times_pairs.begin(); itr != jump_times_pairs.end();
-         ++itr) {
-        fprintf(out_statistic, "\t%s :\t%lld\n",
-                label_map_by_num[itr->first].c_str(), itr->second);
+    set<int> s;
+    for (auto pair : jump_times_pairs) {
+        auto it = s.find(pair.first);
+        if (it == s.end()) { // 見つからない
+            fprintf(out_statistic, "\t%s :\t%lld\n",
+                    label_map_by_num[pair.first].c_str(), pair.second);
+            s.insert(pair.first);
+        }
     }
 
     vector<pair<int, long long int>> inst_times_pairs;
@@ -1663,24 +1672,6 @@ void controller::print_statistic_to_file() {
     }
 
     fclose(out_statistic);
-}
-
-void controller::print_jump_times() {
-    vector<pair<int, long long int>> jump_times_pairs;
-    map<int, string> label_map_by_num;
-    for (auto itr = ld->label_map.begin(); itr != ld->label_map.end(); ++itr) {
-        label_map_by_num.insert(make_pair(itr->second, itr->first));
-        jump_times_pairs.push_back(
-            make_pair(itr->second, jump_times[itr->second]));
-    }
-    sort(jump_times_pairs.begin(), jump_times_pairs.end(), compare_by_b_lld);
-
-    printf("jump times\n");
-    for (auto itr = jump_times_pairs.begin(); itr != jump_times_pairs.end();
-         ++itr) {
-        printf("\t%s :\t%lld\n", label_map_by_num[itr->first].c_str(),
-               itr->second);
-    }
 }
 
 void controller::print_inst_times() {

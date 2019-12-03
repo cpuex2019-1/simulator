@@ -46,6 +46,7 @@ class loader {
     bool input_exist;
     Log log_level = DEBUG;
     map<string, int> label_map;
+    vector<string> label_vec;
     // constructor
     loader(const char *fname);
     // destructor
