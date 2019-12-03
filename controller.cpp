@@ -259,7 +259,8 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- itof(rs($%d):%d)\n", rd, rs,
                        regs[rs].data);
             }
@@ -268,7 +269,8 @@ void controller::exec_code(unsigned int one_code) {
             rs = (one_code & rs_mask) >> 16;
             fregs[rd].data.f = (float)(regs[rs].data);
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
             line_num++;
             break;
@@ -588,15 +590,20 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
-                printf("\trd($f%d) <- rs($f%d):%f +. rt($f%d):%f\n", rd, rs,
-                       fregs[rs].data.f, rt, fregs[rt].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
+                printf("\trd($f%d) <- rs($f%d):%f(hex:%08x) +. "
+                       "rt($f%d):%f(hex:%08x)\n",
+                       rd, rs, fregs[rs].data.f,
+                       ((unsigned int)fregs[rs].data.i), rt, fregs[rt].data.f,
+                       ((unsigned int)fregs[rt].data.i));
             }
 
             fregs[rd].data.f = fregs[rs].data.f + fregs[rt].data.f;
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -611,15 +618,20 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
-                printf("\trd($f%d) <- rs($f%d):%f -. rt($f%d):%f\n", rd, rs,
-                       fregs[rs].data.f, rt, fregs[rt].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
+                printf("\trd($f%d) <- rs($f%d):%f(hex:%08x) -. "
+                       "rt($f%d):%f(hex:%08x)\n",
+                       rd, rs, fregs[rs].data.f,
+                       ((unsigned int)fregs[rs].data.i), rt, fregs[rt].data.f,
+                       ((unsigned int)fregs[rt].data.i));
             }
 
             fregs[rd].data.f = fregs[rs].data.f - fregs[rt].data.f;
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -634,15 +646,20 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
-                printf("\trd($f%d) <- rs($f%d):%f *. rt($f%d):%f\n", rd, rs,
-                       fregs[rs].data.f, rt, fregs[rt].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
+                printf("\trd($f%d) <- rs($f%d):%f(hex:%08x) *.  "
+                       "rt($f%d):%f(hex:%08x)\n",
+                       rd, rs, fregs[rs].data.f,
+                       ((unsigned int)fregs[rs].data.i), rt, fregs[rt].data.f,
+                       ((unsigned int)fregs[rt].data.i));
             }
 
             fregs[rd].data.f = fregs[rs].data.f * fregs[rt].data.f;
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -656,15 +673,20 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
-                printf("\trd($f%d) <- rs($f%d):%f /. rt($f%d):%f\n", rd, rs,
-                       fregs[rs].data.f, rt, fregs[rt].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
+                printf("\trd($f%d) <- rs($f%d):%f(hex:%08x) /. "
+                       "rt($f%d):%f(hex:%08x)\n",
+                       rd, rs, fregs[rs].data.f,
+                       ((unsigned int)fregs[rs].data.i), rt, fregs[rt].data.f,
+                       ((unsigned int)fregs[rt].data.i));
             }
 
             fregs[rd].data.f = fregs[rs].data.f / fregs[rt].data.f;
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -677,14 +699,16 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- neg(rs($f%d):%f)\n", rd, rs,
                        fregs[rs].data.f);
             }
             fregs[rd].data.f = -fregs[rs].data.f;
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -698,14 +722,16 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- abs(rs($f%d):%f)\n", rd, rs,
                        fregs[rs].data.f);
             }
             fregs[rd].data.f = abs(fregs[rs].data.f);
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -719,14 +745,16 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- FLOOR(rs($f%d):%f)\n", rd, rs,
                        fregs[rs].data.f);
             }
             fregs[rd].data.f = floor(fregs[rs].data.f);
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -761,14 +789,16 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- sqrt(rs($f%d):%f)\n", rd, rs,
                        fregs[rs].data.f);
             }
             fregs[rd].data.f = sqrt(fregs[rs].data.f);
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -782,14 +812,16 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- sin(rs($f%d):%f)\n", rd, rs,
                        fregs[rs].data.f);
             }
             fregs[rd].data.f = sin(fregs[rs].data.f);
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -803,14 +835,16 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- cos(rs($f%d):%f)\n", rd, rs,
                        fregs[rs].data.f);
             }
             fregs[rd].data.f = cos(fregs[rs].data.f);
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -824,14 +858,16 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- atan(rs($f%d):%f)\n", rd, rs,
                        fregs[rs].data.f);
             }
             fregs[rd].data.f = atan(fregs[rs].data.f);
 
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -848,9 +884,12 @@ void controller::exec_code(unsigned int one_code) {
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
-                printf("\trd($f%d)[0] <- if (rs($f%d):%f < rt($f%d):%f) then 1 "
+                printf("\trd($%d)[0] <- if (rs($f%d):%f(hex:%08x) < "
+                       "rt($f%d):%f(hex:%08x)) then 1 "
                        "else 0\n",
-                       rd, rs, fregs[rs].data.f, rt, fregs[rt].data.f);
+                       rd, rs, fregs[rs].data.f,
+                       ((unsigned int)fregs[rs].data.i), rt, fregs[rt].data.f,
+                       ((unsigned int)fregs[rt].data.i));
             }
             if (fregs[rs].data.f < fregs[rt].data.f) {
                 regs[rd].data = 1;
@@ -872,12 +911,16 @@ void controller::exec_code(unsigned int one_code) {
 
             if (log_level >= DEBUG) {
                 printf("DEBUG\n");
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
                 printf("\trd($f%d) <- rs($f%d):%f\n", rd, rs, fregs[rs].data.f);
             }
             fregs[rd].data.f = fregs[rs].data.f;
             if (log_level >= DEBUG) {
-                printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+
+                printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                       ((unsigned int)fregs[rd].data.i));
             }
 
             line_num++;
@@ -1209,14 +1252,16 @@ void controller::exec_code(unsigned int one_code) {
 
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
-            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                   ((unsigned int)fregs[rd].data.i));
             printf("\trd($f%d) <- memory[%d]:(hex)%8x\n", rd, addr,
                    memo->read_word(addr));
         }
         fregs[rd].data.i = memo->read_word(addr);
 
         if (log_level >= DEBUG) {
-            printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+            printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                   ((unsigned int)fregs[rd].data.i));
         }
 
         line_num++;
@@ -1261,7 +1306,8 @@ void controller::exec_code(unsigned int one_code) {
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:(hex)%8x\n", addr, memo->read_word(addr));
-            printf("\tmemory[%d] <- rd($f%d):%f\n", addr, rd, fregs[rd].data.f);
+            printf("\tmemory[%d] <- rd($f%d):%f(hex:%08x)\n", addr, rd,
+                   fregs[rd].data.f, ((unsigned int)fregs[rd].data.i));
         }
         memo->write_word(addr, fregs[rd].data.i);
         if (log_level >= DEBUG) {
@@ -1395,13 +1441,18 @@ void controller::exec_code(unsigned int one_code) {
 
                     if (log_level >= DEBUG) {
                         printf("DEBUG\n");
-                        printf("\tINF rd($f%d):%f <- get(float):%f\n", rd,
-                               fregs[rd].data.f, tmp.f);
+                        printf("\tINF rd($f%d):%f(hex:%08x) <- "
+                               "get(float):%f(hex:%08x)\n",
+                               rd, fregs[rd].data.f,
+                               ((unsigned int)fregs[rd].data.i), tmp.f,
+                               ((unsigned int)tmp.i));
                     }
 
                     fregs[rd].data.f = tmp.f;
                     if (log_level >= DEBUG) {
-                        printf("\trd($f%d):%f\n", rd, fregs[rd].data.f);
+                        printf("\trd($f%d):%f(hex:%08x)\n", rd,
+                               fregs[rd].data.f,
+                               ((unsigned int)fregs[rd].data.i));
                     }
                 }
                 line_num++;
@@ -1413,11 +1464,14 @@ void controller::exec_code(unsigned int one_code) {
                 rs = (one_code & rs_mask) >> 16;
                 if (log_level >= DEBUG) {
                     printf("DEBUG\n");
-                    printf("\tOUTF rs($%d):%f\n", rs, fregs[rs].data.f);
+                    printf("\tOUTF rs($%d):%f(hex:%08x)\n", rs,
+                           fregs[rs].data.f, ((unsigned int)fregs[rs].data.i));
                 }
+
                 fprintf(outputfile, "%f", fregs[rs].data.f);
                 if (log_level >= DEBUG) {
-                    printf("\tout(float):%f\n", fregs[rs].data.f);
+                    printf("\tout(float):%f(hex:%08x)\n", fregs[rs].data.f,
+                           ((unsigned int)fregs[rs].data.i));
                 }
                 line_num++;
                 break;
@@ -1469,7 +1523,7 @@ void controller::print_statistic_to_file() {
 
     fprintf(out_statistic, "max hp:%d\n", hp_max);
     fprintf(out_statistic, "max sp:%d\n", sp_max);
-    fprintf(out_statistic, "$0 + 1:%d\n", count_zero_plus_one);
+    fprintf(out_statistic, "$0 + 1:%lld\n", count_zero_plus_one);
 
     vector<pair<int, long long int>>
         jump_times_pairs;              // <labelの番号, labelのjamp回数>
