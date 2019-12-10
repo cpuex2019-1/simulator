@@ -414,7 +414,7 @@ void controller::exec_code(unsigned int one_code) {
         case 12: { // FTOI rd <- ftoi(rs)
             rd = (one_code & rd_mask) >> 21;
             rs = (one_code & rs_mask) >> 16;
-            regs[rd] = (int)fregs[rs].f;
+            regs[rd] = (int)round(fregs[rs].f);
             line_num++;
             break;
         }

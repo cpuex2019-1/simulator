@@ -778,7 +778,7 @@ void controller::exec_code(unsigned int one_code) {
                 printf("\trd($%d) <- ftoi(rs($f%d):%f)\n", rd, rs,
                        fregs[rs].data.f);
             }
-            regs[rd].data = (int)fregs[rs].data.f;
+            regs[rd].data = (int)round(fregs[rs].data.f);
 
             if (log_level >= DEBUG) {
                 printf("\trd($%d):%d\n", rd, regs[rd].data);
