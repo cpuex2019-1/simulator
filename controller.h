@@ -36,6 +36,7 @@ class controller {
     // current line number being processed
     int line_num;
     Log log_level = DEBUG;
+    long long int ex_count;
 
     // constructor
     controller(const char *fname, loader *l, memory *m, reg *r, freg *fr);

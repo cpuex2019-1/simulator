@@ -75,7 +75,7 @@ class controller {
     Status exec_step(int break_point);
 
     Log log_level = DEBUG;
-
+    long long int ex_count;
     // print
     void print_label_map();
     void print_program_map();

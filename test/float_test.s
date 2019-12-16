@@ -1,4 +1,8 @@
     inf $f1
+    ftoi $1, $f1
+    inf $f1
+    ftoi $1, $f1
+    inf $f1
     inf $f2
     fabs $f3, $f1
     outf $f3

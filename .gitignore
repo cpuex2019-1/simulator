@@ -3,3 +3,5 @@
 *.ppm
 /mipsim
 /mipsim-all
+*.out
+.DS_Store

@@ -29,17 +29,16 @@ int main(int argc, char *argv[]) {
 
     printf("start simulation\n");
     clock_t start = clock();
-    long long int count = 0;
+
     Status status = ACTIVE;
     while (status == ACTIVE) {
         status = controller.exec_step(break_p);
-        count++;
     };
     clock_t end = clock();
     const double time =
         static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
 
     printf("time %lf [ms]\n", time);
-    printf("%lld instructions\n", count);
+    printf("%lld instructions\n", controller.ex_count);
     return 0;
 }

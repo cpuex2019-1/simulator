@@ -22,6 +22,7 @@ controller::controller(const char *fname) {
     file_name = fname;
     load_line_num = 0;
     line_num = 0; // reset line number
+    ex_count = 0;
     end_line_num = 1000000;
 
     output_exist = false;
@@ -120,6 +121,7 @@ void controller::print_word_by_addr(sim_addr s_addr, sim_addr e_addr) {
 // for simulate
 Status controller::exec_step(int break_point) {
     unsigned int one_code = get_machine_code_by_line_num(line_num);
+    ex_count++;
     exec_code(one_code);
     if (line_num >= end_line_num) {
         return END;
@@ -566,12 +568,15 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         reg = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
+        if ((offset & 0x8000) == 0x8000) { //符号拡張
+            offset = 0xffff0000 | offset;
+        }
         addr = regs[reg] + offset;
         if (!(0 <= addr && addr < memorySize)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
-                   "[%d]\n",
-                   one_raw_program.c_str(), line_num * 4, addr);
+                   "[%d]\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
         unsigned char data = read_byte(addr);
@@ -584,12 +589,15 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         reg = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
+        if ((offset & 0x8000) == 0x8000) { //符号拡張
+            offset = 0xffff0000 | offset;
+        }
         addr = regs[reg] + offset;
         if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
-                   "[%d]\n",
-                   one_raw_program.c_str(), line_num * 4, addr);
+                   "[%d]\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
         regs[rd] = read_word(addr);
@@ -601,12 +609,15 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         reg = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
+        if ((offset & 0x8000) == 0x8000) { //符号拡張
+            offset = 0xffff0000 | offset;
+        }
         addr = regs[reg] + offset;
         if (!(0 <= addr && addr < memorySize)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
-                   "[%d]\n",
-                   one_raw_program.c_str(), line_num * 4, addr);
+                   "[%d]\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
         write_byte(addr, (unsigned char)((regs[rd] << 8 * 3) >> 8 * 3));
@@ -618,12 +629,15 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         reg = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
+        if ((offset & 0x8000) == 0x8000) { //符号拡張
+            offset = 0xffff0000 | offset;
+        }
         addr = regs[reg] + offset;
         if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
-                   "[%d]\n",
-                   one_raw_program.c_str(), line_num * 4, addr);
+                   "[%d]\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
         write_word(addr, regs[rd]);
@@ -635,12 +649,15 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         base = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
+        if ((offset & 0x8000) == 0x8000) { //符号拡張
+            offset = 0xffff0000 | offset;
+        }
         addr = regs[base] + offset;
         if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
-                   "[%d]\n",
-                   one_raw_program.c_str(), line_num * 4, addr);
+                   "[%d]\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
         fregs[rd].i = read_word(addr);
@@ -661,12 +678,15 @@ void controller::exec_code(unsigned int one_code) {
         rd = (one_code & rd_mask) >> 21;
         base = (one_code & rs_mask) >> 16;
         offset = (one_code & addr_or_imm_mask);
+        if ((offset & 0x8000) == 0x8000) { //符号拡張
+            offset = 0xffff0000 | offset;
+        }
         addr = regs[base] + offset;
         if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
-                   "[%d]\n",
-                   one_raw_program.c_str(), line_num * 4, addr);
+                   "[%d]\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
         write_word(addr, fregs[rd].i);
