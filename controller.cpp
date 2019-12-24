@@ -1202,6 +1202,63 @@ void controller::exec_code(unsigned int one_code) {
         line_num++;
         break;
     }
+    case 20: { // BEQF rs rt label(pc+offset<<2)
+        inst_times[BEQF] += 1;
+        rs = (one_code & rd_mask) >> 21;
+        rt = (one_code & rs_mask) >> 16;
+        label_line = (one_code & addr_or_imm_mask);
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
+        if (log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tprogram counter <- if (rs(f$%d):%f == rt(f$%d):%f) then "
+                   "pc+(offset:%d <<2) "
+                   "else "
+                   "pc+4\n",
+                   rs, fregs[rs].data.f, rt, fregs[rt].data.f, label_line);
+        }
+
+        if (fregs[rs].data.f == fregs[rt].data.f) {
+            line_num = line_num + label_line;
+            record_jump(line_num);
+        } else {
+            line_num++;
+        }
+        if (log_level >= DEBUG) {
+            printf("\tprogram counter:%d\n", line_num * 4);
+        }
+        break;
+    }
+
+    case 22: { // BLTF rs rt label(pc+offset<<2)
+        inst_times[BLTF] += 1;
+        rs = (one_code & rd_mask) >> 21;
+        rt = (one_code & rs_mask) >> 16;
+        label_line = (one_code & addr_or_imm_mask);
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
+        if (log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tprogram counter <- if (rs(f$%d):%f < rt(f$%d):%f) then "
+                   "pc+(offset:%d <<2) "
+                   "else "
+                   "pc+4\n",
+                   rs, fregs[rs].data.f, rt, fregs[rt].data.f, label_line);
+        }
+
+        if (fregs[rs].data.f < fregs[rt].data.f) {
+            line_num = line_num + label_line;
+            record_jump(line_num);
+        } else {
+            line_num++;
+        }
+        if (log_level >= DEBUG) {
+            printf("\tprogram counter:%d\n", line_num * 4);
+        }
+        break;
+    }
 
     case 32: { // LB rd, offset(base)
         inst_times[LB] += 1;
@@ -1805,6 +1862,12 @@ void controller::print_statistic_to_file() {
         case BLE:
             tmp = "BLE";
             break;
+        case BEQF:
+            tmp = "BEQF";
+            break;
+        case BLTF:
+            tmp = "BLTF";
+            break;
         case J:
             tmp = "J";
             break;
@@ -1994,6 +2057,12 @@ void controller::print_inst_times() {
             break;
         case BLE:
             tmp = "BLE";
+            break;
+        case BEQF:
+            tmp = "BEQF";
+            break;
+        case BLTF:
+            tmp = "BLTF";
             break;
         case BGE:
             tmp = "BGE";
