@@ -524,6 +524,36 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
+    case 6: { // BLE rs rt label(pc+offset<<2)
+        rs = (one_code & rd_mask) >> 21;
+        rt = (one_code & rs_mask) >> 16;
+        label_line = (one_code & addr_or_imm_mask);
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
+        if (regs[rs] <= regs[rt]) {
+            line_num = line_num + label_line;
+        } else {
+            line_num++;
+        }
+        break;
+    }
+
+    case 7: { // BGE rs rt label(pc+offset<<2)
+        rs = (one_code & rd_mask) >> 21;
+        rt = (one_code & rs_mask) >> 16;
+        label_line = (one_code & addr_or_imm_mask);
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
+        if (regs[rs] >= regs[rt]) {
+            line_num = line_num + label_line;
+        } else {
+            line_num++;
+        }
+        break;
+    }
+
     case 8: { // ADDI rd <- rs + immediate
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
@@ -2939,6 +2969,84 @@ unsigned int controller::format_code(vector<string> code) {
 
     } else if (opecode == "bne") { // BNE rs rt label(pc+offset<<2)
         unsigned int op_bit = (0x5 << 26);
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int offset_bit; // 下位16bit のみ
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rs = get_reg_num(*iter);
+                rd_bit = ((unsigned int)rs << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rt = get_reg_num(*iter);
+                rs_bit = ((unsigned int)rt << 16);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                string label_str = *iter;
+                int label_num = get_line_num_by_label(label_str);
+                offset_bit = (label_num - line_num) & 0xffff;
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
+            }
+
+            result = op_bit | rd_bit | rs_bit | offset_bit;
+
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+    } else if (opecode == "ble") { // BLE rs rt label(pc+offset<<2)
+        unsigned int op_bit = (0x6 << 26);
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int offset_bit; // 下位16bit のみ
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rs = get_reg_num(*iter);
+                rd_bit = ((unsigned int)rs << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rt = get_reg_num(*iter);
+                rs_bit = ((unsigned int)rt << 16);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                string label_str = *iter;
+                int label_num = get_line_num_by_label(label_str);
+                offset_bit = (label_num - line_num) & 0xffff;
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
+            }
+
+            result = op_bit | rd_bit | rs_bit | offset_bit;
+
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+    } else if (opecode == "bge") { // BGE rs rt label(pc+offset<<2)
+        unsigned int op_bit = (0x7 << 26);
         unsigned int rd_bit = 0x0;
         unsigned int rs_bit = 0x0;
         unsigned int offset_bit; // 下位16bit のみ

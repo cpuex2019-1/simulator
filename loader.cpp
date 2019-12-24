@@ -2209,6 +2209,86 @@ unsigned int loader::format_code(vector<string> code) {
             exit(1);
         }
 
+    } else if (opecode == "ble") { // BLE rs rt label(pc+offset<<2)
+        unsigned int op_bit = (0x6 << 26);
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int offset_bit; // 下位16bit のみ
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rs = get_reg_num(*iter);
+                rd_bit = ((unsigned int)rs << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rt = get_reg_num(*iter);
+                rs_bit = ((unsigned int)rt << 16);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                string label_str = *iter;
+                int label_num = get_line_num_by_label(label_str);
+                offset_bit = (label_num - line_num) & 0xffff;
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
+            }
+
+            result = op_bit | rd_bit | rs_bit | offset_bit;
+
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "bge") { // BGE rs rt label(pc+offset<<2)
+        unsigned int op_bit = (0x7 << 26);
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int offset_bit; // 下位16bit のみ
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rs = get_reg_num(*iter);
+                rd_bit = ((unsigned int)rs << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rt = get_reg_num(*iter);
+                rs_bit = ((unsigned int)rt << 16);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                string label_str = *iter;
+                int label_num = get_line_num_by_label(label_str);
+                offset_bit = (label_num - line_num) & 0xffff;
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
+            }
+
+            result = op_bit | rd_bit | rs_bit | offset_bit;
+
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
     } else if (opecode == "j") { // J label
         unsigned int op_bit = (0x2 << 26);
         unsigned int addr_bit;

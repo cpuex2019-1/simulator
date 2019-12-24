@@ -1054,6 +1054,63 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
+    case 6: { // BLE rs rt label(pc+offset<<2)
+        inst_times[BLE] += 1;
+        rs = (one_code & rd_mask) >> 21;
+        rt = (one_code & rs_mask) >> 16;
+        label_line = (one_code & addr_or_imm_mask);
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
+        if (log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tprogram counter <- if (rs($%d):%d <= rt($%d):%d) then "
+                   "pc+(offset:%d <<2) "
+                   "else "
+                   "pc+4\n",
+                   rs, regs[rs].data, rt, regs[rt].data, label_line);
+        }
+
+        if (regs[rs].data <= regs[rt].data) {
+            line_num = line_num + label_line;
+            record_jump(line_num);
+        } else {
+            line_num++;
+        }
+        if (log_level >= DEBUG) {
+            printf("\tprogram counter:%d\n", line_num * 4);
+        }
+        break;
+    }
+    case 7: { // BGE rs rt label(pc+offset<<2)
+        inst_times[BGE] += 1;
+        rs = (one_code & rd_mask) >> 21;
+        rt = (one_code & rs_mask) >> 16;
+        label_line = (one_code & addr_or_imm_mask);
+        if ((label_line & 0x8000) == 0x8000) { //符号拡張
+            label_line = 0xffff0000 | label_line;
+        }
+        if (log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\tprogram counter <- if (rs($%d):%d >= rt($%d):%d) then "
+                   "pc+(offset:%d <<2) "
+                   "else "
+                   "pc+4\n",
+                   rs, regs[rs].data, rt, regs[rt].data, label_line);
+        }
+
+        if (regs[rs].data >= regs[rt].data) {
+            line_num = line_num + label_line;
+            record_jump(line_num);
+        } else {
+            line_num++;
+        }
+        if (log_level >= DEBUG) {
+            printf("\tprogram counter:%d\n", line_num * 4);
+        }
+        break;
+    }
+
     case 8: { // ADDI rd <- rs + immediate
         inst_times[ADDI] += 1;
         rd = (one_code & rd_mask) >> 21;
@@ -1742,6 +1799,12 @@ void controller::print_statistic_to_file() {
         case BNE:
             tmp = "BNE";
             break;
+        case BGE:
+            tmp = "BGE";
+            break;
+        case BLE:
+            tmp = "BLE";
+            break;
         case J:
             tmp = "J";
             break;
@@ -1928,6 +1991,12 @@ void controller::print_inst_times() {
             break;
         case BNE:
             tmp = "BNE";
+            break;
+        case BLE:
+            tmp = "BLE";
+            break;
+        case BGE:
+            tmp = "BGE";
             break;
         case J:
             tmp = "J";

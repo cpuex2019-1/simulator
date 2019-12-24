@@ -47,6 +47,8 @@ enum Asm {
     BC,
     BEQ,
     BNE,
+    BGE,
+    BLE,
     J,
     JR_OR_JALR,
     JAL,
