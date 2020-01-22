@@ -921,9 +921,27 @@ int controller::get_offset_by_base_plus_offset(string base_plus_offset) {
         try {
             offset = stoi(offset_str); // convert string to int
             if (sign == "-") {
-                return -offset;
+                if (offset <= 32768) { // -2^15まで
+                    return -offset;
+                } else {
+                    if (log_level >= FATAL) {
+                        printf("FATAL\tline:%d\tinvalid offset: "
+                               "[%s](under -2^15)\n",
+                               load_line_num, offset_str.c_str());
+                    }
+                    exit(1);
+                }
             } else {
-                return offset;
+                if (offset <= 32767) { // 2^15-1まで
+                    return offset;
+                } else {
+                    if (log_level >= FATAL) {
+                        printf("FATAL\tline:%d\tinvalid offset: "
+                               "[%s](over 2^15-1)\n",
+                               load_line_num, offset_str.c_str());
+                    }
+                    exit(1);
+                }
             }
         } catch (std::out_of_range &e) {
             if (log_level >= FATAL) {
