@@ -10,8 +10,11 @@ using namespace std;
 
 // constructor
 memory::memory() {
+    check_memory = false;
+    heap_pointer = 3000;
     for (sim_addr i = 0; i < memorySize / 4; i++) {
         table[i] = 0x0;
+        used[i] = NON; // 0:未使用 1:int 2:float
     }
 }
 
@@ -27,11 +30,20 @@ sim_word memory::read_word(sim_addr addr) { return table[addr / 4]; }
 void memory::write_byte(sim_addr addr, sim_byte byte_data) {
     int offset = addr % 4;
     table[addr / 4] = (sim_word)((sim_word)byte_data << offset * 8);
+    used[addr / 4] = INT;
 }
 
-void memory::write_word(sim_addr addr, sim_word word_data) {
+void memory::write_word(sim_addr addr, sim_word word_data, bool is_int) {
     table[addr / 4] = word_data;
+    if (is_int) {
+        used[addr / 4] = INT;
+    } else {
+        used[addr / 4] = FLOAT;
+    }
 }
+
+bool memory::is_int_stored(sim_addr addr) { return used[addr / 4] != FLOAT; }
+bool memory::is_float_stored(sim_addr addr) { return used[addr / 4] != INT; }
 
 // print word from s_addr to e_addr
 void memory::print_word_by_addr(sim_addr s_addr, sim_addr e_addr) {

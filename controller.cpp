@@ -1277,6 +1277,15 @@ void controller::exec_code(unsigned int one_code) {
                    one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
+        if (memo->check_memory && addr >= memo->heap_pointer &&
+            !memo->is_int_stored(addr)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  read float memory[%d] "
+                   "by LB"
+                   "\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
+            exit(1);
+        }
         unsigned char data = memo->read_byte(addr);
 
         if (log_level >= DEBUG) {
@@ -1306,6 +1315,15 @@ void controller::exec_code(unsigned int one_code) {
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
                    "[%d]\n\t%lld instructions\n",
                    one_raw_program.c_str(), line_num * 4, addr, ex_count);
+            exit(1);
+        }
+        if (memo->check_memory && addr >= memo->heap_pointer &&
+            !memo->is_int_stored(addr)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf(
+                "FATAL\n\t%s\n\tprogram address:%d  read float memory[%d] by LW"
+                "\n\t%lld instructions\n",
+                one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
         if (log_level >= DEBUG) {
@@ -1371,13 +1389,12 @@ void controller::exec_code(unsigned int one_code) {
                    one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
-
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:%d\n", addr, memo->read_word(addr));
             printf("\tmemory[%d] <- rd($%d):%d\n", addr, rd, regs[rd].data);
         }
-        memo->write_word(addr, regs[rd].data);
+        memo->write_word(addr, regs[rd].data, true);
         if (log_level >= DEBUG) {
             printf("\tmemory[%d]:%d\n", addr, memo->read_word(addr));
         }
@@ -1403,7 +1420,15 @@ void controller::exec_code(unsigned int one_code) {
                    one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
-
+        if (memo->check_memory && addr >= memo->heap_pointer &&
+            !memo->is_float_stored(addr)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf(
+                "FATAL\n\t%s\n\tprogram address:%d  read int memory[%d] by LF"
+                "\n\t%lld instructions\n",
+                one_raw_program.c_str(), line_num * 4, addr, ex_count);
+            exit(1);
+        }
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
@@ -1465,7 +1490,7 @@ void controller::exec_code(unsigned int one_code) {
             printf("\tmemory[%d] <- rd($f%d):%f(hex:%08x)\n", addr, rd,
                    fregs[rd].data.f, ((unsigned int)fregs[rd].data.i));
         }
-        memo->write_word(addr, fregs[rd].data.i);
+        memo->write_word(addr, fregs[rd].data.i, false);
         if (log_level >= DEBUG) {
             printf("\tmemory[%d]:(hex)%8x\n", addr, memo->read_word(addr));
         }

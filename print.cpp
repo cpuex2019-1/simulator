@@ -29,6 +29,7 @@ void print_usage() {
     \ta | all\t: run all\n \
     \tr | reg\t: print register\n \
     \tm | memo\t: print memory from start to end\n \
+    \tc | check\t: check memory (int or float)\n \
     \tp | program\t: print program and line number\n \
     \tb | break\t: set breakpoint\n \
     \tl | log\t: change log level\n \

@@ -24,7 +24,6 @@ int main(int argc, char *argv[]) {
         printf("usage: %s <program name>\n", argv[0]);
         return 1;
     }
-
     loader ld(argv[1]); // load program
     memory memo;
     reg regs[32];
@@ -156,6 +155,19 @@ int main(int argc, char *argv[]) {
                 if (log_level >= ERROR) {
                     printf("ERROR\tinvalid argument: %s\n", e.what());
                     printf("ERROR\tPlease input Multiples of 4\n");
+                }
+            }
+        } else if (str == "c" ||
+                   str == "check") { // check memory (int or float)
+            printf("input init heap pointer: ");
+            getline(cin, str);
+            string heap_pointer_str = str;
+            try {
+                memo.heap_pointer = stoi(heap_pointer_str);
+                memo.check_memory = true;
+            } catch (const std::invalid_argument &e) {
+                if (log_level >= ERROR) {
+                    printf("ERROR\tinvalid argument: %s\n", e.what());
                 }
             }
 

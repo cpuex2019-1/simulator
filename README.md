@@ -24,6 +24,7 @@ How to use mipsim:
 	   a | all	: run all
 	   r | reg	: print register
 	   m | memo	: print memory from start to end
+	   c | check: check memory (int or float)
 	   p | program	: print program and line number
 	   b | break	: set breakpoint
 	   l | log	: change log level
