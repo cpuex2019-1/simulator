@@ -1,74 +1,66 @@
 input_output:
     in      $1
-    out     $1
+    outb    $1
     inf     $f1
-    outf    $f1
-    div10   $2, $1
     itof   $f2, $1
-arith_float:
+    ftoi   $2, $f1
+memo:
     addi    $29, $0, 10000
-    addi    $4, $0, 16256   # 1.0の上位16bit
+    addi    $3, $0, 16256   # 1.0の上位16bit
+    slli    $3, $3, 16
+    addi    $4, $0, 16448   # 3.0の上位16bit
     slli    $4, $4, 16
-    addi    $5, $0, 16448   # 3.0の上位16bit
-    slli    $5, $5, 16
-    sw      $4, 0($29)
-    sw      $5, -4($29)
-    lf      $f4, 0($29)
-    lf      $f5, -4($29)
+    sw      $3, 0($29)
+    sw      $4, -4($29)
+    lf      $f3, 0($29)
+    lf      $f4, -4($29)
+    lw      $5, 0($29)
+    sf      $f3, -8($29)
+    lf      $f5, -8($29)
 
-    fadd     $f6, $f5, $f4
-    fsub     $f6, $f5, $f4
-    fmul     $f6, $f5, $f5
-    fdiv     $f6, $f4, $f5
-    fneg     $f6, $f4
-    sqrt     $f6, $f5
-    sltf     $1, $f5, $f4
-    sf      $f6, 0($29)
-    lf      $f7, 0($29)
-    movf    $f7, $f4
-
-arith_logic1:
-    addi    $1, $0, 2
-    addi    $2, $0, 3
-    addi    $8, $0, ha(arith_logic2)
-    addi    $9, $0, lo(arith_logic2)
-    bc  arith_logic3
-arith_logic2:
+arith:
     add     $3, $0, $1
     sub     $3, $2, $1
     mul     $3, $2, $1
-    div10     $3, $2
-    mod     $3, $2, $1
-    bne $2,  $1,  arith_logic5
-arith_logic3:
-    slt     $3, $2, $1
-    and     $3, $2, $1
-    andi    $3, $2, 10
-    or     $3, $2, $1
-    ori    $3, $2,10
-    nor     $3, $2, $1
-    beq $0,  $0,  arith_logic2
-arith_logic4:
     xor     $3, $2, $1
-    xori    $3, $2, 2
-    addi    $2, $0, 2
-    srai    $3, $2, 2
-    jal data_move2
-data_move1:
-lw  $3, 0($29)
-lb  $3, -4($29)
-        jr $30
-arith_logic5:
-    srli    $3, $2, 2
-    slli    $3, $2, 2
-    sra    $3, $2, $1
-    srl    $3, $2, $1
-    sll    $3, $2, $1
-    j arith_logic4
-data_move2:
+    addi    $3, $0, 10000
+    slli    $3, $1, 16
+    ori    $3, $2,10
 
-    sw  $2, 0($29)
-    sb  $2, -4($29)
-    mov $3, $0
+arith_float:
+    fadd     $f6, $f5, $f4
+    fsub     $f6, $f5, $f4
+    fmul     $f6, $f5, $f4
+    fdiv     $f6, $f5, $f4
+    fneg     $f6, $f4
+    fabs     $f7, $f6
+    sqrt     $f6, $f4
+    floor    $f7, $f6
+    ftoi     $3, $f6
+    itof     $f6, $2
+    movf    $f7, $f4
+
+jump_j:
+    j jump_jal_jr
+jump_jal_jr:
+    jal jump_jr
+jump_jal_jalr:
+    jal jump_jalr
+branch_bne:
+    sltf $3, $f2, $f1
+    bne $3, $2 ,branch_bge
+jump_jalr:
     jalr $30,$31
+jump_jr:
+    jr $31
+
+branch_bge:
+    bge $2, $3, branch_ble
+branch_beqf:
+    beqf $f2, $f2, branch_bltf
+branch_ble:
+    ble $3, $2, branch_beqf
+branch_bltf:
+    bltf $f3, $f2,EXIT
+
 EXIT:

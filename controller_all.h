@@ -63,7 +63,7 @@ class controller {
     sim_byte read_byte(sim_addr addr);
     sim_word read_word(sim_addr addr);
     void write_byte(sim_addr addr, sim_byte byte_data);
-    void write_word(sim_addr addr, sim_word word_data);
+    void write_word(sim_addr addr, sim_word word_data, bool is_int);
     void print_word_by_addr(sim_addr s_addr, sim_addr e_addr);
 
   public:

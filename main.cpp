@@ -241,7 +241,6 @@ int main(int argc, char *argv[]) {
         if (end_flag) {
             printf("\nprogram end!\n");
             controller.print_statistic_to_file();
-            // controller.print_inst_times();
         }
         print_prompt();
     }

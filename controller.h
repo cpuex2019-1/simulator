@@ -47,7 +47,6 @@ class controller {
     Status exec_step(int break_point);
 
     void print_statistic_to_file();
-    void print_inst_times();
 };
 
 #endif
