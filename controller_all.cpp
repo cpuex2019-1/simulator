@@ -132,12 +132,12 @@ Status controller::exec_step(int break_point) {
 void controller::exec_code(unsigned int one_code) {
 
     // unsigned int op_mask = 0xFE000000;          //上位6bit(<< 26)
-    unsigned int rd_mask = 0x03E00000;          // 5bit(<< 21)
-    unsigned int rs_mask = 0x001F0000;          // 5bit(<< 16)
-    unsigned int rt_mask = 0x0000F800;          // 5bit(<< 11)
-    unsigned int shamt_mask = 0x000007C0;       // 5bit(<< 6)
-    unsigned int addr_or_imm_mask = 0x0000FFFF; // 16bit
-    unsigned int address_mask = 0x03FFFFFF;     // 26bit
+    unsigned int rd_mask = 0x03E00000;           // 5bit(<< 21)
+    unsigned int rs_mask = 0x001F0000;           // 5bit(<< 16)
+    unsigned int rt_mask = 0x0000F800;           // 5bit(<< 11)
+    unsigned int addr_or_imm_mask = 0x0000FFFF;  // 16bit
+    unsigned int imm_mask_for_slli = 0x0000001F; // 5bit
+    unsigned int address_mask = 0x03FFFFFF;      // 26bit
 
     unsigned int opecode = one_code >> 26;
     unsigned int rd;
@@ -289,7 +289,7 @@ void controller::exec_code(unsigned int one_code) {
     case 0x9: { // SLLI rd <- rs << sb (logical)
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
-        sb = (one_code & shamt_mask) >> 6;
+        sb = (one_code & imm_mask_for_slli);
         regs[rd] = (int)((unsigned int)regs[rs] << (unsigned int)sb);
         line_num++;
         break;
@@ -1443,8 +1443,7 @@ unsigned int controller::format_code(vector<string> code) {
         unsigned int rd_bit = 0x0;
         unsigned int rs_bit = 0x0;
         unsigned int rt_bit = 0x0;
-        unsigned int shamt_bit = 0x0;
-        unsigned int funct_bit = 0x0;
+        unsigned int immediate;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1464,14 +1463,14 @@ unsigned int controller::format_code(vector<string> code) {
                 throw 3;
             } else {
                 int sb = get_logic_immediate(*iter); // ＊要変更
-                shamt_bit = ((unsigned int)sb << 6);
+                immediate = sb;
                 iter++;
             }
             if (iter != code.end()) {
                 throw 4;
             }
 
-            result = op_bit | rd_bit | rs_bit | rt_bit | shamt_bit | funct_bit;
+            result = op_bit | rd_bit | rs_bit | rt_bit | immediate;
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());

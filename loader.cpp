@@ -921,8 +921,7 @@ unsigned int loader::format_code(vector<string> code) {
         unsigned int rd_bit = 0x0;
         unsigned int rs_bit = 0x0;
         unsigned int rt_bit = 0x0;
-        unsigned int shamt_bit = 0x0;
-        unsigned int funct_bit = 0x0;
+        unsigned int immediate;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -942,14 +941,14 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 3;
             } else {
                 int sb = get_logic_immediate(*iter); // ＊要変更
-                shamt_bit = ((unsigned int)sb << 6);
+                immediate = sb;
                 iter++;
             }
             if (iter != code.end()) {
                 throw 4;
             }
 
-            result = op_bit | rd_bit | rs_bit | rt_bit | shamt_bit | funct_bit;
+            result = op_bit | rd_bit | rs_bit | rt_bit | immediate;
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());

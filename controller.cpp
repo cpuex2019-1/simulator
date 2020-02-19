@@ -137,12 +137,12 @@ Status controller::exec_step(int break_point) {
 void controller::exec_code(unsigned int one_code) {
 
     // unsigned int op_mask = 0xFE000000;          //上位6bit(<< 26)
-    unsigned int rd_mask = 0x03E00000;          // 5bit(<< 21)
-    unsigned int rs_mask = 0x001F0000;          // 5bit(<< 16)
-    unsigned int rt_mask = 0x0000F800;          // 5bit(<< 11)
-    unsigned int shamt_mask = 0x000007C0;       // 5bit(<< 6)
-    unsigned int addr_or_imm_mask = 0x0000FFFF; // 16bit
-    unsigned int address_mask = 0x03FFFFFF;     // 26bit
+    unsigned int rd_mask = 0x03E00000;           // 5bit(<< 21)
+    unsigned int rs_mask = 0x001F0000;           // 5bit(<< 16)
+    unsigned int rt_mask = 0x0000F800;           // 5bit(<< 11)
+    unsigned int addr_or_imm_mask = 0x0000FFFF;  // 16bit
+    unsigned int imm_mask_for_slli = 0x0000001F; // 5bit
+    unsigned int address_mask = 0x03FFFFFF;      // 26bit
 
     unsigned int opecode = one_code >> 26;
     unsigned int rd;
@@ -428,7 +428,7 @@ void controller::exec_code(unsigned int one_code) {
         inst_times[SLLI_OR_NOP] += 1;
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
-        sb = (one_code & shamt_mask) >> 6;
+        sb = (one_code & imm_mask_for_slli);
 
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
