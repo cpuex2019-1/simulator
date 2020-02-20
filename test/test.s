@@ -47,6 +47,7 @@ jump_jal_jr:
 jump_jal_jalr:
     jal jump_jalr
 branch_bne:
+    slt $3, $2, $1
     sltf $3, $f2, $f1
     bne $3, $2 ,branch_bge
 jump_jalr:

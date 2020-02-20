@@ -790,6 +790,34 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
+    case 0x7: { // SLT Rd[0] = if Rs < Rt then 1 else 0
+        inst_times[SLT] += 1;
+        // * rd is a general register
+        rd = (one_code & rd_mask) >> 21;
+        rs = (one_code & rs_mask) >> 16;
+        rt = (one_code & rt_mask) >> 11;
+
+        if (log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\trd($%d)[0] <- if (rs($%d):%d < "
+                   "rt($%d):%d) then 1 "
+                   "else 0\n",
+                   rd, rs, regs[rs].data, rt, regs[rt].data);
+        }
+        if (regs[rs].data < regs[rt].data) {
+            regs[rd].data = 1;
+        } else {
+            regs[rd].data = 0;
+        }
+        if (log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+
+        line_num++;
+        break;
+    }
+
     case 0x12: { // SLTF Rd[0] = if Rs < Rt then 1 else 0
         inst_times[SLTF] += 1;
         // * rd is a general register
@@ -854,37 +882,9 @@ void controller::exec_code(unsigned int one_code) {
         }
         break;
     }
-    case 0x2D: { // BGE rs rt label(pc+offset<<2)
-        inst_times[BGE] += 1;
-        rs = (one_code & rd_mask) >> 21;
-        rt = (one_code & rs_mask) >> 16;
-        label_line = (one_code & addr_or_imm_mask);
-        if ((label_line & 0x8000) == 0x8000) { //符号拡張
-            label_line = 0xffff0000 | label_line;
-        }
-        if (log_level >= DEBUG) {
-            printf("DEBUG\n");
-            printf("\tprogram counter <- if (rs($%d):%d >= rt($%d):%d) then "
-                   "pc+(offset:%d <<2) "
-                   "else "
-                   "pc+4\n",
-                   rs, regs[rs].data, rt, regs[rt].data, label_line);
-        }
-
-        if (regs[rs].data >= regs[rt].data) {
-            line_num = line_num + label_line;
-            record_jump(line_num);
-        } else {
-            line_num++;
-        }
-        if (log_level >= DEBUG) {
-            printf("\tprogram counter:%d\n", line_num * 4);
-        }
-        break;
-    }
 
     case 0x2E: { // BLE rs rt label(pc+offset<<2)
-        inst_times[BLE] += 1;
+        inst_times[BLE_OR_BGE] += 1;
         rs = (one_code & rd_mask) >> 21;
         rt = (one_code & rs_mask) >> 16;
         label_line = (one_code & addr_or_imm_mask);
@@ -1205,17 +1205,17 @@ void controller::print_statistic_to_file() {
         case JR_OR_JALR:
             tmp = "JR_OR_JALR";
             break;
+        case SLT:
+            tmp = "SLT";
+            break;
         case SLTF:
             tmp = "SLTF";
             break;
         case BNE:
             tmp = "BNE";
             break;
-        case BGE:
-            tmp = "BGE";
-            break;
-        case BLE:
-            tmp = "BLE";
+        case BLE_OR_BGE:
+            tmp = "BLE_OR_BGE";
             break;
         case BEQF:
             tmp = "BEQF";
