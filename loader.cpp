@@ -1642,14 +1642,14 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 1;
             } else {
                 int rs = get_reg_num(*iter);
-                rs_bit = ((unsigned int)rs << 21);
+                rs_bit = ((unsigned int)rs << 16);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 2;
             } else {
                 int rt = get_reg_num(*iter);
-                rt_bit = ((unsigned int)rt << 16);
+                rt_bit = ((unsigned int)rt << 21);
                 iter++;
             }
             if (iter == code.end()) {
