@@ -8,8 +8,8 @@
 enum IANDF { NON, INT, FLOAT };
 
 class memory {
-    sim_word table[memorySize / 4];
-    int used[memorySize / 4];
+    sim_word table[memorySize / 4 + 10];
+    int used[memorySize / 4 + 10];
 
   public:
     Log log_level = DEBUG;
@@ -20,9 +20,7 @@ class memory {
     // destructor
     //~memory();
 
-    sim_byte read_byte(sim_addr addr);
     sim_word read_word(sim_addr addr);
-    void write_byte(sim_addr addr, sim_byte byte_data);
     void write_word(sim_addr addr, sim_word word_data, bool is_int);
 
     bool is_int_stored(sim_addr addr);

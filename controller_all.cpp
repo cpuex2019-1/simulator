@@ -88,32 +88,24 @@ void controller::print_binary_with_space(unsigned int v) {
 }
 
 // for memory
-sim_byte controller::read_byte(sim_addr addr) {
-    int offset = addr % 4;
-    return (sim_byte)((table[addr / 4] >> offset * 8) & 0xff);
-}
-sim_word controller::read_word(sim_addr addr) { return table[addr / 4]; }
-void controller::write_byte(sim_addr addr, sim_byte byte_data) {
-    int offset = addr % 4;
-    table[addr / 4] = (sim_word)((sim_word)byte_data << offset * 8);
-}
+sim_word controller::read_word(sim_addr addr) { return table[addr]; }
+
 void controller::write_word(sim_addr addr, sim_word word_data, bool is_int) {
-    table[addr / 4] = word_data;
+    table[addr] = word_data;
 }
 // print word from s_addr to e_addr
 void controller::print_word_by_addr(sim_addr s_addr, sim_addr e_addr) {
-    if (s_addr < memorySize && s_addr % 4 == 0 && e_addr + 4 <= memorySize &&
-        e_addr % 4 == 0 && s_addr <= e_addr) {
-        for (sim_addr addr = s_addr; addr <= e_addr; addr += 4) {
+    if (s_addr < memorySize / 4 && e_addr <= memorySize / 4 &&
+        s_addr <= e_addr) {
+        for (sim_addr addr = s_addr; addr <= e_addr; addr++) {
             sim_word word = read_word(addr);
-            printf("%9d:\t%9d\t%8x\t", addr, table[addr / 4], table[addr / 4]);
+            printf("%9d:\t%9d\t%8x\t", addr, table[addr], table[addr]);
             print_binary(word);
             printf("\n");
         }
     } else {
         if (log_level >= ERROR) {
             printf("ERROR\tinvalid address: [%d] to [%d]\n", s_addr, e_addr);
-            printf("ERROR\tPlease input Multiples of 4\n");
         }
     }
 }
@@ -161,7 +153,7 @@ void controller::exec_code(unsigned int one_code) {
             offset = 0xffff0000 | offset;
         }
         addr = regs[reg] + offset;
-        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+        if (!(0 <= addr && addr < memorySize / 4)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
                    "[%d]\n\t%lld instructions\n",
@@ -181,7 +173,7 @@ void controller::exec_code(unsigned int one_code) {
             offset = 0xffff0000 | offset;
         }
         addr = regs[reg] + offset;
-        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+        if (!(0 <= addr && addr < memorySize / 4)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
                    "[%d]\n\t%lld instructions\n",
@@ -202,7 +194,7 @@ void controller::exec_code(unsigned int one_code) {
         }
         addr = regs[base] + offset;
 
-        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+        if (!(0 <= addr && addr < memorySize / 4)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
                    "[%d]\n\t%lld instructions\n",
@@ -222,7 +214,7 @@ void controller::exec_code(unsigned int one_code) {
             offset = 0xffff0000 | offset;
         }
         addr = regs[base] + offset;
-        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+        if (!(0 <= addr && addr < memorySize / 4)) {
             string one_raw_program = get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
                    "[%d]\n\t%lld instructions\n",

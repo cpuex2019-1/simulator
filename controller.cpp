@@ -167,7 +167,7 @@ void controller::exec_code(unsigned int one_code) {
             offset = 0xffff0000 | offset;
         }
         addr = regs[reg].data + offset;
-        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+        if (!(0 <= addr && addr < memorySize / 4)) {
             string one_raw_program = ld->get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
                    "[%d]\n\t%lld instructions\n",
@@ -208,9 +208,9 @@ void controller::exec_code(unsigned int one_code) {
             offset = 0xffff0000 | offset;
         }
         addr = regs[reg].data + offset;
-        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+        if (!(0 <= addr && addr < memorySize / 4)) {
             string one_raw_program = ld->get_raw_program_by_line_num(line_num);
-            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid write address: "
                    "[%d]\n\t%lld instructions\n",
                    one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
@@ -238,8 +238,7 @@ void controller::exec_code(unsigned int one_code) {
             offset = 0xffff0000 | offset;
         }
         addr = regs[base].data + offset;
-
-        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+        if (!(0 <= addr && addr < memorySize / 4)) {
             string one_raw_program = ld->get_raw_program_by_line_num(line_num);
             printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
                    "[%d]\n\t%lld instructions\n",
@@ -282,14 +281,13 @@ void controller::exec_code(unsigned int one_code) {
             offset = 0xffff0000 | offset;
         }
         addr = regs[base].data + offset;
-        if (!(0 <= addr && addr < memorySize && addr % 4 == 0)) {
+        if (!(0 <= addr && addr < memorySize / 4)) {
             string one_raw_program = ld->get_raw_program_by_line_num(line_num);
-            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid write address: "
                    "[%d]\n\t%lld instructions\n",
                    one_raw_program.c_str(), line_num * 4, addr, ex_count);
             exit(1);
         }
-
         if (log_level >= DEBUG) {
             printf("DEBUG\n");
             printf("\tmemory[%d]:(hex)%8x\n", addr, memo->read_word(addr));
