@@ -1061,6 +1061,7 @@ unsigned int controller::format_code(vector<string> code) {
     string opecode = *iter;
     iter++;
     unsigned int result;
+
     if (opecode == "lw") { // LW rd, offset(base)
         unsigned int op_bit = (0x1 << 26);
         unsigned int rd_bit = 0x0;
@@ -2022,7 +2023,6 @@ unsigned int controller::format_code(vector<string> code) {
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
-
     } else if (opecode == "slt") { // SLTF Rd = if Rs < Rt then 1 else 0
         // *rd is a general register
         unsigned int op_bit = ((unsigned int)0x7 << 26);
@@ -2064,6 +2064,7 @@ unsigned int controller::format_code(vector<string> code) {
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
             exit(1);
         }
+
     } else if (opecode == "sltf") { // SLTF Rd = if Rs < Rt then 1 else 0
         // *rd is a general register
         unsigned int op_bit = ((unsigned int)0x12 << 26);
@@ -2156,14 +2157,14 @@ unsigned int controller::format_code(vector<string> code) {
                 throw 1;
             } else {
                 int rs = get_reg_num(*iter);
-                rs_bit = ((unsigned int)rs << 21);
+                rs_bit = ((unsigned int)rs << 16);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 2;
             } else {
                 int rt = get_reg_num(*iter);
-                rt_bit = ((unsigned int)rt << 16);
+                rt_bit = ((unsigned int)rt << 21);
                 iter++;
             }
             if (iter == code.end()) {
@@ -2188,7 +2189,7 @@ unsigned int controller::format_code(vector<string> code) {
 
     } else if (opecode == "ble") { // BLE rs rt label(pc+offset<<2)
         unsigned int op_bit = (0x2E << 26);
-        unsigned int rd_bit = 0x0;
+        unsigned int rt_bit = 0x0;
         unsigned int rs_bit = 0x0;
         unsigned int offset_bit; // 下位16bit のみ
         try {
@@ -2196,14 +2197,14 @@ unsigned int controller::format_code(vector<string> code) {
                 throw 1;
             } else {
                 int rs = get_reg_num(*iter);
-                rd_bit = ((unsigned int)rs << 21);
+                rs_bit = ((unsigned int)rs << 21);
                 iter++;
             }
             if (iter == code.end()) {
                 throw 2;
             } else {
                 int rt = get_reg_num(*iter);
-                rs_bit = ((unsigned int)rt << 16);
+                rt_bit = ((unsigned int)rt << 16);
                 iter++;
             }
             if (iter == code.end()) {
@@ -2218,7 +2219,7 @@ unsigned int controller::format_code(vector<string> code) {
                 throw 4;
             }
 
-            result = op_bit | rd_bit | rs_bit | offset_bit;
+            result = op_bit | rs_bit | rt_bit | offset_bit;
 
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
