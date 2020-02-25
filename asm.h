@@ -14,6 +14,8 @@ enum Asm {
     XOR,
     ADDI,
     SLLI_OR_NOP,
+    SRLI,
+    SRAI,
     ORI,
     FADD,
     FSUB,

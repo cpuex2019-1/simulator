@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
                     print_freg(i, fregs);
                 }
             } else if (str == "general" || str == "g") {
-                printf("\nfloat registers\n");
+                printf("\ngeneral registers\n");
                 for (int i = 0; i < 32; i++) {
                     print_reg(i, regs);
                 }

@@ -141,7 +141,8 @@ void controller::exec_code(unsigned int one_code) {
     unsigned int rs_mask = 0x001F0000;           // 5bit(<< 16)
     unsigned int rt_mask = 0x0000F800;           // 5bit(<< 11)
     unsigned int addr_or_imm_mask = 0x0000FFFF;  // 16bit
-    unsigned int imm_mask_for_slli = 0x0000001F; // 5bit
+    unsigned int imm_mask_for_slli = 0x0000007C; // 5bit<< 2
+    unsigned int low_mask = 0x00000003;          // 2bit
     unsigned int address_mask = 0x03FFFFFF;      // 26bit
 
     unsigned int opecode = one_code >> 26;
@@ -155,6 +156,7 @@ void controller::exec_code(unsigned int one_code) {
     int addr;
     int base;
     int label_line;
+    int low;
 
     switch (opecode) {
 
@@ -421,28 +423,68 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
-    // nop or SLLI
-    case 0x9: { // SLLI rd <- rs << sb (logical)
-        inst_times[SLLI_OR_NOP] += 1;
+    // nop or SLLI or SRLI or SRAI
+    case 0x9: {
+
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
-        sb = (one_code & imm_mask_for_slli);
+        sb = (one_code & imm_mask_for_slli) >> 2;
+        low = (one_code & low_mask);
 
-        if (log_level >= DEBUG) {
-            printf("DEBUG\n");
-            printf("\trd($%d):%d\n", rd, regs[rd].data);
-            printf("\trd($%d) <- rs($%d):%d << sb:%d (logical)\n", rd, rs,
-                   regs[rs].data, sb);
+        if (low == 0x0) { // SLLI rd <- rs << sb (logical)
+            inst_times[SLLI_OR_NOP] += 1;
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+                printf("\trd($%d) <- rs($%d):%d << sb:%d (logical)\n", rd, rs,
+                       regs[rs].data, sb);
+            }
+
+            regs[rd].data =
+                (int)((unsigned int)regs[rs].data << (unsigned int)sb);
+
+            if (log_level >= DEBUG) {
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+            }
+
+            line_num++;
+            break;
+        } else if (low == 0x1) { // SRLI rd <- rs >> sb (logical)
+            inst_times[SRLI] += 1;
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+                printf("\trd($%d) <- rs($%d):%d >> sb:%d (logical)\n", rd, rs,
+                       regs[rs].data, sb);
+            }
+
+            regs[rd].data =
+                (int)((unsigned int)regs[rs].data >> (unsigned int)sb);
+
+            if (log_level >= DEBUG) {
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+            }
+
+            line_num++;
+            break;
+        } else if (low == 0x3) { // SRAI rd <- rs >>> sb (arith)
+            inst_times[SRAI] += 1;
+            if (log_level >= DEBUG) {
+                printf("DEBUG\n");
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+                printf("\trd($%d) <- rs($%d):%d >>> sb:%d (arith)\n", rd, rs,
+                       regs[rs].data, sb);
+            }
+
+            regs[rd].data = regs[rs].data >> sb;
+
+            if (log_level >= DEBUG) {
+                printf("\trd($%d):%d\n", rd, regs[rd].data);
+            }
+
+            line_num++;
+            break;
         }
-
-        regs[rd].data = (int)((unsigned int)regs[rs].data << (unsigned int)sb);
-
-        if (log_level >= DEBUG) {
-            printf("\trd($%d):%d\n", rd, regs[rd].data);
-        }
-
-        line_num++;
-        break;
     }
 
     case 0xA: { // ORI rd <- rs & immediate
@@ -1119,7 +1161,7 @@ void controller::print_statistic_to_file() {
     }
 
     vector<pair<int, long long int>> inst_times_pairs;
-    for (int i = ADD_OR_MOV; i <= SLLI_OR_NOP; i++) {
+    for (int i = LW; i <= IN; i++) {
         inst_times_pairs.push_back(make_pair(i, inst_times[i]));
     }
     sort(inst_times_pairs.begin(), inst_times_pairs.end(), compare_by_b_lld);
@@ -1159,6 +1201,12 @@ void controller::print_statistic_to_file() {
             break;
         case SLLI_OR_NOP:
             tmp = "SLLI_OR_NOP";
+            break;
+        case SRLI:
+            tmp = "SRLI";
+            break;
+        case SRAI:
+            tmp = "SRAI";
             break;
         case ORI:
             tmp = "ORI";

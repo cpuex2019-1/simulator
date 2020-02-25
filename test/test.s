@@ -23,8 +23,10 @@ arith:
     sub     $3, $2, $1
     mul     $3, $2, $1
     xor     $3, $2, $1
-    addi    $3, $0, 10000
-    slli    $3, $1, 16
+    addi    $4, $0, -3
+    srli    $3, $4, 2
+    slli    $3, $3, 2
+    srai    $3, $4, 2
     ori    $3, $2,10
 
 arith_float:

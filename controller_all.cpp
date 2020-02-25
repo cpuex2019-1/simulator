@@ -128,7 +128,8 @@ void controller::exec_code(unsigned int one_code) {
     unsigned int rs_mask = 0x001F0000;           // 5bit(<< 16)
     unsigned int rt_mask = 0x0000F800;           // 5bit(<< 11)
     unsigned int addr_or_imm_mask = 0x0000FFFF;  // 16bit
-    unsigned int imm_mask_for_slli = 0x0000001F; // 5bit
+    unsigned int imm_mask_for_slli = 0x0000007C; // 5bit<< 2
+    unsigned int low_mask = 0x00000003;          // 2bit
     unsigned int address_mask = 0x03FFFFFF;      // 26bit
 
     unsigned int opecode = one_code >> 26;
@@ -142,6 +143,7 @@ void controller::exec_code(unsigned int one_code) {
     int addr;
     int base;
     int label_line;
+    int low;
 
     switch (opecode) {
 
@@ -277,14 +279,25 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
-    // nop or SLLI
-    case 0x9: { // SLLI rd <- rs << sb (logical)
+    // nop or SLLI or SRLI or SRAI
+    case 0x9: {
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
-        sb = (one_code & imm_mask_for_slli);
-        regs[rd] = (int)((unsigned int)regs[rs] << (unsigned int)sb);
-        line_num++;
-        break;
+        sb = (one_code & imm_mask_for_slli) >> 2;
+        low = (one_code & low_mask);
+        if (low == 0x0) { // SLLI rd <- rs << sb (logical)
+            regs[rd] = (int)((unsigned int)regs[rs] << (unsigned int)sb);
+            line_num++;
+            break;
+        } else if (low == 0x1) { // SRLI rd <- rs >> sb (logical)
+            regs[rd] = (int)((unsigned int)regs[rs] >> (unsigned int)sb);
+            line_num++;
+            break;
+        } else if (low == 0x3) { // SRAI rd <- rs >>> sb (arith)
+            regs[rd] = regs[rs] >> sb;
+            line_num++;
+            break;
+        }
     }
 
     case 0xA: { // ORI rd <- rs & immediate
@@ -1437,6 +1450,7 @@ unsigned int controller::format_code(vector<string> code) {
         unsigned int rs_bit = 0x0;
         unsigned int rt_bit = 0x0;
         unsigned int immediate;
+        unsigned int low = 0x0;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -1456,14 +1470,94 @@ unsigned int controller::format_code(vector<string> code) {
                 throw 3;
             } else {
                 int sb = get_logic_immediate(*iter); // ＊要変更
-                immediate = sb;
+                immediate = (0x7F & (unsigned int)sb << 2);
                 iter++;
             }
             if (iter != code.end()) {
                 throw 4;
             }
 
-            result = op_bit | rd_bit | rs_bit | rt_bit | immediate;
+            result = op_bit | rd_bit | rs_bit | rt_bit | immediate | low;
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "srli") { // SRLI rd <- rs >> sb (logical)
+        unsigned int op_bit = 0x9 << 26;
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int rt_bit = 0x0;
+        unsigned int immediate;
+        unsigned int low = 0x1;
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                rd_bit = ((unsigned int)rd << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                rs_bit = ((unsigned int)rs << 16);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                int sb = get_logic_immediate(*iter); // ＊要変更
+                immediate = (0x7F & (unsigned int)sb << 2);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
+            }
+
+            result = op_bit | rd_bit | rs_bit | rt_bit | immediate | low;
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "srai") { // SRAI rd <- rs >>> sb (arith)
+        unsigned int op_bit = 0x9 << 26;
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int rt_bit = 0x0;
+        unsigned int immediate;
+        unsigned int low = 0x3;
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                rd_bit = ((unsigned int)rd << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                rs_bit = ((unsigned int)rs << 16);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                int sb = get_logic_immediate(*iter); // ＊要変更
+                immediate = (0x7F & (unsigned int)sb << 2);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
+            }
+
+            result = op_bit | rd_bit | rs_bit | rt_bit | immediate | low;
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());

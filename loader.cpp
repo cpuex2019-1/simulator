@@ -922,6 +922,7 @@ unsigned int loader::format_code(vector<string> code) {
         unsigned int rs_bit = 0x0;
         unsigned int rt_bit = 0x0;
         unsigned int immediate;
+        unsigned int low = 0x0;
         try {
             if (iter == code.end()) {
                 throw 1;
@@ -941,14 +942,94 @@ unsigned int loader::format_code(vector<string> code) {
                 throw 3;
             } else {
                 int sb = get_logic_immediate(*iter); // ＊要変更
-                immediate = sb;
+                immediate = (0x7F & (unsigned int)sb << 2);
                 iter++;
             }
             if (iter != code.end()) {
                 throw 4;
             }
 
-            result = op_bit | rd_bit | rs_bit | rt_bit | immediate;
+            result = op_bit | rd_bit | rs_bit | rt_bit | immediate | low;
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "srli") { // SRLI rd <- rs >> sb (logical)
+        unsigned int op_bit = 0x9 << 26;
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int rt_bit = 0x0;
+        unsigned int immediate;
+        unsigned int low = 0x1;
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                rd_bit = ((unsigned int)rd << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                rs_bit = ((unsigned int)rs << 16);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                int sb = get_logic_immediate(*iter); // ＊要変更
+                immediate = (0x7F & (unsigned int)sb << 2);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
+            }
+
+            result = op_bit | rd_bit | rs_bit | rt_bit | immediate | low;
+        } catch (int arg_num) {
+            printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
+                   arg_num, get_raw_program_by_line_num(line_num).c_str());
+            exit(1);
+        }
+
+    } else if (opecode == "srai") { // SRAI rd <- rs >>> sb (arith)
+        unsigned int op_bit = 0x9 << 26;
+        unsigned int rd_bit = 0x0;
+        unsigned int rs_bit = 0x0;
+        unsigned int rt_bit = 0x0;
+        unsigned int immediate;
+        unsigned int low = 0x3;
+        try {
+            if (iter == code.end()) {
+                throw 1;
+            } else {
+                int rd = get_reg_num(*iter);
+                rd_bit = ((unsigned int)rd << 21);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 2;
+            } else {
+                int rs = get_reg_num(*iter);
+                rs_bit = ((unsigned int)rs << 16);
+                iter++;
+            }
+            if (iter == code.end()) {
+                throw 3;
+            } else {
+                int sb = get_logic_immediate(*iter); // ＊要変更
+                immediate = (0x7F & (unsigned int)sb << 2);
+                iter++;
+            }
+            if (iter != code.end()) {
+                throw 4;
+            }
+
+            result = op_bit | rd_bit | rs_bit | rt_bit | immediate | low;
         } catch (int arg_num) {
             printf("FATAL\tline:%d\tinvalid argument%d: [%s]\n", load_line_num,
                    arg_num, get_raw_program_by_line_num(line_num).c_str());
