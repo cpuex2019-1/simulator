@@ -683,7 +683,7 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "addlw") { // addlw  r1 r2 r3 : r1 <-mem[r2+r3]
-        unsigned int op_bit = ((unsigned int)0x22 << 26);
+        unsigned int op_bit = ((unsigned int)0x11 << 26);
         unsigned int rd_bit = 0x0;
         unsigned int rs_bit = 0x0;
         unsigned int rt_bit = 0x0;
@@ -724,7 +724,7 @@ unsigned int loader::format_code(vector<string> code) {
         }
 
     } else if (opecode == "addlf") { // addlf  r1 r2 r3 : r1 <-mem[r2+r3]
-        unsigned int op_bit = ((unsigned int)0x23 << 26);
+        unsigned int op_bit = ((unsigned int)0x31 << 26);
         unsigned int rd_bit = 0x0;
         unsigned int rs_bit = 0x0;
         unsigned int rt_bit = 0x0;

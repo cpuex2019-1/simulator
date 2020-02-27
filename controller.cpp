@@ -201,7 +201,7 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
-    case 0x22: { // addlw r1 r2 r3 : r1 <-mem[r2+r3]
+    case 0x11: { // addlw r1 r2 r3 : r1 <-mem[r2+r3]
         inst_times[ADDLW] += 1;
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
@@ -241,7 +241,7 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
-    case 0x23: { // addlf fr1 r2 r3 : fr1 <-mem[r2+r3]
+    case 0x31: { // addlf fr1 r2 r3 : fr1 <-mem[r2+r3]
         inst_times[ADDLF] += 1;
         rd = (one_code & rd_mask) >> 21;
         rs = (one_code & rs_mask) >> 16;
