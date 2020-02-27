@@ -201,6 +201,88 @@ void controller::exec_code(unsigned int one_code) {
         break;
     }
 
+    case 0x22: { // addlw r1 r2 r3 : r1 <-mem[r2+r3]
+        inst_times[ADDLW] += 1;
+        rd = (one_code & rd_mask) >> 21;
+        rs = (one_code & rs_mask) >> 16;
+        rt = (one_code & rt_mask) >> 11;
+        addr = regs[rs].data + regs[rt].data;
+        if (!(0 <= addr && addr < memorySize / 4)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
+            exit(1);
+        }
+        if (memo->check_memory && addr >= memo->heap_pointer &&
+            !memo->is_int_stored(addr)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf(
+                "FATAL\n\t%s\n\tprogram address:%d  read float memory[%d] by LW"
+                "\n\t%lld instructions\n",
+                one_raw_program.c_str(), line_num * 4, addr, ex_count);
+            exit(1);
+        }
+        if (log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+            printf("\taddr:%d <- rs($%d):%d + rt($%d):%d\n", addr, rs,
+                   regs[rs].data, rt, regs[rt].data);
+            printf("\trd($%d) <- memory[%d]:%d\n", rd, addr,
+                   memo->read_word(addr));
+        }
+        regs[rd].data = memo->read_word(addr);
+
+        if (log_level >= DEBUG) {
+            printf("\trd($%d):%d\n", rd, regs[rd].data);
+        }
+
+        line_num++;
+        break;
+    }
+
+    case 0x23: { // addlf fr1 r2 r3 : fr1 <-mem[r2+r3]
+        inst_times[ADDLF] += 1;
+        rd = (one_code & rd_mask) >> 21;
+        rs = (one_code & rs_mask) >> 16;
+        rt = (one_code & rt_mask) >> 11;
+        addr = regs[rs].data + regs[rt].data;
+        if (!(0 <= addr && addr < memorySize / 4)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf("FATAL\n\t%s\n\tprogram address:%d  invalid read address: "
+                   "[%d]\n\t%lld instructions\n",
+                   one_raw_program.c_str(), line_num * 4, addr, ex_count);
+            exit(1);
+        }
+        if (memo->check_memory && addr >= memo->heap_pointer &&
+            !memo->is_int_stored(addr)) {
+            string one_raw_program = ld->get_raw_program_by_line_num(line_num);
+            printf(
+                "FATAL\n\t%s\n\tprogram address:%d  read float memory[%d] by LW"
+                "\n\t%lld instructions\n",
+                one_raw_program.c_str(), line_num * 4, addr, ex_count);
+            exit(1);
+        }
+        if (log_level >= DEBUG) {
+            printf("DEBUG\n");
+            printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                   ((unsigned int)fregs[rd].data.i));
+            printf("\taddr:%d <- rs($%d):%d + rt($%d):%d\n", addr, rs,
+                   regs[rs].data, rt, regs[rt].data);
+            printf("\trd($f%d) <- memory[%d]:(hex:%8x)\n", rd, addr,
+                   memo->read_word(addr));
+        }
+        fregs[rd].data.i = memo->read_word(addr);
+
+        if (log_level >= DEBUG) {
+            printf("\trd($f%d):%f(hex:%08x)\n", rd, fregs[rd].data.f,
+                   ((unsigned int)fregs[rd].data.i));
+        }
+
+        line_num++;
+        break;
+    }
+
     case 0: { // SW
         inst_times[SW] += 1;
         rd = (one_code & rd_mask) >> 21;
@@ -1183,6 +1265,12 @@ void controller::print_statistic_to_file() {
             break;
         case SF:
             tmp = "SF";
+            break;
+        case ADDLW:
+            tmp = "ADDLW";
+            break;
+        case ADDLF:
+            tmp = "ADDLF";
             break;
         case ADD_OR_MOV:
             tmp = "ADD_OR_MOV";

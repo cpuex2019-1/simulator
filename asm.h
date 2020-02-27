@@ -8,6 +8,8 @@ enum Asm {
     SW,
     LF,
     SF,
+    ADDLW,
+    ADDLF,
     ADD_OR_MOV,
     SUB,
     MUL,
